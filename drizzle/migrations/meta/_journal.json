@@ -8,6 +8,13 @@
       "when": 1792045980000,
       "tag": "0000_baseline",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792120966038,
+      "tag": "0001_core_courier_schema",
+      "breakpoints": true
     }
   ]
 }

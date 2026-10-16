@@ -1222,6 +1222,41 @@ export type Database = {
           },
         ]
       }
+      tracking_otps: {
+        Row: {
+          attempts: number
+          code: string
+          created_at: string
+          expires_at: string
+          id: string
+          shipment_id: string
+        }
+        Insert: {
+          attempts?: number
+          code: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          shipment_id: string
+        }
+        Update: {
+          attempts?: number
+          code?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          shipment_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tracking_otps_shipment_id_fkey"
+            columns: ["shipment_id"]
+            isOneToOne: false
+            referencedRelation: "shipments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -1678,6 +1713,10 @@ export type Database = {
       }
       import_partner_order: { Args: { _id: string }; Returns: string }
       is_ancestor: { Args: { _anc: string; _desc: string }; Returns: boolean }
+      request_tracking_otp: {
+        Args: { _code: string; _phone_last4: string }
+        Returns: Json
+      }
       resolve_cod_handover: {
         Args: { _id: string; _note?: string; _received: number }
         Returns: {
@@ -1750,6 +1789,7 @@ export type Database = {
         }
       }
       track_shipment: { Args: { _code: string }; Returns: Json }
+      track_with_otp: { Args: { _code: string; _otp: string }; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "distributor" | "manager" | "rider"

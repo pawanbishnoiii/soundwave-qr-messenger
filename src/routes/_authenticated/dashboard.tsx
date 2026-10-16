@@ -11,6 +11,7 @@ import heroRider from "@/assets/bnoy-rider.webp";
 import { AppShell } from "@/components/AppShell";
 import { RiderHome } from "@/components/RiderHome";
 import { SeedWorkspaceButton } from "@/components/SeedWorkspaceButton";
+import { SetupWizard } from "@/components/SetupWizard";
 import { FailureCharts } from "@/components/FailureCharts";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
@@ -74,6 +75,7 @@ function LeadDashboard() {
         </>
       }
     >
+      {myRole === "admin" && <SetupWizard />}
       {myRole === "admin" && (
         <div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-dashed bg-card px-4 py-3 text-sm">
           <Eye className="h-4 w-4 text-primary" />

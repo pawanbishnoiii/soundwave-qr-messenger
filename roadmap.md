@@ -32,3 +32,9 @@
 - [x] Per-role dashboards + admin "view as" switcher
 - [x] New hero photo, parallax, sign-in panel refresh
 - [ ] End-to-end browser test — needs a first signed-up account
+
+## Oct 16 (2)
+- [x] AI tools admin-only; parcel filters (tracking/status/hub/rider)
+- [x] Admin setup wizard; phone-only profiles (no placeholder email saved)
+- [x] Rider app redesign; new hero photo; OTP-verified /track, public tracking API removed
+- [ ] Real SMS for OTPs — needs SMS provider

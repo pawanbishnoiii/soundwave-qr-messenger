@@ -36,7 +36,7 @@ export function OtpDialog({ shipment, onClose, onDone }: { shipment: Shipment | 
       if (!navigator.geolocation) return res(null);
       navigator.geolocation.getCurrentPosition(res, () => res(null), { timeout: 4000, maximumAge: 60000 });
     });
-    const { data, error } = await supabase.rpc("deliver_with_otp", { _id: shipment.id, _otp: otp, _lat: pos?.coords.latitude, _lng: pos?.coords.longitude });
+    const { data, error } = await supabase.rpc("deliver_with_otp", { _id: shipment.id, _otp: otp, ...(pos ? { _lat: pos.coords.latitude, _lng: pos.coords.longitude } : {}) });
     setBusy(false);
     if (error) { playError(); toast.error(error.message); return; }
     if (!data) { playError(); toast.error("Incorrect OTP"); return; }

@@ -99,7 +99,8 @@ function ScanPage() {
           });
           const { data: u, error: ue } = await supabase.rpc("scan_transition", {
             _code: shipment.tracking_code, _to: mode, _source: "camera",
-            _lat: pos?.coords.latitude, _lng: pos?.coords.longitude, _failure: failure ?? undefined,
+            ...(pos ? { _lat: pos.coords.latitude, _lng: pos.coords.longitude } : {}),
+            ...(failure ? { _failure: failure } : {}),
           });
           if (ue) throw ue;
           const r = u as unknown as { duplicate: boolean; shipment: Shipment };

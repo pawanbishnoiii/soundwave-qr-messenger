@@ -34,7 +34,7 @@ function Jobs() {
   const jobs: Job[] = (rider
     ? [
         { key: "pickup", title: "Pick up from hub", hint: "Assigned to you, not picked up yet", icon: PackageOpen, tone: "bg-accent text-primary", items: mine.filter((s) => s.status === "assigned").map(item) },
-        { key: "deliver", title: "Deliver today", hint: "Out for delivery — send OTP 1234 at the door", icon: Truck, tone: "bg-sky/20 text-foreground", items: mine.filter((s) => ["picked_up", "in_transit", "out_for_delivery"].includes(s.status)).map(item) },
+        { key: "deliver", title: "Deliver today", hint: "Out for delivery — verify the customer OTP at the door", icon: Truck, tone: "bg-sky/20 text-foreground", items: mine.filter((s) => ["picked_up", "in_transit", "out_for_delivery"].includes(s.status)).map(item) },
         { key: "retry", title: "Re-attempt failed", hint: "Customer wasn't reached last time", icon: AlertTriangle, tone: "bg-coral/15 text-coral", items: mine.filter((s) => s.status === "failed").map(item) },
         { key: "cod", title: "Hand over COD cash", hint: "Collected cash to deposit with your manager", icon: IndianRupee, tone: "bg-success/15 text-success", items: mine.filter((s) => s.status === "delivered" && !s.cod_collected && Number(s.cod_amount) > 0).map((s) => ({ ...item(s), label: `${inr(Number(s.cod_amount))} · ${s.receiver_name}` })) },
         { key: "returns", title: "Return pickups", hint: "Collect from customer with photos", icon: RotateCcw, tone: "bg-accent text-primary", items: returns.filter((r) => r.rider_id === user?.id).map((r) => ({ id: r.shipment_id, code: r.kind, label: r.status.replace(/_/g, " ") })) },

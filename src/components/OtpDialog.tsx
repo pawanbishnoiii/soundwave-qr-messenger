@@ -61,7 +61,7 @@ export function OtpDialog({ shipment, onClose, onDone }: { shipment: Shipment | 
               <Button variant="hero" className="w-full" onClick={send} disabled={busy}>{busy ? <Loader2 className="animate-spin" /> : <MessageSquareText />} Send OTP to customer</Button>
             ) : (
               <form onSubmit={verify} className="space-y-3">
-                <p className="text-sm text-muted-foreground">Ask the customer for the 4-digit code sent to their phone. <b>Demo OTP is 1234.</b></p>
+                <p className="text-sm text-muted-foreground">Ask the customer for the 4-digit code sent to their phone.</p>
                 <Input autoFocus inputMode="numeric" maxLength={6} value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))} placeholder="••••" className="h-14 text-center font-mono text-2xl tracking-[0.5em]" />
                 <Button variant="hero" className="w-full" disabled={busy || otp.length < 4}>{busy ? <Loader2 className="animate-spin" /> : <ShieldCheck />} Verify & mark delivered</Button>
                 <button type="button" onClick={send} className="w-full text-center text-xs font-semibold text-primary">Resend OTP</button>

@@ -9,19 +9,45 @@ export const STATUS_FLOW: ShipmentStatus[] = [
   "created",
   "assigned",
   "picked_up",
+  "hub_received",
+  "sorted",
   "in_transit",
   "out_for_delivery",
   "delivered",
 ];
 
+/** Mirrors public.shipment_transition_ok in the database (the DB is the source of truth). */
+export const TRANSITIONS: Record<ShipmentStatus, ShipmentStatus[]> = {
+  created: ["pickup_scheduled", "assigned", "picked_up", "hub_received", "cancelled"],
+  pickup_scheduled: ["assigned", "picked_up", "cancelled"],
+  assigned: ["picked_up", "pickup_scheduled", "out_for_delivery", "cancelled"],
+  picked_up: ["hub_received", "in_transit", "out_for_delivery", "cancelled", "return_initiated"],
+  hub_received: ["sorted", "in_transit", "out_for_delivery", "return_initiated", "cancelled"],
+  sorted: ["in_transit", "out_for_delivery", "return_initiated"],
+  in_transit: ["hub_received", "out_for_delivery", "return_initiated"],
+  out_for_delivery: ["delivered", "failed", "return_initiated"],
+  failed: ["reattempt", "return_initiated", "out_for_delivery"],
+  reattempt: ["out_for_delivery", "return_initiated", "hub_received"],
+  return_initiated: ["in_transit", "hub_received", "returned"],
+  delivered: [],
+  returned: [],
+  cancelled: [],
+};
+export const canTransition = (from: ShipmentStatus, to: ShipmentStatus) => from === to || TRANSITIONS[from].includes(to);
+
 export const STATUS_META: Record<ShipmentStatus, { label: string; tone: string }> = {
   created: { label: "Created", tone: "bg-muted text-muted-foreground" },
+  pickup_scheduled: { label: "Pickup scheduled", tone: "bg-muted text-foreground" },
   assigned: { label: "Assigned", tone: "bg-accent text-accent-foreground" },
   picked_up: { label: "Picked up", tone: "bg-sky/20 text-foreground" },
+  hub_received: { label: "At hub", tone: "bg-sky/20 text-foreground" },
+  sorted: { label: "Sorted", tone: "bg-sky/25 text-foreground" },
   in_transit: { label: "In transit", tone: "bg-sky/30 text-foreground" },
   out_for_delivery: { label: "Out for delivery", tone: "bg-warning/30 text-foreground" },
   delivered: { label: "Delivered", tone: "bg-success/20 text-success" },
-  failed: { label: "Failed", tone: "bg-destructive/15 text-destructive" },
+  failed: { label: "Failed attempt", tone: "bg-destructive/15 text-destructive" },
+  reattempt: { label: "Reattempt", tone: "bg-warning/20 text-foreground" },
+  return_initiated: { label: "Return in progress", tone: "bg-coral/15 text-coral" },
   returned: { label: "Returned", tone: "bg-coral/20 text-coral" },
   cancelled: { label: "Cancelled", tone: "bg-destructive/10 text-destructive" },
 };

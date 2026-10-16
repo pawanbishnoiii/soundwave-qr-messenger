@@ -1,0 +1,14 @@
+import warehouse from '@/assets/bnoy-warehouse.webp';
+import handover from '@/assets/bnoy-handover.webp';
+import dispatch from '@/assets/bnoy-dispatch.webp';
+import packaging from '@/assets/bnoy-packaging.webp';
+import scanner from '@/assets/bnoy-scanner.webp';
+import merchant from '@/assets/bnoy-merchant.webp';
+import rider from '@/assets/bnoy-rider.webp';
+import conveyor from '@/assets/bnoy-conveyor.webp';
+import hub from '@/assets/bnoy-hub.webp';
+import operations from '@/assets/bnoy-operations.webp';
+import parcels from '@/assets/bnoy-parcels.webp';
+import returnPickup from '@/assets/bnoy-return-pickup.webp';
+import returnsDesk from '@/assets/bnoy-returns-desk.webp';
+export const photos = { warehouse, handover, dispatch, packaging, scanner, merchant, rider, conveyor, hub, operations, parcels, returnPickup, returnsDesk };

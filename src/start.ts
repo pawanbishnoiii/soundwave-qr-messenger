@@ -3,12 +3,16 @@ import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/r
 import { renderErrorPage } from "./lib/error-page";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 
-const errorMiddleware = createMiddleware().server(async ({ next }) => {
+const errorMiddleware = createMiddleware().server(async ({ next, request }) => {
   try {
     return await next();
   } catch (error) {
     if (error != null && typeof error === "object" && "statusCode" in error) {
       throw error;
+    }
+    const msg = error instanceof Error ? `${error.name} ${error.message}` : String(error);
+    if (request?.signal?.aborted || /abort|econnreset|epipe/i.test(msg)) {
+      return new Response(null, { status: 499 });
     }
     console.error(error);
     return new Response(renderErrorPage(), {

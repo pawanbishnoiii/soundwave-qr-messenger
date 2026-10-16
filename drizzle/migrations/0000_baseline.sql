@@ -1,0 +1,2 @@
+-- Baseline: the database schema already exists from the project remix.
+-- Migration history was rescaffolded fresh; future changes start from here.

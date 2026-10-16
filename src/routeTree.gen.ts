@@ -19,6 +19,7 @@ import { Route as TrackRouteImport } from './routes/track'
 import { Route as AuthenticatedCashRouteImport } from './routes/_authenticated/cash'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDevelopersRouteImport } from './routes/_authenticated/developers'
+import { Route as AuthenticatedGatewaysRouteImport } from './routes/_authenticated/gateways'
 import { Route as AuthenticatedHubsRouteImport } from './routes/_authenticated/hubs'
 import { Route as AuthenticatedJobsRouteImport } from './routes/_authenticated/jobs'
 import { Route as AuthenticatedLotsRouteImport } from './routes/_authenticated/lots'
@@ -89,6 +90,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 const AuthenticatedDevelopersRoute = AuthenticatedDevelopersRouteImport.update({
   id: '/developers',
   path: '/developers',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedGatewaysRoute = AuthenticatedGatewaysRouteImport.update({
+  id: '/gateways',
+  path: '/gateways',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedHubsRoute = AuthenticatedHubsRouteImport.update({
@@ -219,6 +225,7 @@ export interface FileRoutesByFullPath {
   '/cash': typeof AuthenticatedCashRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/developers': typeof AuthenticatedDevelopersRoute
+  '/gateways': typeof AuthenticatedGatewaysRoute
   '/hubs': typeof AuthenticatedHubsRoute
   '/jobs': typeof AuthenticatedJobsRoute
   '/lots': typeof AuthenticatedLotsRoute
@@ -252,6 +259,7 @@ export interface FileRoutesByTo {
   '/cash': typeof AuthenticatedCashRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/developers': typeof AuthenticatedDevelopersRoute
+  '/gateways': typeof AuthenticatedGatewaysRoute
   '/hubs': typeof AuthenticatedHubsRoute
   '/jobs': typeof AuthenticatedJobsRoute
   '/lots': typeof AuthenticatedLotsRoute
@@ -287,6 +295,7 @@ export interface FileRoutesById {
   '/_authenticated/cash': typeof AuthenticatedCashRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/developers': typeof AuthenticatedDevelopersRoute
+  '/_authenticated/gateways': typeof AuthenticatedGatewaysRoute
   '/_authenticated/hubs': typeof AuthenticatedHubsRoute
   '/_authenticated/jobs': typeof AuthenticatedJobsRoute
   '/_authenticated/lots': typeof AuthenticatedLotsRoute
@@ -322,6 +331,7 @@ export interface FileRouteTypes {
     | '/cash'
     | '/dashboard'
     | '/developers'
+    | '/gateways'
     | '/hubs'
     | '/jobs'
     | '/lots'
@@ -355,6 +365,7 @@ export interface FileRouteTypes {
     | '/cash'
     | '/dashboard'
     | '/developers'
+    | '/gateways'
     | '/hubs'
     | '/jobs'
     | '/lots'
@@ -389,6 +400,7 @@ export interface FileRouteTypes {
     | '/_authenticated/cash'
     | '/_authenticated/dashboard'
     | '/_authenticated/developers'
+    | '/_authenticated/gateways'
     | '/_authenticated/hubs'
     | '/_authenticated/jobs'
     | '/_authenticated/lots'
@@ -498,6 +510,13 @@ declare module '@tanstack/react-router' {
       path: '/developers'
       fullPath: '/developers'
       preLoaderRoute: typeof AuthenticatedDevelopersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/gateways': {
+      id: '/_authenticated/gateways'
+      path: '/gateways'
+      fullPath: '/gateways'
+      preLoaderRoute: typeof AuthenticatedGatewaysRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/hubs': {
@@ -661,6 +680,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCashRoute: typeof AuthenticatedCashRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDevelopersRoute: typeof AuthenticatedDevelopersRoute
+  AuthenticatedGatewaysRoute: typeof AuthenticatedGatewaysRoute
   AuthenticatedHubsRoute: typeof AuthenticatedHubsRoute
   AuthenticatedJobsRoute: typeof AuthenticatedJobsRoute
   AuthenticatedLotsRoute: typeof AuthenticatedLotsRoute
@@ -684,6 +704,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCashRoute: AuthenticatedCashRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDevelopersRoute: AuthenticatedDevelopersRoute,
+  AuthenticatedGatewaysRoute: AuthenticatedGatewaysRoute,
   AuthenticatedHubsRoute: AuthenticatedHubsRoute,
   AuthenticatedJobsRoute: AuthenticatedJobsRoute,
   AuthenticatedLotsRoute: AuthenticatedLotsRoute,

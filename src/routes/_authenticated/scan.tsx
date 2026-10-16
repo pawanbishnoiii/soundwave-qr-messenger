@@ -26,8 +26,9 @@ export const Route = createFileRoute("/_authenticated/scan")({
 });
 
 const LABEL: Record<Mode, string> = {
-  lookup: "Lookup", lot: "Add to lot", claim: "Sort / claim", picked_up: "Pickup",
-  in_transit: "In transit", out_for_delivery: "Out for delivery", delivered: "Deliver (OTP)",
+  lookup: "Lookup", lot: "Add to lot", claim: "Claim parcel", picked_up: "Pickup",
+  hub_received: "Hub in", sorted: "Sort", in_transit: "Dispatch", out_for_delivery: "Out for delivery",
+  failed: "Failed attempt", delivered: "Deliver (OTP)",
 };
 
 type Result = { ok: boolean; code: string; msg: string; shipment?: Shipment; at: number };

@@ -23,3 +23,6 @@
 - Partner API keys are stored only as SHA-256 hashes; `/api/public/v1/*` verifies the key before using the admin client, and outbound webhooks are HMAC-signed via `src/lib/webhooks.server.ts` — why: keys and secrets must never be recoverable or spoofable.
 - Phone OTP is demo-only (fixed code) until an SMS provider is connected; phone-only accounts use a synthetic `p<phone>@phone.bnoy.app` email created by a server function — why: no SMS credentials, and auth needs an email identity.
 - Wallet credits for riders, managers and distributors are written only by a DB trigger on shipment status, using admin-editable pay rates and dated bonuses, idempotent per shipment+kind — why: clients cannot mint earnings and rate changes apply without code changes.
+- GSAP plugins are registered only behind `typeof window !== "undefined"` — why: module-scope registration starts a timer, which the Worker runtime forbids and crashes every published page.
+- Migrations must pass `bun run check:migrations` (no drop/truncate/re-create of baseline tables) — why: the empty baseline must never wipe the 27 existing tables.
+- AI Gateway JSON calls go through `src/lib/ai-gateway.server.ts` (dynamically imported inside handlers) — why: one streaming + error-handling path.

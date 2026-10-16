@@ -86,7 +86,7 @@ export function AppShell({ title, actions, children }: { title: string; actions?
 
   const userCard = (
     <div className="rounded-md border border-sidebar-border p-3">
-      <p className="truncate text-sm font-semibold text-sidebar-accent-foreground">{profile?.full_name || user?.email}</p>
+      <p className="truncate text-sm font-semibold text-sidebar-accent-foreground">{profile?.full_name || profile?.phone || "Loading…"}</p>
       <p className="truncate text-xs text-sidebar-foreground">{role ? ROLE_LABEL[role] : "No role yet"}</p>
       <Button variant="ghost" size="sm" onClick={signOut} className="mt-3 h-auto p-0 text-xs text-sidebar-foreground hover:bg-transparent hover:text-sidebar-accent-foreground">
         <LogOut className="h-3.5 w-3.5" /> Sign out

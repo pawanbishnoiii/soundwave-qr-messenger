@@ -30,7 +30,7 @@ export function RiderHome() {
   const refresh = () => { qc.invalidateQueries({ queryKey: ["shipments"] }); qc.invalidateQueries({ queryKey: ["wallet"] }); };
 
   const tiles = [
-        { label: "Done", value: st.pending === 0 ? st.deliveredToday : st.deliveredToday, icon: Clock },
+        { label: "All-time", value: st.delivered, icon: Clock },
     { label: "Delivered today", value: st.deliveredToday, icon: PackageCheck },
     { label: "Accuracy today", value: st.accuracyToday === null ? "—" : `${st.accuracyToday}%`, icon: Target },
     { label: `Rating (${st.ratingCount})`, value: st.rating === null ? "—" : st.rating.toFixed(1) + "★", icon: Star },
@@ -100,7 +100,7 @@ export function RiderHome() {
                     <Button asChild variant="outline" size="sm"><a href={`tel:${s.receiver_phone}`}><Phone /> Call</a></Button>
                     <Button asChild variant="outline" size="sm"><a target="_blank" rel="noreferrer" href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${s.receiver_address}, ${s.city} ${s.pincode ?? ""}`)}`}><Navigation /> Navigate</a></Button>
                     <Button variant="outline" size="sm" className="border-destructive/40 text-destructive" onClick={() => setCancel(s)}><XCircle /> Not delivered</Button>
-                    <Button size="sm" className="bg-success text-success-foreground hover:bg-success/90" onClick={() => setDeliver(s)}><ShieldCheck /> Delivered</Button>
+                    <Button size="sm" className="bg-success text-primary-foreground hover:bg-success/90" onClick={() => setDeliver(s)}><ShieldCheck /> Delivered</Button>
                     <Button asChild variant="ghost" size="sm" className="col-span-2"><Link to="/shipments/$id" params={{ id: s.id }}>Full details</Link></Button>
                   </div>
                 )}

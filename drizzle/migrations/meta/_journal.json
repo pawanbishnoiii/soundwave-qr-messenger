@@ -1,27 +1,5 @@
 {
   "version": "7",
   "dialect": "postgresql",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "7",
-      "when": 1792045980000,
-      "tag": "0000_baseline",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1792122670221,
-      "tag": "0001_return_kinds_fix",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1792123448590,
-      "tag": "0002_otp_tracking_phone_profiles",
-      "breakpoints": true
-    }
-  ]
+  "entries": []
 }

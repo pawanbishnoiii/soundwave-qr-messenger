@@ -1,2 +1,0 @@
--- Baseline: migration history was rescaffolded empty for this project's database.
--- Future schema changes start from here.

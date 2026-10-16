@@ -1,6 +1,6 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { LayoutDashboard, Package, ScanLine, Users, LogOut, Menu, X, Layers, Plug, Undo2, KeyRound, Trophy, ListChecks, Wallet, MapPin, Barcode } from "lucide-react";
+import { LayoutDashboard, Package, ScanLine, Users, LogOut, Menu, X, Layers, Plug, Undo2, KeyRound, Trophy, ListChecks, Wallet, MapPin, Barcode, Building2, Truck, Store, Route as RouteIcon, Banknote, Sparkles } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMe } from "@/lib/auth";
@@ -20,9 +20,15 @@ const GROUPS = [
     { to: "/scan", label: "Scan", icon: ScanLine, roles: ALL },
     { to: "/lots", label: "Lots", icon: Layers, roles: ALL },
     { to: "/returns", label: "Returns", icon: Undo2, roles: ALL },
+    { to: "/cash", label: "Cash handovers", icon: Banknote, roles: ALL },
   ] },
   { title: "Analytics & warehouse", items: [
     { to: "/hubs", label: "Hub network", icon: MapPin, roles: LEADS },
+    { to: "/manage-hubs", label: "Hubs & branches", icon: Building2, roles: LEADS },
+    { to: "/manage-vehicles", label: "Fleet", icon: Truck, roles: LEADS },
+    { to: "/manage-merchants", label: "Merchants", icon: Store, roles: LEADS },
+    { to: "/manage-routes", label: "Routes", icon: RouteIcon, roles: LEADS },
+    { to: "/route-planner", label: "AI route planner", icon: Sparkles, roles: LEADS },
     { to: "/manifest", label: "Barcode manifest", icon: Barcode, roles: LEADS },
     { to: "/riders", label: "Rider performance", icon: Trophy, roles: LEADS },
   ] },

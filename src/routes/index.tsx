@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { photos } from '@/lib/photography';
 import { pageHead } from '@/lib/seo';
 import { ParcelJourney } from '@/components/ParcelJourney';
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+if (typeof window !== "undefined") gsap.registerPlugin(useGSAP, ScrollTrigger);
 export const Route = createFileRoute('/')({ head:()=>pageHead('Connected courier operations','Barcode-first shipment operations, courier partner exchange and delivery tracking in one Bnoy workspace.'), component:Landing });
 function Landing(){
  const scope=useRef<HTMLDivElement>(null); const [code,setCode]=useState(''); const navigate=useNavigate();

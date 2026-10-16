@@ -16,16 +16,22 @@ import { Route as IntegrationsRouteImport } from './routes/integrations'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as TrackRouteImport } from './routes/track'
+import { Route as AuthenticatedCashRouteImport } from './routes/_authenticated/cash'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDevelopersRouteImport } from './routes/_authenticated/developers'
 import { Route as AuthenticatedHubsRouteImport } from './routes/_authenticated/hubs'
 import { Route as AuthenticatedJobsRouteImport } from './routes/_authenticated/jobs'
 import { Route as AuthenticatedLotsRouteImport } from './routes/_authenticated/lots'
+import { Route as AuthenticatedManageHubsRouteImport } from './routes/_authenticated/manage-hubs'
+import { Route as AuthenticatedManageMerchantsRouteImport } from './routes/_authenticated/manage-merchants'
+import { Route as AuthenticatedManageRoutesRouteImport } from './routes/_authenticated/manage-routes'
+import { Route as AuthenticatedManageVehiclesRouteImport } from './routes/_authenticated/manage-vehicles'
 import { Route as AuthenticatedManifestRouteImport } from './routes/_authenticated/manifest'
 import { Route as AuthenticatedPayoutsRouteImport } from './routes/_authenticated/payouts'
 import { Route as AuthenticatedProvidersRouteImport } from './routes/_authenticated/providers'
 import { Route as AuthenticatedReturnsRouteImport } from './routes/_authenticated/returns'
 import { Route as AuthenticatedRidersRouteImport } from './routes/_authenticated/riders'
+import { Route as AuthenticatedRoutePlannerRouteImport } from './routes/_authenticated/route-planner'
 import { Route as AuthenticatedScanRouteImport } from './routes/_authenticated/scan'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as DocsApiRouteImport } from './routes/docs.api'
@@ -71,6 +77,11 @@ const TrackRoute = TrackRouteImport.update({
   path: '/track',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCashRoute = AuthenticatedCashRouteImport.update({
+  id: '/cash',
+  path: '/cash',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -96,6 +107,29 @@ const AuthenticatedLotsRoute = AuthenticatedLotsRouteImport.update({
   path: '/lots',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedManageHubsRoute = AuthenticatedManageHubsRouteImport.update({
+  id: '/manage-hubs',
+  path: '/manage-hubs',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedManageMerchantsRoute =
+  AuthenticatedManageMerchantsRouteImport.update({
+    id: '/manage-merchants',
+    path: '/manage-merchants',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedManageRoutesRoute =
+  AuthenticatedManageRoutesRouteImport.update({
+    id: '/manage-routes',
+    path: '/manage-routes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedManageVehiclesRoute =
+  AuthenticatedManageVehiclesRouteImport.update({
+    id: '/manage-vehicles',
+    path: '/manage-vehicles',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedManifestRoute = AuthenticatedManifestRouteImport.update({
   id: '/manifest',
   path: '/manifest',
@@ -121,6 +155,12 @@ const AuthenticatedRidersRoute = AuthenticatedRidersRouteImport.update({
   path: '/riders',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedRoutePlannerRoute =
+  AuthenticatedRoutePlannerRouteImport.update({
+    id: '/route-planner',
+    path: '/route-planner',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedScanRoute = AuthenticatedScanRouteImport.update({
   id: '/scan',
   path: '/scan',
@@ -182,16 +222,22 @@ export interface FileRoutesByFullPath {
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/track': typeof TrackRoute
+  '/cash': typeof AuthenticatedCashRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/developers': typeof AuthenticatedDevelopersRoute
   '/hubs': typeof AuthenticatedHubsRoute
   '/jobs': typeof AuthenticatedJobsRoute
   '/lots': typeof AuthenticatedLotsRoute
+  '/manage-hubs': typeof AuthenticatedManageHubsRoute
+  '/manage-merchants': typeof AuthenticatedManageMerchantsRoute
+  '/manage-routes': typeof AuthenticatedManageRoutesRoute
+  '/manage-vehicles': typeof AuthenticatedManageVehiclesRoute
   '/manifest': typeof AuthenticatedManifestRoute
   '/payouts': typeof AuthenticatedPayoutsRoute
   '/providers': typeof AuthenticatedProvidersRoute
   '/returns': typeof AuthenticatedReturnsRoute
   '/riders': typeof AuthenticatedRidersRoute
+  '/route-planner': typeof AuthenticatedRoutePlannerRoute
   '/scan': typeof AuthenticatedScanRoute
   '/team': typeof AuthenticatedTeamRoute
   '/docs/api': typeof DocsApiRoute
@@ -210,16 +256,22 @@ export interface FileRoutesByTo {
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/track': typeof TrackRoute
+  '/cash': typeof AuthenticatedCashRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/developers': typeof AuthenticatedDevelopersRoute
   '/hubs': typeof AuthenticatedHubsRoute
   '/jobs': typeof AuthenticatedJobsRoute
   '/lots': typeof AuthenticatedLotsRoute
+  '/manage-hubs': typeof AuthenticatedManageHubsRoute
+  '/manage-merchants': typeof AuthenticatedManageMerchantsRoute
+  '/manage-routes': typeof AuthenticatedManageRoutesRoute
+  '/manage-vehicles': typeof AuthenticatedManageVehiclesRoute
   '/manifest': typeof AuthenticatedManifestRoute
   '/payouts': typeof AuthenticatedPayoutsRoute
   '/providers': typeof AuthenticatedProvidersRoute
   '/returns': typeof AuthenticatedReturnsRoute
   '/riders': typeof AuthenticatedRidersRoute
+  '/route-planner': typeof AuthenticatedRoutePlannerRoute
   '/scan': typeof AuthenticatedScanRoute
   '/team': typeof AuthenticatedTeamRoute
   '/docs/api': typeof DocsApiRoute
@@ -240,16 +292,22 @@ export interface FileRoutesById {
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/track': typeof TrackRoute
+  '/_authenticated/cash': typeof AuthenticatedCashRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/developers': typeof AuthenticatedDevelopersRoute
   '/_authenticated/hubs': typeof AuthenticatedHubsRoute
   '/_authenticated/jobs': typeof AuthenticatedJobsRoute
   '/_authenticated/lots': typeof AuthenticatedLotsRoute
+  '/_authenticated/manage-hubs': typeof AuthenticatedManageHubsRoute
+  '/_authenticated/manage-merchants': typeof AuthenticatedManageMerchantsRoute
+  '/_authenticated/manage-routes': typeof AuthenticatedManageRoutesRoute
+  '/_authenticated/manage-vehicles': typeof AuthenticatedManageVehiclesRoute
   '/_authenticated/manifest': typeof AuthenticatedManifestRoute
   '/_authenticated/payouts': typeof AuthenticatedPayoutsRoute
   '/_authenticated/providers': typeof AuthenticatedProvidersRoute
   '/_authenticated/returns': typeof AuthenticatedReturnsRoute
   '/_authenticated/riders': typeof AuthenticatedRidersRoute
+  '/_authenticated/route-planner': typeof AuthenticatedRoutePlannerRoute
   '/_authenticated/scan': typeof AuthenticatedScanRoute
   '/_authenticated/team': typeof AuthenticatedTeamRoute
   '/docs/api': typeof DocsApiRoute
@@ -270,16 +328,22 @@ export interface FileRouteTypes {
     | '/resources'
     | '/solutions'
     | '/track'
+    | '/cash'
     | '/dashboard'
     | '/developers'
     | '/hubs'
     | '/jobs'
     | '/lots'
+    | '/manage-hubs'
+    | '/manage-merchants'
+    | '/manage-routes'
+    | '/manage-vehicles'
     | '/manifest'
     | '/payouts'
     | '/providers'
     | '/returns'
     | '/riders'
+    | '/route-planner'
     | '/scan'
     | '/team'
     | '/docs/api'
@@ -298,16 +362,22 @@ export interface FileRouteTypes {
     | '/resources'
     | '/solutions'
     | '/track'
+    | '/cash'
     | '/dashboard'
     | '/developers'
     | '/hubs'
     | '/jobs'
     | '/lots'
+    | '/manage-hubs'
+    | '/manage-merchants'
+    | '/manage-routes'
+    | '/manage-vehicles'
     | '/manifest'
     | '/payouts'
     | '/providers'
     | '/returns'
     | '/riders'
+    | '/route-planner'
     | '/scan'
     | '/team'
     | '/docs/api'
@@ -327,16 +397,22 @@ export interface FileRouteTypes {
     | '/resources'
     | '/solutions'
     | '/track'
+    | '/_authenticated/cash'
     | '/_authenticated/dashboard'
     | '/_authenticated/developers'
     | '/_authenticated/hubs'
     | '/_authenticated/jobs'
     | '/_authenticated/lots'
+    | '/_authenticated/manage-hubs'
+    | '/_authenticated/manage-merchants'
+    | '/_authenticated/manage-routes'
+    | '/_authenticated/manage-vehicles'
     | '/_authenticated/manifest'
     | '/_authenticated/payouts'
     | '/_authenticated/providers'
     | '/_authenticated/returns'
     | '/_authenticated/riders'
+    | '/_authenticated/route-planner'
     | '/_authenticated/scan'
     | '/_authenticated/team'
     | '/docs/api'
@@ -416,6 +492,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/cash': {
+      id: '/_authenticated/cash'
+      path: '/cash'
+      fullPath: '/cash'
+      preLoaderRoute: typeof AuthenticatedCashRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -451,6 +534,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLotsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/manage-hubs': {
+      id: '/_authenticated/manage-hubs'
+      path: '/manage-hubs'
+      fullPath: '/manage-hubs'
+      preLoaderRoute: typeof AuthenticatedManageHubsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/manage-merchants': {
+      id: '/_authenticated/manage-merchants'
+      path: '/manage-merchants'
+      fullPath: '/manage-merchants'
+      preLoaderRoute: typeof AuthenticatedManageMerchantsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/manage-routes': {
+      id: '/_authenticated/manage-routes'
+      path: '/manage-routes'
+      fullPath: '/manage-routes'
+      preLoaderRoute: typeof AuthenticatedManageRoutesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/manage-vehicles': {
+      id: '/_authenticated/manage-vehicles'
+      path: '/manage-vehicles'
+      fullPath: '/manage-vehicles'
+      preLoaderRoute: typeof AuthenticatedManageVehiclesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/manifest': {
       id: '/_authenticated/manifest'
       path: '/manifest'
@@ -484,6 +595,13 @@ declare module '@tanstack/react-router' {
       path: '/riders'
       fullPath: '/riders'
       preLoaderRoute: typeof AuthenticatedRidersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/route-planner': {
+      id: '/_authenticated/route-planner'
+      path: '/route-planner'
+      fullPath: '/route-planner'
+      preLoaderRoute: typeof AuthenticatedRoutePlannerRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/scan': {
@@ -560,16 +678,22 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCashRoute: typeof AuthenticatedCashRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDevelopersRoute: typeof AuthenticatedDevelopersRoute
   AuthenticatedHubsRoute: typeof AuthenticatedHubsRoute
   AuthenticatedJobsRoute: typeof AuthenticatedJobsRoute
   AuthenticatedLotsRoute: typeof AuthenticatedLotsRoute
+  AuthenticatedManageHubsRoute: typeof AuthenticatedManageHubsRoute
+  AuthenticatedManageMerchantsRoute: typeof AuthenticatedManageMerchantsRoute
+  AuthenticatedManageRoutesRoute: typeof AuthenticatedManageRoutesRoute
+  AuthenticatedManageVehiclesRoute: typeof AuthenticatedManageVehiclesRoute
   AuthenticatedManifestRoute: typeof AuthenticatedManifestRoute
   AuthenticatedPayoutsRoute: typeof AuthenticatedPayoutsRoute
   AuthenticatedProvidersRoute: typeof AuthenticatedProvidersRoute
   AuthenticatedReturnsRoute: typeof AuthenticatedReturnsRoute
   AuthenticatedRidersRoute: typeof AuthenticatedRidersRoute
+  AuthenticatedRoutePlannerRoute: typeof AuthenticatedRoutePlannerRoute
   AuthenticatedScanRoute: typeof AuthenticatedScanRoute
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRoute
   AuthenticatedShipmentsIdRoute: typeof AuthenticatedShipmentsIdRoute
@@ -577,16 +701,22 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCashRoute: AuthenticatedCashRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDevelopersRoute: AuthenticatedDevelopersRoute,
   AuthenticatedHubsRoute: AuthenticatedHubsRoute,
   AuthenticatedJobsRoute: AuthenticatedJobsRoute,
   AuthenticatedLotsRoute: AuthenticatedLotsRoute,
+  AuthenticatedManageHubsRoute: AuthenticatedManageHubsRoute,
+  AuthenticatedManageMerchantsRoute: AuthenticatedManageMerchantsRoute,
+  AuthenticatedManageRoutesRoute: AuthenticatedManageRoutesRoute,
+  AuthenticatedManageVehiclesRoute: AuthenticatedManageVehiclesRoute,
   AuthenticatedManifestRoute: AuthenticatedManifestRoute,
   AuthenticatedPayoutsRoute: AuthenticatedPayoutsRoute,
   AuthenticatedProvidersRoute: AuthenticatedProvidersRoute,
   AuthenticatedReturnsRoute: AuthenticatedReturnsRoute,
   AuthenticatedRidersRoute: AuthenticatedRidersRoute,
+  AuthenticatedRoutePlannerRoute: AuthenticatedRoutePlannerRoute,
   AuthenticatedScanRoute: AuthenticatedScanRoute,
   AuthenticatedTeamRoute: AuthenticatedTeamRoute,
   AuthenticatedShipmentsIdRoute: AuthenticatedShipmentsIdRoute,

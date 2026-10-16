@@ -36,17 +36,17 @@ export const triageDeliveryIssue = createServerFn({ method: "POST" })
   .handler(async ({ data, context }): Promise<TriageResult> => {
     const { data: s, error } = await context.supabase
       .from("shipments")
-      .select("tracking_code, status, city, cod_amount, cod_collected, created_at, delivered_at, rider_id, notes")
+      .select("tracking_code, status, city, cod_amount, cod_collected, created_at, delivered_at, rider_id, notes, failure_reason, delivery_notes, attempt_count")
       .eq("id", data.shipmentId)
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!s) throw new Error("Shipment not found or not visible to you");
     const { data: events } = await context.supabase
       .from("shipment_events")
-      .select("status, note, created_at")
+      .select("status, note, failure_reason, scan_source, created_at")
       .eq("shipment_id", data.shipmentId)
       .order("created_at", { ascending: false })
-      .limit(10);
+      .limit(25);
 
     const apiKey = process.env["LOVABLE_API_KEY"];
     if (!apiKey) throw new Error("AI is not configured");

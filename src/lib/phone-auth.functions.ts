@@ -22,11 +22,16 @@ export const phoneOtpLogin = createServerFn({ method: "POST" })
     const full = "+91" + data.phone;
 
     // Existing account linked to this number (also covers staff added by admins).
+    // Profiles store only the phone; the login identity is looked up on the auth account.
     const { data: prof } = await supabaseAdmin
-      .from("profiles").select("email")
-      .or(`phone.eq.${full},phone.eq.${data.phone},email.eq.${phoneEmail(data.phone)}`)
-      .not("email", "is", null).limit(1).maybeSingle();
-    let email = prof?.email ?? phoneEmail(data.phone);
+      .from("profiles").select("id")
+      .or(`phone.eq.${full},phone.eq.${data.phone}`)
+      .limit(1).maybeSingle();
+    let email: string = phoneEmail(data.phone);
+    if (prof) {
+      const { data: u } = await supabaseAdmin.auth.admin.getUserById(prof.id);
+      if (u?.user?.email) email = u.user.email;
+    }
 
     if (!prof) {
       if (!data.name || data.name.length < 2) return { error: null, needsName: true, tokenHash: null };

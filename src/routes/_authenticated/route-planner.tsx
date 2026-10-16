@@ -29,7 +29,7 @@ function Planner() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!hub) return toast.error("Pick a hub");
+    if (!hub) { toast.error("Pick a hub"); return; }
     setBusy(true); setPlan(null);
     try { setPlan(await run({ data: { hubId: hub, constraints } })); }
     catch (err) { toast.error(err instanceof Error ? err.message : "Failed"); }

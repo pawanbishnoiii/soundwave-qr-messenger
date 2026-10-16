@@ -51,7 +51,7 @@ function CashPage() {
     setBusy(true);
     const { data: h, error } = await supabase.rpc("submit_cod_handover");
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(`Handover ${(h as H).code} submitted`); refresh();
   }
   async function doResolve() {
@@ -59,7 +59,7 @@ function CashPage() {
     setBusy(true);
     const { error } = await supabase.rpc("resolve_cod_handover", { _id: resolve.id, _received: Number(amt), _note: note });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Recorded"); setResolve(null); refresh();
   }
   const incoming = (d?.handovers ?? []).filter((h) => h.status === "submitted" && h.from_user !== user?.id && (h.to_user === user?.id || role === "admin"));

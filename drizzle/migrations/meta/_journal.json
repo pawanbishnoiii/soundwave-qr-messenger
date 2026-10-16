@@ -15,6 +15,13 @@
       "when": 1792120966038,
       "tag": "0001_core_courier_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792121026327,
+      "tag": "0002_demo_network_seed",
+      "breakpoints": true
     }
   ]
 }

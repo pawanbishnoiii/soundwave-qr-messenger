@@ -7,7 +7,6 @@ import { ArrowLeft, Printer, ChevronRight, XCircle, Undo2, IndianRupee, Trash2, 
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { StatusBadge } from "@/components/StatusBadge";
-import { QrCode } from "@/components/QrCode";
 import { Barcode } from "@/components/Barcode";
 import { AiIssueAssist } from "@/components/AiIssueAssist";
 import { OtpDialog } from "@/components/OtpDialog";
@@ -215,13 +214,12 @@ function Detail() {
         </div>
 
         <aside className="h-fit rounded-lg border bg-card p-5 text-center shadow-card">
-          <p className="text-xs uppercase tracking-wide text-muted-foreground">QR & barcode label</p>
-          <div className="mx-auto mt-3 w-fit rounded-md border p-3"><QrCode value={trackUrl(s.tracking_code)} size={200} /></div>
-          <div className="mt-4 rounded-md border bg-background p-3"><Barcode value={s.tracking_code} /></div>
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">Barcode label</p>
+          <div className="mt-3 rounded-md border bg-background p-4"><Barcode value={s.tracking_code} height={90} /></div>
           <p className="mt-2 font-mono text-lg font-bold">{s.tracking_code}</p>
           <p className="break-all text-[11px] text-muted-foreground">Order ID {s.id}</p>
           {s.is_demo && <span className="mt-2 inline-block rounded-full bg-warning/30 px-2 py-0.5 text-xs font-semibold">Demo order</span>}
-          <p className="text-xs text-muted-foreground">Scan in the app to update status, or by the customer to track.</p>
+          <p className="text-xs text-muted-foreground">Scan the barcode in the app to update status.</p>
           <Button className="mt-4 w-full" variant="hero" onClick={printLabel}><Printer /> Print label</Button>
         </aside>
       </div>

@@ -23,7 +23,7 @@ export function QrScanner({ onScan, paused }: Props) {
         if (cancelled) return;
         const s = new Html5Qrcode(id.current, {
           verbose: false,
-          formatsToSupport: [F.QR_CODE, F.CODE_128, F.CODE_39, F.EAN_13, F.EAN_8, F.UPC_A, F.ITF],
+          formatsToSupport: [F.CODE_128, F.QR_CODE, F.CODE_39, F.EAN_13, F.EAN_8, F.UPC_A, F.ITF],
           useBarCodeDetectorIfSupported: true,
         });
         scanner.current = s;

@@ -48,7 +48,7 @@ function LeadDashboard() {
   const rows = viewing
     ? allRows.filter((s) => [s.rider_id, s.manager_id, s.distributor_id, s.created_by].includes(viewing.id))
     : allRows;
-  const quick = QUICK[role ?? "manager"] ?? QUICK.manager;
+  const quick = QUICK[role ?? "manager"] ?? QUICK["manager"] ?? [];
   const today = new Date().toDateString();
   const active = rows.filter((s) => !["delivered", "failed", "returned"].includes(s.status));
   const deliveredToday = rows.filter((s) => s.delivered_at && new Date(s.delivered_at).toDateString() === today);

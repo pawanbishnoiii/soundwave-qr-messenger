@@ -9,6 +9,7 @@ import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useMe } from "@/lib/auth";
 import { selectCls } from "@/lib/ui";
 import { pageHead } from "@/lib/seo";
 import { Reveal } from "@/components/motion";
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/_authenticated/route-planner")({
 });
 
 function Planner() {
+  const { role } = useMe();
   const run = useServerFn(planDeliveryRoute);
   const hubs = useQuery({ queryKey: ["hubs-lite"], queryFn: async () => (await supabase.from("hubs").select("id,name,city").order("name")).data ?? [] });
   const [hub, setHub] = useState("");
@@ -36,6 +38,7 @@ function Planner() {
     finally { setBusy(false); }
   }
 
+  if (role && role !== "admin") return <AppShell title="AI route planner"><p className="rounded-xl border bg-card p-8 text-center text-muted-foreground">AI tools are available to admins only.</p></AppShell>;
   return (
     <AppShell title="AI route planner">
       <div className="grid gap-6 lg:grid-cols-[380px_1fr]">

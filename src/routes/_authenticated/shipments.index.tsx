@@ -16,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useMe, useTeam } from "@/lib/auth";
 import { useShipments } from "@/lib/shipments";
+import { useHubOptions } from "@/lib/manage";
 import { selectCls } from "@/lib/ui";
 import { STATUS_META, fmtDate, inr, type ShipmentStatus } from "@/lib/status";
 
@@ -49,11 +50,16 @@ function Shipments() {
   const { data: team = [] } = useTeam();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<ShipmentStatus | "all">("all");
+  const [hub, setHub] = useState("all");
+  const [rider, setRider] = useState("all");
+  const hubs = useHubOptions();
   const [seed, setSeed] = useState(false);
   const names = useMemo(() => new Map(team.map((t) => [t.id, t.full_name])), [team]);
 
   const filtered = rows.filter((s) => {
     if (status !== "all" && s.status !== status) return false;
+    if (hub !== "all" && (hub === "none" ? s.hub_id : s.hub_id !== hub)) return false;
+    if (rider !== "all" && (rider === "none" ? s.rider_id : s.rider_id !== rider)) return false;
     const t = q.trim().toLowerCase();
     if (!t) return true;
     return [s.tracking_code, s.id, s.external_order_id, s.partner_awb, s.receiver_name, s.receiver_phone, s.city].some((v) => v?.toLowerCase().includes(t));
@@ -86,7 +92,19 @@ function Shipments() {
           <option value="all">All statuses</option>
           {Object.entries(STATUS_META).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
         </select>
+        <select aria-label="Filter by hub" className={`${selectCls} sm:w-44`} value={hub} onChange={(e) => setHub(e.target.value)}>
+          <option value="all">All hubs</option><option value="none">No hub</option>
+          {hubs.map((h) => <option key={h.value} value={h.value}>{h.label}</option>)}
+        </select>
+        {role !== "rider" && (
+          <select aria-label="Filter by rider" className={`${selectCls} sm:w-44`} value={rider} onChange={(e) => setRider(e.target.value)}>
+            <option value="all">All riders</option><option value="none">Unassigned</option>
+            {team.filter((t) => t.role === "rider").map((t) => <option key={t.id} value={t.id}>{t.full_name}</option>)}
+          </select>
+        )}
+        {(q || status !== "all" || hub !== "all" || rider !== "all") && <Button variant="ghost" onClick={() => { setQ(""); setStatus("all"); setHub("all"); setRider("all"); }}>Clear</Button>}
       </div>
+      <p className="mt-2 text-xs text-muted-foreground">{filtered.length} of {rows.length} parcels</p>
 
       <div className="mt-4 overflow-hidden rounded-lg border bg-card shadow-card">
         {isLoading ? (

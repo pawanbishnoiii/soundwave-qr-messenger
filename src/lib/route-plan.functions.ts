@@ -25,6 +25,8 @@ export const planDeliveryRoute = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => z.object({ hubId: z.string().uuid(), constraints: z.string().trim().max(1500).default("") }).parse(d))
   .handler(async ({ data, context }): Promise<RoutePlan & { hub: string; count: number }> => {
+    const { data: isAdmin } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
+    if (!isAdmin) throw new Error("AI tools are available to admins only");
     const { data: hub } = await context.supabase.from("hubs").select("name, city, address, opens_at, closes_at").eq("id", data.hubId).maybeSingle();
     if (!hub) throw new Error("Hub not found");
     const { data: parcels, error } = await context.supabase.from("shipments")

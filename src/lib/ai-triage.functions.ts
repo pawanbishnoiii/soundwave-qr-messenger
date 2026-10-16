@@ -34,6 +34,8 @@ export const triageDeliveryIssue = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => z.object({ shipmentId: z.string().uuid(), description: z.string().trim().min(5).max(2000) }).parse(d))
   .handler(async ({ data, context }): Promise<TriageResult> => {
+    const { data: isAdmin } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
+    if (!isAdmin) throw new Error("AI tools are available to admins only");
     const { data: s, error } = await context.supabase
       .from("shipments")
       .select("tracking_code, status, city, cod_amount, cod_collected, created_at, delivered_at, rider_id, notes, failure_reason, delivery_notes, attempt_count")

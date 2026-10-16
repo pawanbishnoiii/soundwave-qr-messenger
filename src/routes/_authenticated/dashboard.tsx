@@ -21,9 +21,9 @@ import { STATUS_FLOW, STATUS_META, ROLE_LABEL, fmtDate, inr } from "@/lib/status
 const HERO: Record<string, string> = { admin: heroAdmin, distributor: heroDist, manager: heroMgr, rider: heroRider };
 type Q = { to: "/cash" | "/manage-hubs" | "/manage-merchants" | "/route-planner" | "/team" | "/manage-routes" | "/returns" | "/jobs" | "/scan"; label: string; icon: typeof Package };
 const QUICK: Record<string, Q[]> = {
-  admin: [{ to: "/manage-hubs", label: "Hubs", icon: Building2 }, { to: "/manage-merchants", label: "Merchants", icon: Store }, { to: "/cash", label: "Cash settlements", icon: Banknote }, { to: "/team", label: "Team", icon: Users }],
+  admin: [{ to: "/route-planner", label: "AI route plan", icon: Sparkles }, { to: "/manage-hubs", label: "Hubs", icon: Building2 }, { to: "/manage-merchants", label: "Merchants", icon: Store }, { to: "/cash", label: "Cash settlements", icon: Banknote }, { to: "/team", label: "Team", icon: Users }],
   distributor: [{ to: "/team", label: "My network", icon: Users }, { to: "/manage-routes", label: "Routes", icon: RouteIcon }, { to: "/cash", label: "Cash", icon: Banknote }, { to: "/returns", label: "Returns", icon: Undo2 }],
-  manager: [{ to: "/route-planner", label: "AI route plan", icon: Sparkles }, { to: "/manage-routes", label: "Routes", icon: RouteIcon }, { to: "/cash", label: "Review cash", icon: Banknote }, { to: "/scan", label: "Hub scan", icon: ScanLine }],
+  manager: [{ to: "/manage-routes", label: "Routes", icon: RouteIcon }, { to: "/cash", label: "Review cash", icon: Banknote }, { to: "/scan", label: "Hub scan", icon: ScanLine }],
   rider: [{ to: "/jobs", label: "Jobs", icon: ListChecks }, { to: "/scan", label: "Scan", icon: ScanLine }, { to: "/cash", label: "Hand over cash", icon: Banknote }],
 };
 

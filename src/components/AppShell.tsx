@@ -28,7 +28,7 @@ const GROUPS = [
     { to: "/manage-vehicles", label: "Fleet", icon: Truck, roles: LEADS },
     { to: "/manage-merchants", label: "Merchants", icon: Store, roles: LEADS },
     { to: "/manage-routes", label: "Routes", icon: RouteIcon, roles: LEADS },
-    { to: "/route-planner", label: "AI route planner", icon: Sparkles, roles: LEADS },
+    { to: "/route-planner", label: "AI route planner", icon: Sparkles, roles: ADMIN },
     { to: "/manifest", label: "Barcode manifest", icon: Barcode, roles: LEADS },
     { to: "/riders", label: "Rider performance", icon: Trophy, roles: LEADS },
   ] },

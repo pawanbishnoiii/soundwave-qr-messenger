@@ -1,0 +1,1 @@
+CREATE POLICY "Signed-in users read company branding" ON public.app_settings FOR SELECT TO authenticated USING (key = 'company');

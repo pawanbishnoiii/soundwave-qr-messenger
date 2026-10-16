@@ -39,7 +39,6 @@ import { Route as DocsB2bRouteImport } from './routes/docs.b2b'
 import { Route as AuthenticatedShipmentsIndexRouteImport } from './routes/_authenticated/shipments.index'
 import { Route as AuthenticatedShipmentsIdRouteImport } from './routes/_authenticated/shipments.$id'
 import { Route as ApiPublicJobsWebhooksRouteImport } from './routes/api/public/jobs/webhooks'
-import { Route as ApiPublicTrackCodeRouteImport } from './routes/api/public/track.$code'
 import { Route as ApiPublicV1ShipmentsRouteImport } from './routes/api/public/v1/shipments'
 import { Route as ApiPublicCouriersPartnerIdWebhookRouteImport } from './routes/api/public/couriers.$partnerId.webhook'
 
@@ -198,11 +197,6 @@ const ApiPublicJobsWebhooksRoute = ApiPublicJobsWebhooksRouteImport.update({
   path: '/api/public/jobs/webhooks',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicTrackCodeRoute = ApiPublicTrackCodeRouteImport.update({
-  id: '/api/public/track/$code',
-  path: '/api/public/track/$code',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiPublicV1ShipmentsRoute = ApiPublicV1ShipmentsRouteImport.update({
   id: '/api/public/v1/shipments',
   path: '/api/public/v1/shipments',
@@ -245,7 +239,6 @@ export interface FileRoutesByFullPath {
   '/shipments/$id': typeof AuthenticatedShipmentsIdRoute
   '/shipments/': typeof AuthenticatedShipmentsIndexRoute
   '/api/public/jobs/webhooks': typeof ApiPublicJobsWebhooksRoute
-  '/api/public/track/$code': typeof ApiPublicTrackCodeRoute
   '/api/public/v1/shipments': typeof ApiPublicV1ShipmentsRoute
   '/api/public/couriers/$partnerId/webhook': typeof ApiPublicCouriersPartnerIdWebhookRoute
 }
@@ -279,7 +272,6 @@ export interface FileRoutesByTo {
   '/shipments/$id': typeof AuthenticatedShipmentsIdRoute
   '/shipments': typeof AuthenticatedShipmentsIndexRoute
   '/api/public/jobs/webhooks': typeof ApiPublicJobsWebhooksRoute
-  '/api/public/track/$code': typeof ApiPublicTrackCodeRoute
   '/api/public/v1/shipments': typeof ApiPublicV1ShipmentsRoute
   '/api/public/couriers/$partnerId/webhook': typeof ApiPublicCouriersPartnerIdWebhookRoute
 }
@@ -315,7 +307,6 @@ export interface FileRoutesById {
   '/_authenticated/shipments/$id': typeof AuthenticatedShipmentsIdRoute
   '/_authenticated/shipments/': typeof AuthenticatedShipmentsIndexRoute
   '/api/public/jobs/webhooks': typeof ApiPublicJobsWebhooksRoute
-  '/api/public/track/$code': typeof ApiPublicTrackCodeRoute
   '/api/public/v1/shipments': typeof ApiPublicV1ShipmentsRoute
   '/api/public/couriers/$partnerId/webhook': typeof ApiPublicCouriersPartnerIdWebhookRoute
 }
@@ -351,7 +342,6 @@ export interface FileRouteTypes {
     | '/shipments/$id'
     | '/shipments/'
     | '/api/public/jobs/webhooks'
-    | '/api/public/track/$code'
     | '/api/public/v1/shipments'
     | '/api/public/couriers/$partnerId/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -385,7 +375,6 @@ export interface FileRouteTypes {
     | '/shipments/$id'
     | '/shipments'
     | '/api/public/jobs/webhooks'
-    | '/api/public/track/$code'
     | '/api/public/v1/shipments'
     | '/api/public/couriers/$partnerId/webhook'
   id:
@@ -420,7 +409,6 @@ export interface FileRouteTypes {
     | '/_authenticated/shipments/$id'
     | '/_authenticated/shipments/'
     | '/api/public/jobs/webhooks'
-    | '/api/public/track/$code'
     | '/api/public/v1/shipments'
     | '/api/public/couriers/$partnerId/webhook'
   fileRoutesById: FileRoutesById
@@ -436,7 +424,6 @@ export interface RootRouteChildren {
   DocsApiRoute: typeof DocsApiRoute
   DocsB2bRoute: typeof DocsB2bRoute
   ApiPublicJobsWebhooksRoute: typeof ApiPublicJobsWebhooksRoute
-  ApiPublicTrackCodeRoute: typeof ApiPublicTrackCodeRoute
   ApiPublicV1ShipmentsRoute: typeof ApiPublicV1ShipmentsRoute
   ApiPublicCouriersPartnerIdWebhookRoute: typeof ApiPublicCouriersPartnerIdWebhookRoute
 }
@@ -653,13 +640,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicJobsWebhooksRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/track/$code': {
-      id: '/api/public/track/$code'
-      path: '/api/public/track/$code'
-      fullPath: '/api/public/track/$code'
-      preLoaderRoute: typeof ApiPublicTrackCodeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/v1/shipments': {
       id: '/api/public/v1/shipments'
       path: '/api/public/v1/shipments'
@@ -737,7 +717,6 @@ const rootRouteChildren: RootRouteChildren = {
   DocsApiRoute: DocsApiRoute,
   DocsB2bRoute: DocsB2bRoute,
   ApiPublicJobsWebhooksRoute: ApiPublicJobsWebhooksRoute,
-  ApiPublicTrackCodeRoute: ApiPublicTrackCodeRoute,
   ApiPublicV1ShipmentsRoute: ApiPublicV1ShipmentsRoute,
   ApiPublicCouriersPartnerIdWebhookRoute:
     ApiPublicCouriersPartnerIdWebhookRoute,

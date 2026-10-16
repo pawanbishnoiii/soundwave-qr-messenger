@@ -11,6 +11,7 @@ import heroRider from "@/assets/bnoy-rider.webp";
 import { AppShell } from "@/components/AppShell";
 import { RiderHome } from "@/components/RiderHome";
 import { SeedWorkspaceButton } from "@/components/SeedWorkspaceButton";
+import { SetupWizard } from "@/components/SetupWizard";
 import { FailureCharts } from "@/components/FailureCharts";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
@@ -21,9 +22,9 @@ import { STATUS_FLOW, STATUS_META, ROLE_LABEL, fmtDate, inr } from "@/lib/status
 const HERO: Record<string, string> = { admin: heroAdmin, distributor: heroDist, manager: heroMgr, rider: heroRider };
 type Q = { to: "/cash" | "/manage-hubs" | "/manage-merchants" | "/route-planner" | "/team" | "/manage-routes" | "/returns" | "/jobs" | "/scan"; label: string; icon: typeof Package };
 const QUICK: Record<string, Q[]> = {
-  admin: [{ to: "/manage-hubs", label: "Hubs", icon: Building2 }, { to: "/manage-merchants", label: "Merchants", icon: Store }, { to: "/cash", label: "Cash settlements", icon: Banknote }, { to: "/team", label: "Team", icon: Users }],
+  admin: [{ to: "/route-planner", label: "AI route plan", icon: Sparkles }, { to: "/manage-hubs", label: "Hubs", icon: Building2 }, { to: "/manage-merchants", label: "Merchants", icon: Store }, { to: "/cash", label: "Cash settlements", icon: Banknote }, { to: "/team", label: "Team", icon: Users }],
   distributor: [{ to: "/team", label: "My network", icon: Users }, { to: "/manage-routes", label: "Routes", icon: RouteIcon }, { to: "/cash", label: "Cash", icon: Banknote }, { to: "/returns", label: "Returns", icon: Undo2 }],
-  manager: [{ to: "/route-planner", label: "AI route plan", icon: Sparkles }, { to: "/manage-routes", label: "Routes", icon: RouteIcon }, { to: "/cash", label: "Review cash", icon: Banknote }, { to: "/scan", label: "Hub scan", icon: ScanLine }],
+  manager: [{ to: "/manage-routes", label: "Routes", icon: RouteIcon }, { to: "/cash", label: "Review cash", icon: Banknote }, { to: "/scan", label: "Hub scan", icon: ScanLine }],
   rider: [{ to: "/jobs", label: "Jobs", icon: ListChecks }, { to: "/scan", label: "Scan", icon: ScanLine }, { to: "/cash", label: "Hand over cash", icon: Banknote }],
 };
 
@@ -74,6 +75,7 @@ function LeadDashboard() {
         </>
       }
     >
+      {myRole === "admin" && <SetupWizard />}
       {myRole === "admin" && (
         <div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-dashed bg-card px-4 py-3 text-sm">
           <Eye className="h-4 w-4 text-primary" />

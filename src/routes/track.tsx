@@ -1,32 +1,32 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
-import { CheckCircle2, Circle, Search, PackageX } from "lucide-react";
+import { toast } from "sonner";
+import { CheckCircle2, Circle, Search, ShieldCheck, Loader2, MapPin, ArrowLeft, Package } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Brand } from "@/components/Brand";
+import { PublicShell } from "@/components/PublicShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { StatusBadge } from "@/components/StatusBadge";
-import { STATUS_FLOW, STATUS_META, fmtDate, type ShipmentStatus } from "@/lib/status";
+import { Reveal } from "@/components/motion";
+import { STATUS_FLOW, STATUS_META, fmtDate, inr, type ShipmentStatus } from "@/lib/status";
+import trackHero from "@/assets/bnoy-handover.webp";
 
 type Tracked = {
-  tracking_code: string; status: ShipmentStatus; city: string; receiver: string;
-  created_at: string; updated_at: string; delivered_at: string | null;
-  events: { status: ShipmentStatus; at: string }[];
-  returns?: { kind: string; status: string; requested_at: string; events: { status: string; at: string }[] }[];
+  tracking_code: string; status: ShipmentStatus; city: string; receiver: string; receiver_address?: string; cod_amount?: number;
+  created_at: string; updated_at: string; delivered_at: string | null; promised_by: string | null;
+  events: { status: ShipmentStatus; at: string; hub: string | null }[];
 };
-const RET: Record<string, string> = { requested: "Return requested", pickup_assigned: "Pickup rider assigned", picked_up: "Picked up from customer", in_transit: "Returning to hub", received: "Received at hub", cancelled: "Return closed" };
-const KIND: Record<string, string> = { customer_return: "Return pickup", rto: "Return to origin", cancellation: "Cancellation" };
 
 export const Route = createFileRoute("/track")({
   validateSearch: z.object({ code: z.string().optional() }),
   head: () => ({
     meta: [
-      { title: "Track your parcel — Bnoy Logistics OS" },
-      { name: "description", content: "Enter your tracking number or scan the QR on your parcel to see live status." },
-      { property: "og:title", content: "Track your parcel — Bnoy Logistics OS" },
-      { property: "og:description", content: "Live shipment status from pickup to doorstep." },
+      { title: "Track your parcel securely — Bnoy Logistics OS" },
+      { name: "description", content: "Enter your tracking number and verify with a one-time code sent to your phone to see your parcel's journey." },
+      { property: "og:title", content: "Track your parcel securely — Bnoy Logistics OS" },
+      { property: "og:description", content: "OTP-verified parcel tracking from pickup to doorstep." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -35,83 +35,113 @@ export const Route = createFileRoute("/track")({
 });
 
 function TrackPage() {
-  const { code } = Route.useSearch();
-  const navigate = useNavigate({ from: "/track" });
-  const [input, setInput] = useState(code ?? "");
-  const q = useQuery({
-    queryKey: ["track", code],
-    enabled: !!code,
-    queryFn: async () => {
-      if (!code) return null;
-      const { data, error } = await supabase.rpc("track_shipment", { _code: code });
-      if (error) throw error;
-      return data as unknown as Tracked | null;
-    },
-  });
-  const t = q.data;
-  const reached = new Map(t?.events.map((e) => [e.status, e.at]) ?? []);
+  const { code: initial } = Route.useSearch();
+  const [step, setStep] = useState<"code" | "otp" | "done">("code");
+  const [code, setCode] = useState(initial ?? "");
+  const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState("");
+  const [sentTo, setSentTo] = useState("");
+  const [demo, setDemo] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [t, setT] = useState<Tracked | null>(null);
+
+  async function requestOtp(e?: React.FormEvent) {
+    e?.preventDefault();
+    setBusy(true);
+    const { data, error } = await supabase.rpc("request_tracking_otp", { _code: code.trim(), _phone_last4: phone });
+    setBusy(false);
+    if (error) { toast.error(error.message); return; }
+    const d = data as { sent_to: string; sms_configured: boolean; demo_code: string | null };
+    setSentTo(d.sent_to); setDemo(d.demo_code); setOtp(""); setStep("otp");
+  }
+  async function verify(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    const { data, error } = await supabase.rpc("track_with_otp", { _code: code.trim(), _otp: otp });
+    setBusy(false);
+    if (error) { toast.error(error.message); return; }
+    setT(data as unknown as Tracked); setStep("done");
+  }
+  const reached = new Map(t?.events.map((e) => [e.status, e]) ?? []);
+  const progress = t ? Math.round(((STATUS_FLOW.indexOf(t.status) + 1) / STATUS_FLOW.length) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="mx-auto flex max-w-5xl items-center justify-between px-4 py-5 sm:px-6"><Brand /></header>
-      <main className="mx-auto max-w-2xl px-4 pb-16 sm:px-6">
-        <h1 className="text-3xl font-bold sm:text-4xl">Track your parcel</h1>
-        <form
-          className="mt-6 flex gap-2"
-          onSubmit={(e) => { e.preventDefault(); navigate({ search: { code: input.trim() || undefined } }); }}
-        >
-          <Input value={input} onChange={(e) => setInput(e.target.value)} aria-label="Tracking code or order ID" placeholder="Tracking code or order ID" className="h-12 font-mono uppercase" maxLength={120} />
-          <Button type="submit" variant="hero" className="h-12 px-6"><Search /> Track</Button>
-        </form>
+    <PublicShell>
+      <section className="relative isolate overflow-hidden bg-navy text-navy-foreground">
+        <img src={trackHero} alt="" className="absolute inset-0 -z-10 h-full w-full object-cover opacity-30" />
+        <div className="public-container py-14 sm:py-20">
+          <Reveal className="max-w-xl">
+            <p data-reveal className="text-xs font-semibold uppercase tracking-[0.2em] text-lime">Secure tracking</p>
+            <h1 data-reveal className="mt-3 font-display text-4xl font-bold sm:text-5xl">Where's my parcel?</h1>
+            <p data-reveal className="mt-3 text-sm text-navy-foreground/80">For your privacy, we send a one-time code to the phone number on the parcel before showing its journey.</p>
+          </Reveal>
+        </div>
+      </section>
 
-        {q.isLoading && <div className="mt-8 h-48 animate-pulse rounded-2xl bg-muted" />}
-        {q.error && <div role="alert" className="mt-8 border p-6"><p>Tracking is temporarily unavailable.</p><Button variant="outline" className="mt-3" onClick={()=>q.refetch()}>Retry</Button></div>}
-        {code && !q.isLoading && !q.error && !t && (
-          <div className="mt-8 rounded-2xl border bg-card p-8 text-center shadow-card">
-            <PackageX className="mx-auto h-10 w-10 text-muted-foreground" />
-            <p className="mt-3 font-semibold">No shipment found for “{code}”</p>
-            <p className="text-sm text-muted-foreground">Check the code on your parcel label.</p>
-          </div>
-        )}
-        {t && (
-          <div className="mt-8 rounded-2xl border bg-card p-6 shadow-card animate-rise">
-            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
-              <div className="min-w-0">
-                <p className="truncate font-mono text-lg font-bold">{t.tracking_code}</p>
-                <p className="text-sm text-muted-foreground">For {t.receiver} · {t.city}</p>
+      <main className="public-container -mt-10 pb-20">
+        <div className="mx-auto max-w-2xl rounded-2xl border bg-card p-6 shadow-card sm:p-8">
+          <ol className="mb-6 flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+            {["Parcel details", "Verify OTP", "Journey"].map((l, i) => {
+              const active = ["code", "otp", "done"].indexOf(step) >= i;
+              return <li key={l} className="flex flex-1 items-center gap-2"><span className={`grid h-6 w-6 place-items-center rounded-full ${active ? "bg-primary text-primary-foreground" : "bg-muted"}`}>{i + 1}</span><span className={active ? "text-foreground" : ""}>{l}</span></li>;
+            })}
+          </ol>
+
+          {step === "code" && (
+            <form onSubmit={requestOtp} className="space-y-4">
+              <div><Label htmlFor="code">Tracking number or order ID</Label>
+                <Input id="code" value={code} onChange={(e) => setCode(e.target.value)} placeholder="e.g. BN261014ABCDE" className="h-12 font-mono uppercase" maxLength={80} required /></div>
+              <div><Label htmlFor="ph">Last 4 digits of the receiver's phone</Label>
+                <Input id="ph" value={phone} onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 4))} inputMode="numeric" placeholder="••••" className="h-12 tracking-[0.5em]" required minLength={4} /></div>
+              <Button type="submit" variant="hero" className="h-12 w-full" disabled={busy}>{busy ? <Loader2 className="animate-spin" /> : <Search />} Send OTP</Button>
+            </form>
+          )}
+
+          {step === "otp" && (
+            <form onSubmit={verify} className="space-y-4">
+              <p className="text-sm">We sent a 6-digit code to <span className="font-semibold">{sentTo}</span>.</p>
+              {demo && <p className="rounded-lg bg-accent p-3 text-sm text-primary">Demo parcel — SMS isn't connected yet. Your code is <span className="font-mono font-bold">{demo}</span>.</p>}
+              {!demo && <p className="rounded-lg bg-muted p-3 text-xs text-muted-foreground">SMS delivery is not connected yet, so codes for real parcels can't be delivered until an SMS provider is set up.</p>}
+              <Input value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))} inputMode="numeric" aria-label="OTP" placeholder="••••••" className="h-14 text-center font-mono text-2xl tracking-[0.6em]" required minLength={6} autoFocus />
+              <Button type="submit" variant="hero" className="h-12 w-full" disabled={busy || otp.length !== 6}>{busy ? <Loader2 className="animate-spin" /> : <ShieldCheck />} Verify & track</Button>
+              <div className="flex justify-between text-sm">
+                <button type="button" className="flex items-center gap-1 text-muted-foreground" onClick={() => setStep("code")}><ArrowLeft className="h-4 w-4" /> Change details</button>
+                <button type="button" className="font-semibold text-primary" disabled={busy} onClick={() => requestOtp()}>Resend code</button>
               </div>
-              <StatusBadge status={t.status} />
-            </div>
-            <ol className="mt-6 space-y-4">
-              {STATUS_FLOW.map((s) => {
-                const at = reached.get(s);
-                return (
-                  <li key={s} className="flex items-center gap-3">
-                    {at ? <CheckCircle2 className="h-5 w-5 shrink-0 text-success" /> : <Circle className="h-5 w-5 shrink-0 text-border" />}
-                    <span className={`flex-1 text-sm ${at ? "font-semibold" : "text-muted-foreground"}`}>{STATUS_META[s].label}</span>
-                    <span className="text-xs text-muted-foreground tabular">{at ? fmtDate(at) : ""}</span>
-                  </li>
-                );
-              })}
-            </ol>
-            {(t.returns ?? []).map((r, i) => (
-              <div key={i} className="mt-6 border-t pt-4">
-                <p className="text-sm font-semibold">{KIND[r.kind] ?? "Return"}</p>
-                <ol className="mt-3 space-y-2">
-                  {r.events.map((e, j) => (
-                    <li key={j} className="flex items-center gap-3 text-sm"><CheckCircle2 className="h-4 w-4 shrink-0 text-coral" /><span className="flex-1">{RET[e.status] ?? e.status}</span><span className="text-xs text-muted-foreground tabular">{fmtDate(e.at)}</span></li>
-                  ))}
-                </ol>
+            </form>
+          )}
+
+          {step === "done" && t && (
+            <Reveal stagger={0.05}>
+              <div data-reveal className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+                <div className="min-w-0">
+                  <p className="truncate font-mono text-lg font-bold">{t.tracking_code}</p>
+                  <p className="text-sm text-muted-foreground">For {t.receiver} · {t.city}</p>
+                </div>
+                <StatusBadge status={t.status} />
               </div>
-            ))}
-          </div>
-        )}
-        <div className="mt-10 rounded-2xl bg-navy p-5 text-navy-foreground">
-          <p className="font-bold">Tracking API</p>
-          <p className="mt-1 text-sm opacity-75">Fetch status as JSON using a tracking code or order ID.</p>
-          <pre className="mt-3 overflow-x-auto rounded-xl bg-navy-foreground/10 p-3 text-xs">GET /api/public/track/{code || "RF261014ABCDE"}</pre>
+              <div data-reveal className="mt-4 h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-gradient-brand transition-all duration-1000" style={{ width: `${progress}%` }} /></div>
+              <div data-reveal className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+                {t.receiver_address && <p className="flex gap-2"><MapPin className="h-4 w-4 shrink-0 text-primary" />{t.receiver_address}</p>}
+                <p className="flex gap-2"><Package className="h-4 w-4 shrink-0 text-primary" />{t.delivered_at ? `Delivered ${fmtDate(t.delivered_at)}` : t.promised_by ? `Expected by ${fmtDate(t.promised_by)}` : "In progress"}{Number(t.cod_amount) > 0 && ` · Pay ${inr(Number(t.cod_amount))} on delivery`}</p>
+              </div>
+              <ol className="mt-6 space-y-0 border-l-2 border-border pl-6">
+                {STATUS_FLOW.map((s) => {
+                  const ev = reached.get(s);
+                  return (
+                    <li data-reveal key={s} className="relative pb-5">
+                      <span className="absolute -left-[33px] top-0 bg-card">{ev ? <CheckCircle2 className="h-5 w-5 text-success" /> : <Circle className="h-5 w-5 text-border" />}</span>
+                      <p className={`text-sm ${ev ? "font-semibold" : "text-muted-foreground"}`}>{STATUS_META[s].label}</p>
+                      {ev && <p className="text-xs text-muted-foreground">{fmtDate(ev.at)}{ev.hub ? ` · ${ev.hub}` : ""}</p>}
+                    </li>
+                  );
+                })}
+              </ol>
+              <Button variant="outline" className="mt-2" onClick={() => { setStep("code"); setT(null); setOtp(""); }}>Track another parcel</Button>
+            </Reveal>
+          )}
         </div>
       </main>
-    </div>
+    </PublicShell>
   );
 }

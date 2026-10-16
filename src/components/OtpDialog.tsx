@@ -19,19 +19,27 @@ export function OtpDialog({ shipment, onClose, onDone }: { shipment: Shipment | 
   async function send() {
     if (!shipment) return;
     setBusy(true);
-    const { error } = await supabase.rpc("send_delivery_otp", { _id: shipment.id });
+    const { data: res, error } = await supabase.rpc("send_delivery_otp", { _id: shipment.id });
     setBusy(false);
     if (error) { toast.error(error.message); return; }
     setSent(true);
-    toast.success(`OTP sent to ${shipment.receiver_phone} (demo OTP: 1234)`);
+    const r = res as { sms_configured?: boolean; demo_code?: string | null } | null;
+    if (r?.sms_configured) toast.success(`OTP sent to ${shipment.receiver_phone}`);
+    else if (r?.demo_code) toast.warning(`SMS not connected — demo parcel code: ${r.demo_code}`, { duration: 10000 });
+    else toast.warning("SMS provider not connected. Ask the customer for the OTP printed on their booking confirmation.");
   }
   async function verify(e: React.FormEvent) {
     e.preventDefault();
     if (!shipment) return;
     setBusy(true);
-    const { data, error } = await supabase.rpc("deliver_with_otp", { _id: shipment.id, _otp: otp });
+    const pos = await new Promise<GeolocationPosition | null>((res) => {
+      if (!navigator.geolocation) return res(null);
+      navigator.geolocation.getCurrentPosition(res, () => res(null), { timeout: 4000, maximumAge: 60000 });
+    });
+    const { data, error } = await supabase.rpc("deliver_with_otp", { _id: shipment.id, _otp: otp, _lat: pos?.coords.latitude, _lng: pos?.coords.longitude });
     setBusy(false);
     if (error) { playError(); toast.error(error.message); return; }
+    if (!data) { playError(); toast.error("Incorrect OTP"); return; }
     playSuccess();
     toast.success("Delivered — OTP verified");
     onDone?.(data as Shipment);

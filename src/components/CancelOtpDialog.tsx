@@ -19,9 +19,10 @@ export function CancelOtpDialog({ shipment, onClose, onDone }: { shipment: Shipm
     e.preventDefault();
     if (!shipment) return;
     setBusy(true);
-    const { error } = await supabase.rpc("cancel_with_otp", { _id: shipment.id, _otp: otp, _reason: reason.trim().slice(0, 300) });
+    const { data, error } = await supabase.rpc("cancel_with_otp", { _id: shipment.id, _otp: otp, _reason: reason.trim().slice(0, 300) });
     setBusy(false);
     if (error) { playError(); toast.error(error.message); return; }
+    if (!data) { playError(); toast.error("Incorrect OTP"); return; }
     playSuccess();
     toast.success("Order cancelled with customer OTP");
     setOtp(""); setReason("");
@@ -38,7 +39,7 @@ export function CancelOtpDialog({ shipment, onClose, onDone }: { shipment: Shipm
             <div className="rounded-lg bg-muted p-3 text-sm">
               <p className="font-semibold">{shipment.receiver_name}</p>
               <a href={`tel:${shipment.receiver_phone}`} className="mt-2 inline-flex items-center gap-2 font-semibold text-primary"><Phone className="h-4 w-4" /> Call {shipment.receiver_phone}</a>
-              <p className="mt-2 text-xs text-muted-foreground">Ask the customer for their order OTP. Demo OTP: 1234.</p>
+              <p className="mt-2 text-xs text-muted-foreground">Ask the customer for their order OTP.</p>
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="cr">Reason</Label>

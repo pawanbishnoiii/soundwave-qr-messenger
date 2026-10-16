@@ -86,11 +86,23 @@ function ScanPage() {
         else { setOtpFor(shipment); msg = "Waiting for customer OTP"; }
       } else if (mode !== "lookup") {
         if (shipment.status === mode) msg = `Already ${STATUS_META[mode].label}`;
-        else if (["delivered", "returned"].includes(shipment.status)) throw new Error(`Already ${STATUS_META[shipment.status].label}`);
         else {
-          const { data: u, error: ue } = await supabase.from("shipments").update({ status: mode }).eq("id", shipment.id).select("*").single();
+          let failure: string | null = null;
+          if (mode === "failed") {
+            failure = window.prompt("Failure reason (e.g. Customer not reachable, Address incomplete)")?.trim() || null;
+            if (!failure) throw new Error("Failure reason required");
+          }
+          const pos = await new Promise<GeolocationPosition | null>((res) => {
+            if (!navigator.geolocation) return res(null);
+            navigator.geolocation.getCurrentPosition(res, () => res(null), { timeout: 2500, maximumAge: 120000 });
+          });
+          const { data: u, error: ue } = await supabase.rpc("scan_transition", {
+            _code: shipment.tracking_code, _to: mode, _source: "camera",
+            _lat: pos?.coords.latitude, _lng: pos?.coords.longitude, _failure: failure ?? undefined,
+          });
           if (ue) throw ue;
-          shipment = u as Shipment; msg = `Updated → ${STATUS_META[mode].label}`;
+          const r = u as unknown as { duplicate: boolean; shipment: Shipment };
+          shipment = r.shipment; msg = r.duplicate ? `Duplicate scan — already ${STATUS_META[mode].label}` : `Updated → ${STATUS_META[mode].label}`;
         }
       }
       qc.invalidateQueries({ queryKey: ["shipments"] });

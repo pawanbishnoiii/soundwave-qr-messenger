@@ -37,6 +37,7 @@ const GROUPS = [
     { to: "/payouts", label: "Pay & bonuses", icon: Wallet, roles: ADMIN },
     { to: "/providers", label: "Courier partners", icon: Plug, roles: ADMIN },
     { to: "/developers", label: "API & webhooks", icon: KeyRound, roles: ADMIN },
+    { to: "/company", label: "Company & branding", icon: Building2, roles: ADMIN },
     { to: "/gateways", label: "Gateways (SMS, email, pay)", icon: PlugZap, roles: ADMIN },
   ] },
 ] as const;

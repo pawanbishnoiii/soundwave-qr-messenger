@@ -75,7 +75,7 @@ function Shipments() {
           <Button variant="outline" size="sm" onClick={() => setSeed(true)}><Sparkles /> <span className="hidden sm:inline">Demo orders</span></Button>
           <Button variant="outline" size="sm" className="hidden sm:inline-flex" disabled={!filtered.length} onClick={() => printLabels(filtered.slice(0, 200)).catch((e) => toast.error(e.message))}><Printer /> Labels</Button>
           <select aria-label="Print barcode sheet" className="hidden h-9 rounded-md border bg-background px-2 text-sm sm:block" value="" disabled={!filtered.length}
-            onChange={(e) => { const l = SHEET_LAYOUTS[Number(e.target.value)]; if (l) { try { printLabelSheet(filtered.slice(0, 500), l); } catch (err) { toast.error((err as Error).message); } } }}>
+            onChange={(e) => { const l = SHEET_LAYOUTS[Number(e.target.value)]; if (l) { printLabelSheet(filtered.slice(0, 500), l).catch((err) => toast.error((err as Error).message)); } }}>
             <option value="">A4 sheet…</option>
             {SHEET_LAYOUTS.map((l, i) => <option key={l.name} value={i}>{l.name}</option>)}
           </select>

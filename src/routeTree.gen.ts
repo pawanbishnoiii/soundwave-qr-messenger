@@ -17,6 +17,7 @@ import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as TrackRouteImport } from './routes/track'
 import { Route as AuthenticatedCashRouteImport } from './routes/_authenticated/cash'
+import { Route as AuthenticatedCompanyRouteImport } from './routes/_authenticated/company'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDevelopersRouteImport } from './routes/_authenticated/developers'
 import { Route as AuthenticatedGatewaysRouteImport } from './routes/_authenticated/gateways'
@@ -80,6 +81,11 @@ const TrackRoute = TrackRouteImport.update({
 const AuthenticatedCashRoute = AuthenticatedCashRouteImport.update({
   id: '/cash',
   path: '/cash',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCompanyRoute = AuthenticatedCompanyRouteImport.update({
+  id: '/company',
+  path: '/company',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -223,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/solutions': typeof SolutionsRoute
   '/track': typeof TrackRoute
   '/cash': typeof AuthenticatedCashRoute
+  '/company': typeof AuthenticatedCompanyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/developers': typeof AuthenticatedDevelopersRoute
   '/gateways': typeof AuthenticatedGatewaysRoute
@@ -257,6 +264,7 @@ export interface FileRoutesByTo {
   '/solutions': typeof SolutionsRoute
   '/track': typeof TrackRoute
   '/cash': typeof AuthenticatedCashRoute
+  '/company': typeof AuthenticatedCompanyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/developers': typeof AuthenticatedDevelopersRoute
   '/gateways': typeof AuthenticatedGatewaysRoute
@@ -293,6 +301,7 @@ export interface FileRoutesById {
   '/solutions': typeof SolutionsRoute
   '/track': typeof TrackRoute
   '/_authenticated/cash': typeof AuthenticatedCashRoute
+  '/_authenticated/company': typeof AuthenticatedCompanyRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/developers': typeof AuthenticatedDevelopersRoute
   '/_authenticated/gateways': typeof AuthenticatedGatewaysRoute
@@ -329,6 +338,7 @@ export interface FileRouteTypes {
     | '/solutions'
     | '/track'
     | '/cash'
+    | '/company'
     | '/dashboard'
     | '/developers'
     | '/gateways'
@@ -363,6 +373,7 @@ export interface FileRouteTypes {
     | '/solutions'
     | '/track'
     | '/cash'
+    | '/company'
     | '/dashboard'
     | '/developers'
     | '/gateways'
@@ -398,6 +409,7 @@ export interface FileRouteTypes {
     | '/solutions'
     | '/track'
     | '/_authenticated/cash'
+    | '/_authenticated/company'
     | '/_authenticated/dashboard'
     | '/_authenticated/developers'
     | '/_authenticated/gateways'
@@ -496,6 +508,13 @@ declare module '@tanstack/react-router' {
       path: '/cash'
       fullPath: '/cash'
       preLoaderRoute: typeof AuthenticatedCashRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/company': {
+      id: '/_authenticated/company'
+      path: '/company'
+      fullPath: '/company'
+      preLoaderRoute: typeof AuthenticatedCompanyRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dashboard': {
@@ -678,6 +697,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedCashRoute: typeof AuthenticatedCashRoute
+  AuthenticatedCompanyRoute: typeof AuthenticatedCompanyRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDevelopersRoute: typeof AuthenticatedDevelopersRoute
   AuthenticatedGatewaysRoute: typeof AuthenticatedGatewaysRoute
@@ -702,6 +722,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCashRoute: AuthenticatedCashRoute,
+  AuthenticatedCompanyRoute: AuthenticatedCompanyRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDevelopersRoute: AuthenticatedDevelopersRoute,
   AuthenticatedGatewaysRoute: AuthenticatedGatewaysRoute,

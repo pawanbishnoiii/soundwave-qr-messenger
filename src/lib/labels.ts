@@ -1,7 +1,16 @@
-import QRCode from "qrcode";
 import JsBarcode from "jsbarcode";
 import type { Shipment } from "./status";
-import { trackUrl } from "./shipments";
+import { supabase } from "@/integrations/supabase/client";
+
+export type Company = { name?: string; tagline?: string; logo?: string; address?: string; phone?: string; email?: string; gstin?: string; footer?: string };
+
+/** Company branding set by the admin (Company settings). */
+export async function getCompany(): Promise<Company> {
+  const { data } = await supabase.from("app_settings").select("value").eq("key", "company").maybeSingle();
+  return (data?.value ?? {}) as Company;
+}
+const brandName = (c: Company) => (c.name?.trim() || "Bnoy Logistics");
+const logoTag = (c: Company, h: number) => (c.logo?.startsWith("data:image/") ? `<img src="${c.logo}" style="height:${h}px;width:auto;object-fit:contain"/>` : "");
 
 const esc = (v: string | number | null | undefined) =>
   String(v ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
@@ -16,30 +25,26 @@ export function barcodeDataUrl(code: string) {
 export async function printLabels(list: Shipment[]) {
   const w = window.open("", "_blank", "width=520,height=720");
   if (!w) throw new Error("Allow pop-ups to print labels");
-  const items = await Promise.all(
-    list.map(async (s) => ({
-      s,
-      qr: await QRCode.toDataURL(trackUrl(s.tracking_code), { width: 300, margin: 0 }),
-      bar: barcodeDataUrl(s.tracking_code),
-    })),
-  );
+  const c = await getCompany();
+  const items = list.map((s) => ({ s, bar: barcodeDataUrl(s.tracking_code) }));
   w.document.write(`<html><head><title>Labels (${list.length})</title><style>
     *{box-sizing:border-box}body{font-family:system-ui,sans-serif;margin:0;padding:12px;color:#111}
     .l{border:2px solid #111;border-radius:8px;padding:14px;width:380px;margin:0 auto 14px;page-break-after:always}
     .h{display:flex;justify-content:space-between;font-weight:800;font-size:12px;letter-spacing:.1em;border-bottom:1px dashed #111;padding-bottom:6px}
-    .bar{width:100%;height:60px;margin-top:10px}.c{font:700 18px monospace;text-align:center;margin:4px 0 8px}
+    .bar{width:100%;height:90px;margin-top:10px}.b{display:flex;align-items:center;gap:8px}.c{font:700 18px monospace;text-align:center;margin:4px 0 8px}
     .g{display:flex;gap:10px}.r{font-size:12px;line-height:1.45;flex:1}
     .cod{margin-top:8px;padding:6px 10px;background:#111;color:#fff;display:inline-block;border-radius:5px;font-weight:800}
     @media print{body{padding:0}.l{margin:0 auto}}
   </style></head><body>${items
     .map(
-      ({ s, qr, bar }) => `<div class="l"><div class="h"><span>ROUTEFLOW OS</span><span>${esc(s.city).toUpperCase()}</span></div>
+      ({ s, bar }) => `<div class="l"><div class="h"><span class="b">${logoTag(c, 22)}${esc(brandName(c)).toUpperCase()}</span><span>${esc(s.city).toUpperCase()}</span></div>
       <img class="bar" src="${bar}"/><div class="c">${esc(s.tracking_code)}</div>
-      <div class="g"><img src="${qr}" width="110" height="110"/><div class="r">
+      <div class="g"><div class="r">
         <b>TO:</b> ${esc(s.receiver_name)}<br/>${esc(s.receiver_phone)}<br/>${esc(s.receiver_address)}, ${esc(s.city)} ${esc(s.pincode)}
         <br/><b>FROM:</b> ${esc(s.sender_name)}<br/>Wt ${esc(s.weight_kg)} kg${s.is_demo ? " · DEMO" : ""}
       </div></div>
-      <div class="cod">${Number(s.cod_amount) > 0 ? `COD ₹${Number(s.cod_amount).toLocaleString("en-IN")}` : "PREPAID"}</div></div>`,
+      <div class="cod">${Number(s.cod_amount) > 0 ? `COD ₹${Number(s.cod_amount).toLocaleString("en-IN")}` : "PREPAID"}</div>
+      <div style="margin-top:8px;font-size:10px;color:#555">${esc([c.phone, c.gstin ? "GSTIN " + c.gstin : ""].filter(Boolean).join(" · "))}</div></div>`,
     )
     .join("")}<script>onload=()=>setTimeout(()=>print(),300)</script></body></html>`);
   w.document.close();
@@ -53,9 +58,10 @@ export const SHEET_LAYOUTS: SheetLayout[] = [
 ];
 
 /** Prints barcode labels tiled on A4 sheets (cols × rows per page). */
-export function printLabelSheet(list: Shipment[], layout: SheetLayout) {
+export async function printLabelSheet(list: Shipment[], layout: SheetLayout) {
   const w = window.open("", "_blank", "width=820,height=900");
   if (!w) throw new Error("Allow pop-ups to print labels");
+  const co = await getCompany();
   const per = layout.cols * layout.rows;
   const pages: Shipment[][] = [];
   for (let i = 0; i < list.length; i += per) pages.push(list.slice(i, i + per));
@@ -67,7 +73,7 @@ export function printLabelSheet(list: Shipment[], layout: SheetLayout) {
     .c img{width:100%;height:${small ? "28px" : "52px"}}.t{font:700 ${small ? "10px" : "14px"} monospace;text-align:center}
   </style></head><body>${pages
     .map((pg) => `<div class="p">${pg
-      .map((s) => `<div class="c"><img src="${barcodeDataUrl(s.tracking_code)}"/><div class="t">${esc(s.tracking_code)}</div>
+      .map((s) => `<div class="c"><div style="font-weight:800;display:flex;gap:4px;align-items:center">${logoTag(co, small ? 10 : 16)}${esc(brandName(co))}</div><img src="${barcodeDataUrl(s.tracking_code)}"/><div class="t">${esc(s.tracking_code)}</div>
         <div><b>${esc(s.receiver_name)}</b> · ${esc(s.receiver_phone)}</div><div>${esc(s.city)} ${esc(s.pincode)}</div>
         <div><b>${Number(s.cod_amount) > 0 ? `COD ₹${Number(s.cod_amount).toLocaleString("en-IN")}` : "PREPAID"}</b> · ${esc(s.weight_kg)} kg</div></div>`)
       .join("")}</div>`)
@@ -80,19 +86,20 @@ export async function printInvoice(s: Shipment) {
   const w = window.open("", "_blank", "width=720,height=900");
   if (!w) throw new Error("Allow pop-ups to print the bill");
   const amt = Number(s.cod_amount);
+  const c = await getCompany();
   w.document.write(`<html><head><title>Bill ${esc(s.tracking_code)}</title><style>
     body{font-family:system-ui,sans-serif;max-width:680px;margin:24px auto;color:#111}h1{margin:0;font-size:22px}
     table{width:100%;border-collapse:collapse;margin-top:18px}td,th{border:1px solid #ccc;padding:8px;text-align:left;font-size:13px}
     .r{text-align:right}.m{color:#555;font-size:12px}img{height:50px}
   </style></head><body>
-    <div style="display:flex;justify-content:space-between;align-items:center"><div><h1>BNOY LOGISTICS</h1><div class="m">Delivery bill / invoice</div></div><img src="${barcodeDataUrl(s.tracking_code)}"/></div>
+    <div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;gap:12px;align-items:center">${logoTag(c, 54)}<div><h1>${esc(brandName(c))}</h1><div class="m">${esc(c.tagline || "Delivery bill / invoice")}</div><div class="m">${esc([c.address, c.phone, c.email].filter(Boolean).join(" · "))}</div>${c.gstin ? `<div class="m">GSTIN: ${esc(c.gstin)}</div>` : ""}</div></div><img src="${barcodeDataUrl(s.tracking_code)}"/></div>
     <p class="m">Bill no: ${esc(s.tracking_code)} · Date: ${new Date(s.created_at).toLocaleDateString("en-IN")}${s.external_order_id ? ` · Order ref: ${esc(s.external_order_id)}` : ""}${s.partner_awb ? ` · AWB: ${esc(s.partner_awb)}` : ""}</p>
     <table><tr><th>From</th><th>Bill to</th></tr><tr><td>${esc(s.sender_name)}<br/>${esc(s.sender_phone)}</td>
     <td>${esc(s.receiver_name)}<br/>${esc(s.receiver_phone)}<br/>${esc(s.receiver_address)}, ${esc(s.city)} ${esc(s.pincode)}</td></tr></table>
     <table><tr><th>Description</th><th>Weight</th><th class="r">Amount</th></tr>
     <tr><td>Parcel ${esc(s.tracking_code)}${s.notes ? ` — ${esc(s.notes.split("\n")[0])}` : ""}</td><td>${esc(s.weight_kg)} kg</td><td class="r">₹${amt.toLocaleString("en-IN")}</td></tr>
     <tr><th colspan="2" class="r">${amt > 0 ? "Cash on delivery" : "Prepaid"} total</th><th class="r">₹${amt.toLocaleString("en-IN")}</th></tr></table>
-    <p class="m">Status: ${esc(s.status)}. Computer-generated bill.</p>
+    <p class="m">Status: ${esc(s.status)}. Computer-generated bill.</p>${c.footer ? `<p class="m">${esc(c.footer)}</p>` : ""}
     <script>onload=()=>setTimeout(()=>print(),300)</script></body></html>`);
   w.document.close();
 }

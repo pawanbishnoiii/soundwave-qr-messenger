@@ -39,12 +39,13 @@ function CompanyPage() {
   if (role && role !== "admin") return <AppShell title="Company settings"><p className="text-sm text-muted-foreground">Only admins can change company branding.</p></AppShell>;
 
   function onLogo(f?: File) {
-    if (!f) return;
-    if (!f.type.startsWith("image/")) return toast.error("Choose an image file");
-    if (f.size > 300_000) return toast.error("Logo must be under 300 KB");
+    if (!f) return undefined;
+    if (!f.type.startsWith("image/")) { toast.error("Choose an image file"); return undefined; }
+    if (f.size > 300_000) { toast.error("Logo must be under 300 KB"); return undefined; }
     const r = new FileReader();
     r.onload = () => setC((x) => ({ ...x, logo: String(r.result) }));
     r.readAsDataURL(f);
+    return undefined;
   }
 
   async function save() {
@@ -67,7 +68,7 @@ function CompanyPage() {
             </div>
             <div className="flex gap-2">
               <Button variant="outline" asChild><label className="cursor-pointer"><ImageUp />Upload logo<input type="file" accept="image/*" className="sr-only" onChange={(e) => onLogo(e.target.files?.[0])} /></label></Button>
-              {c.logo && <Button variant="ghost" onClick={() => setC({ ...c, logo: undefined })}><Trash2 />Remove</Button>}
+              {c.logo && <Button variant="ghost" onClick={() => setC({ ...c, logo: "" })}><Trash2 />Remove</Button>}
             </div>
           </div>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">

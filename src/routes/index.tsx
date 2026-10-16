@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { photos } from '@/lib/photography';
 import { pageHead } from '@/lib/seo';
 import { ParcelJourney } from '@/components/ParcelJourney';
+import heroDusk from '@/assets/hero-dusk.jpg';
 if (typeof window !== "undefined") gsap.registerPlugin(useGSAP, ScrollTrigger);
 export const Route = createFileRoute('/')({ head:()=>pageHead('Connected courier operations','Barcode-first shipment operations, courier partner exchange and delivery tracking in one Bnoy workspace.'), component:Landing });
 function Landing(){
@@ -18,6 +19,8 @@ function Landing(){
   const mm=gsap.matchMedia();
   mm.add('(prefers-reduced-motion: no-preference)',()=>{
    gsap.from('[data-headline-line]',{yPercent:110,rotate:2,duration:1.1,stagger:.14,ease:'power4.out'});
+   gsap.fromTo('[data-hero-img]',{scale:1.12},{scale:1,duration:1.8,ease:'power3.out'});
+   gsap.to('[data-hero-img]',{yPercent:-12,ease:'none',scrollTrigger:{trigger:'.landing-hero',start:'top top',end:'bottom top',scrub:true}});
    gsap.from('[data-intro]',{y:18,opacity:0,duration:.8,stagger:.12,delay:.35,ease:'power3.out'});
    gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach(el=>gsap.from(el,{y:28,opacity:0,duration:.8,ease:'power2.out',scrollTrigger:{trigger:el,start:'top 92%',once:true}}));
    gsap.utils.toArray<HTMLElement>('[data-count]').forEach(el=>{const end=Number(el.dataset['count']);const o={v:0};gsap.to(o,{v:end,duration:1.4,ease:'power2.out',scrollTrigger:{trigger:el,start:'top 90%',once:true},onUpdate:()=>{el.textContent=String(Math.round(o.v));}});});
@@ -32,7 +35,7 @@ function Landing(){
  },{scope});
  return <div ref={scope} className="landing-page"><PublicShell>
  <section className="landing-hero relative isolate overflow-hidden bg-navy text-navy-foreground">
-  <img src={photos.warehouse} alt="Indian warehouse team sorting parcels on a conveyor" width={1920} height={1024} fetchPriority="high" className="absolute inset-0 -z-20 h-full w-full object-cover object-[65%_center]"/>
+  <img data-hero-img src={heroDusk} alt="Bnoy courier rider delivering parcels through Jaipur at dusk" width={1920} height={1024} fetchPriority="high" className="absolute inset-0 -z-20 h-[115%] w-full object-cover object-[70%_center] will-change-transform"/>
   <div className="hero-shade absolute inset-0 -z-10"/>
   <div className="public-container relative py-12 sm:py-16"><div className="max-w-2xl"><p data-intro className="flex items-center gap-2 text-[11px] font-semibold uppercase text-lime"><span className="h-px w-6 bg-lime"/>Built for the next mile</p><h1 className="hero-brand mt-5 font-semibold leading-[1.04]"><span className="headline-mask"><span data-headline-line>Bnoy</span></span><span className="headline-mask"><span data-headline-line>Logistics OS<span className="text-lime">.</span></span></span></h1><p className="mt-5 text-3xl leading-tight sm:text-4xl"><span className="headline-mask"><span data-headline-line className="font-serif italic">Every parcel. A connected journey.</span></span></p><p data-intro className="mt-5 max-w-md text-sm leading-7 text-navy-foreground/85">Bring your shipments, sorting teams and courier partners together. Less chasing updates. More moving forward.</p><div data-intro className="mt-7 flex flex-wrap gap-3"><Button asChild className="h-11 bg-lime text-navy hover:bg-lime/90"><Link to="/auth">Open your workspace<ArrowUpRight/></Link></Button><Button asChild variant="outline" className="h-11 border-navy-foreground/40 bg-transparent text-navy-foreground hover:bg-navy-foreground/10 hover:text-navy-foreground"><Link to="/solutions">Explore the platform<ArrowRight/></Link></Button></div></div><div data-intro className="hero-mile-marker mt-10 flex items-center gap-4 border-t border-navy-foreground/20 pt-4 text-[11px] text-navy-foreground/80"><span className="font-mono text-lime">01 — 06</span><span>First label → Final doorstep</span><span className="ml-auto font-mono hidden sm:block">CONNECTED BY BNOY</span></div></div>
  </section>

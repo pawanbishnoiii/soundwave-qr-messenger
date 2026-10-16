@@ -16,6 +16,7 @@ import { Route as IntegrationsRouteImport } from './routes/integrations'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as TrackRouteImport } from './routes/track'
+import { Route as AuthenticatedCashRouteImport } from './routes/_authenticated/cash'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDevelopersRouteImport } from './routes/_authenticated/developers'
 import { Route as AuthenticatedHubsRouteImport } from './routes/_authenticated/hubs'
@@ -75,6 +76,11 @@ const TrackRoute = TrackRouteImport.update({
   id: '/track',
   path: '/track',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedCashRoute = AuthenticatedCashRouteImport.update({
+  id: '/cash',
+  path: '/cash',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
@@ -216,6 +222,7 @@ export interface FileRoutesByFullPath {
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/track': typeof TrackRoute
+  '/cash': typeof AuthenticatedCashRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/developers': typeof AuthenticatedDevelopersRoute
   '/hubs': typeof AuthenticatedHubsRoute
@@ -249,6 +256,7 @@ export interface FileRoutesByTo {
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/track': typeof TrackRoute
+  '/cash': typeof AuthenticatedCashRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/developers': typeof AuthenticatedDevelopersRoute
   '/hubs': typeof AuthenticatedHubsRoute
@@ -284,6 +292,7 @@ export interface FileRoutesById {
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/track': typeof TrackRoute
+  '/_authenticated/cash': typeof AuthenticatedCashRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/developers': typeof AuthenticatedDevelopersRoute
   '/_authenticated/hubs': typeof AuthenticatedHubsRoute
@@ -319,6 +328,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/solutions'
     | '/track'
+    | '/cash'
     | '/dashboard'
     | '/developers'
     | '/hubs'
@@ -352,6 +362,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/solutions'
     | '/track'
+    | '/cash'
     | '/dashboard'
     | '/developers'
     | '/hubs'
@@ -386,6 +397,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/solutions'
     | '/track'
+    | '/_authenticated/cash'
     | '/_authenticated/dashboard'
     | '/_authenticated/developers'
     | '/_authenticated/hubs'
@@ -479,6 +491,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/track'
       preLoaderRoute: typeof TrackRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/cash': {
+      id: '/_authenticated/cash'
+      path: '/cash'
+      fullPath: '/cash'
+      preLoaderRoute: typeof AuthenticatedCashRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
@@ -659,6 +678,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCashRoute: typeof AuthenticatedCashRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDevelopersRoute: typeof AuthenticatedDevelopersRoute
   AuthenticatedHubsRoute: typeof AuthenticatedHubsRoute
@@ -681,6 +701,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCashRoute: AuthenticatedCashRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDevelopersRoute: AuthenticatedDevelopersRoute,
   AuthenticatedHubsRoute: AuthenticatedHubsRoute,

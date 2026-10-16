@@ -1,6 +1,6 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { LayoutDashboard, Package, ScanLine, Users, LogOut, Menu, X, Layers, Plug, Undo2, KeyRound, Trophy, ListChecks, Wallet, MapPin, Barcode, Building2, Truck, Store, Route as RouteIcon, Banknote, Sparkles } from "lucide-react";
+import { LayoutDashboard, Package, ScanLine, Users, LogOut, Menu, X, Layers, Plug, Undo2, KeyRound, Trophy, ListChecks, Wallet, MapPin, Barcode, Building2, Truck, Store, Route as RouteIcon, Banknote, Sparkles, PlugZap } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMe } from "@/lib/auth";
@@ -37,6 +37,7 @@ const GROUPS = [
     { to: "/payouts", label: "Pay & bonuses", icon: Wallet, roles: ADMIN },
     { to: "/providers", label: "Courier partners", icon: Plug, roles: ADMIN },
     { to: "/developers", label: "API & webhooks", icon: KeyRound, roles: ADMIN },
+    { to: "/gateways", label: "Gateways (SMS, email, pay)", icon: PlugZap, roles: ADMIN },
   ] },
 ] as const;
 const NAV = GROUPS.flatMap((g) => [...g.items]) as Array<(typeof GROUPS)[number]["items"][number]>;
@@ -85,7 +86,7 @@ export function AppShell({ title, actions, children }: { title: string; actions?
 
   const userCard = (
     <div className="rounded-md border border-sidebar-border p-3">
-      <p className="truncate text-sm font-semibold text-sidebar-accent-foreground">{profile?.full_name || user?.email}</p>
+      <p className="truncate text-sm font-semibold text-sidebar-accent-foreground">{profile?.full_name || profile?.phone || "Loading…"}</p>
       <p className="truncate text-xs text-sidebar-foreground">{role ? ROLE_LABEL[role] : "No role yet"}</p>
       <Button variant="ghost" size="sm" onClick={signOut} className="mt-3 h-auto p-0 text-xs text-sidebar-foreground hover:bg-transparent hover:text-sidebar-accent-foreground">
         <LogOut className="h-3.5 w-3.5" /> Sign out

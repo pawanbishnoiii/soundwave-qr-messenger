@@ -29,15 +29,22 @@ export const seedDemoWorkspace = createServerFn({ method: "POST" })
     let createdUsers = 0;
     for (const m of DEMO_TEAM) {
       const email = `p${m.phone}@phone.bnoy.app`;
-      const { data: existing } = await supabaseAdmin.from("profiles").select("id").eq("email", email).maybeSingle();
+      const { data: existing } = await supabaseAdmin.from("profiles").select("id")
+        .or(`phone.eq.+91${m.phone},phone.eq.${m.phone}`).limit(1).maybeSingle();
       let id = existing?.id;
       if (!id) {
         const { data: c, error } = await supabaseAdmin.auth.admin.createUser({
           email, password: crypto.randomUUID() + "Aa1!", email_confirm: true,
           user_metadata: { full_name: m.name, phone: "+91" + m.phone },
         });
-        if (error || !c.user) throw new Error(error?.message ?? "Could not create demo user");
-        id = c.user.id; createdUsers++;
+        if (c?.user) { id = c.user.id; createdUsers++; }
+        else if (error && /already/i.test(error.message)) {
+          // Account exists without a profile row: recover its id
+          const { data: link } = await supabaseAdmin.auth.admin.generateLink({ type: "magiclink", email });
+          id = link?.user?.id;
+        }
+        if (!id) throw new Error(error?.message ?? "Could not create demo user");
+        await supabaseAdmin.from("profiles").upsert({ id, full_name: m.name, phone: "+91" + m.phone });
       }
       ids[m.phone] = id;
       await supabaseAdmin.from("profiles").update({ parent_id: (m.parent ? ids[m.parent] : userId) ?? null, phone: "+91" + m.phone, full_name: m.name }).eq("id", id);

@@ -61,6 +61,24 @@ export type Database = {
           },
         ]
       }
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       audit_log: {
         Row: {
           action: string
@@ -632,27 +650,63 @@ export type Database = {
         }
         Relationships: []
       }
+      phone_otps: {
+        Row: {
+          attempts: number
+          code: string
+          created_at: string
+          expires_at: string
+          id: string
+          phone: string
+          used: boolean
+        }
+        Insert: {
+          attempts?: number
+          code: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          phone: string
+          used?: boolean
+        }
+        Update: {
+          attempts?: number
+          code?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          phone?: string
+          used?: boolean
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
+          age: number | null
           created_at: string
           email: string | null
           full_name: string
+          gender: string | null
           id: string
           parent_id: string | null
           phone: string | null
         }
         Insert: {
+          age?: number | null
           created_at?: string
           email?: string | null
           full_name?: string
+          gender?: string | null
           id: string
           parent_id?: string | null
           phone?: string | null
         }
         Update: {
+          age?: number | null
           created_at?: string
           email?: string | null
           full_name?: string
+          gender?: string | null
           id?: string
           parent_id?: string | null
           phone?: string | null

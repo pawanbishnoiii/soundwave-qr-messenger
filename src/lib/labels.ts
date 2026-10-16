@@ -59,9 +59,9 @@ export const SHEET_LAYOUTS: SheetLayout[] = [
 
 /** Prints barcode labels tiled on A4 sheets (cols × rows per page). */
 export async function printLabelSheet(list: Shipment[], layout: SheetLayout) {
-  const co = await getCompany();
   const w = window.open("", "_blank", "width=820,height=900");
   if (!w) throw new Error("Allow pop-ups to print labels");
+  const co = await getCompany();
   const per = layout.cols * layout.rows;
   const pages: Shipment[][] = [];
   for (let i = 0; i < list.length; i += per) pages.push(list.slice(i, i + per));

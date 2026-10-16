@@ -29,6 +29,6 @@
 - [x] Migration safety check (`bun run check:migrations`)
 - [ ] Phone-only signup/login without placeholder email — needs SMS provider (Twilio/MSG91)
 - [ ] SMTP (Hostinger/custom) automatic emails — needs SMTP host/user/password
-- [ ] Per-role dashboards + admin "view as" switcher
-- [ ] Hero/background images + GSAP polish across dashboards, onboarding redesign
+- [x] Per-role dashboards + admin "view as" switcher
+- [x] New hero photo, parallax, sign-in panel refresh
 - [ ] End-to-end browser test — needs a first signed-up account

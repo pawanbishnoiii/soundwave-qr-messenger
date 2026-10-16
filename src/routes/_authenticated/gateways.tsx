@@ -58,7 +58,7 @@ function Gateways() {
     setBusy(key);
     const { error } = await supabase.from("app_settings").upsert({ key, value: value as never, updated_at: new Date().toISOString() });
     setBusy(null);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Saved"); qc.invalidateQueries({ queryKey: ["app_settings", key] });
   }
   async function test(fn: () => Promise<{ ok: boolean; message: string }>, k: string) {

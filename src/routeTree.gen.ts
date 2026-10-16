@@ -21,6 +21,10 @@ import { Route as AuthenticatedDevelopersRouteImport } from './routes/_authentic
 import { Route as AuthenticatedHubsRouteImport } from './routes/_authenticated/hubs'
 import { Route as AuthenticatedJobsRouteImport } from './routes/_authenticated/jobs'
 import { Route as AuthenticatedLotsRouteImport } from './routes/_authenticated/lots'
+import { Route as AuthenticatedManageHubsRouteImport } from './routes/_authenticated/manage-hubs'
+import { Route as AuthenticatedManageMerchantsRouteImport } from './routes/_authenticated/manage-merchants'
+import { Route as AuthenticatedManageRoutesRouteImport } from './routes/_authenticated/manage-routes'
+import { Route as AuthenticatedManageVehiclesRouteImport } from './routes/_authenticated/manage-vehicles'
 import { Route as AuthenticatedManifestRouteImport } from './routes/_authenticated/manifest'
 import { Route as AuthenticatedPayoutsRouteImport } from './routes/_authenticated/payouts'
 import { Route as AuthenticatedProvidersRouteImport } from './routes/_authenticated/providers'
@@ -97,6 +101,29 @@ const AuthenticatedLotsRoute = AuthenticatedLotsRouteImport.update({
   path: '/lots',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedManageHubsRoute = AuthenticatedManageHubsRouteImport.update({
+  id: '/manage-hubs',
+  path: '/manage-hubs',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedManageMerchantsRoute =
+  AuthenticatedManageMerchantsRouteImport.update({
+    id: '/manage-merchants',
+    path: '/manage-merchants',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedManageRoutesRoute =
+  AuthenticatedManageRoutesRouteImport.update({
+    id: '/manage-routes',
+    path: '/manage-routes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedManageVehiclesRoute =
+  AuthenticatedManageVehiclesRouteImport.update({
+    id: '/manage-vehicles',
+    path: '/manage-vehicles',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedManifestRoute = AuthenticatedManifestRouteImport.update({
   id: '/manifest',
   path: '/manifest',
@@ -194,6 +221,10 @@ export interface FileRoutesByFullPath {
   '/hubs': typeof AuthenticatedHubsRoute
   '/jobs': typeof AuthenticatedJobsRoute
   '/lots': typeof AuthenticatedLotsRoute
+  '/manage-hubs': typeof AuthenticatedManageHubsRoute
+  '/manage-merchants': typeof AuthenticatedManageMerchantsRoute
+  '/manage-routes': typeof AuthenticatedManageRoutesRoute
+  '/manage-vehicles': typeof AuthenticatedManageVehiclesRoute
   '/manifest': typeof AuthenticatedManifestRoute
   '/payouts': typeof AuthenticatedPayoutsRoute
   '/providers': typeof AuthenticatedProvidersRoute
@@ -223,6 +254,10 @@ export interface FileRoutesByTo {
   '/hubs': typeof AuthenticatedHubsRoute
   '/jobs': typeof AuthenticatedJobsRoute
   '/lots': typeof AuthenticatedLotsRoute
+  '/manage-hubs': typeof AuthenticatedManageHubsRoute
+  '/manage-merchants': typeof AuthenticatedManageMerchantsRoute
+  '/manage-routes': typeof AuthenticatedManageRoutesRoute
+  '/manage-vehicles': typeof AuthenticatedManageVehiclesRoute
   '/manifest': typeof AuthenticatedManifestRoute
   '/payouts': typeof AuthenticatedPayoutsRoute
   '/providers': typeof AuthenticatedProvidersRoute
@@ -254,6 +289,10 @@ export interface FileRoutesById {
   '/_authenticated/hubs': typeof AuthenticatedHubsRoute
   '/_authenticated/jobs': typeof AuthenticatedJobsRoute
   '/_authenticated/lots': typeof AuthenticatedLotsRoute
+  '/_authenticated/manage-hubs': typeof AuthenticatedManageHubsRoute
+  '/_authenticated/manage-merchants': typeof AuthenticatedManageMerchantsRoute
+  '/_authenticated/manage-routes': typeof AuthenticatedManageRoutesRoute
+  '/_authenticated/manage-vehicles': typeof AuthenticatedManageVehiclesRoute
   '/_authenticated/manifest': typeof AuthenticatedManifestRoute
   '/_authenticated/payouts': typeof AuthenticatedPayoutsRoute
   '/_authenticated/providers': typeof AuthenticatedProvidersRoute
@@ -285,6 +324,10 @@ export interface FileRouteTypes {
     | '/hubs'
     | '/jobs'
     | '/lots'
+    | '/manage-hubs'
+    | '/manage-merchants'
+    | '/manage-routes'
+    | '/manage-vehicles'
     | '/manifest'
     | '/payouts'
     | '/providers'
@@ -314,6 +357,10 @@ export interface FileRouteTypes {
     | '/hubs'
     | '/jobs'
     | '/lots'
+    | '/manage-hubs'
+    | '/manage-merchants'
+    | '/manage-routes'
+    | '/manage-vehicles'
     | '/manifest'
     | '/payouts'
     | '/providers'
@@ -344,6 +391,10 @@ export interface FileRouteTypes {
     | '/_authenticated/hubs'
     | '/_authenticated/jobs'
     | '/_authenticated/lots'
+    | '/_authenticated/manage-hubs'
+    | '/_authenticated/manage-merchants'
+    | '/_authenticated/manage-routes'
+    | '/_authenticated/manage-vehicles'
     | '/_authenticated/manifest'
     | '/_authenticated/payouts'
     | '/_authenticated/providers'
@@ -462,6 +513,34 @@ declare module '@tanstack/react-router' {
       path: '/lots'
       fullPath: '/lots'
       preLoaderRoute: typeof AuthenticatedLotsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/manage-hubs': {
+      id: '/_authenticated/manage-hubs'
+      path: '/manage-hubs'
+      fullPath: '/manage-hubs'
+      preLoaderRoute: typeof AuthenticatedManageHubsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/manage-merchants': {
+      id: '/_authenticated/manage-merchants'
+      path: '/manage-merchants'
+      fullPath: '/manage-merchants'
+      preLoaderRoute: typeof AuthenticatedManageMerchantsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/manage-routes': {
+      id: '/_authenticated/manage-routes'
+      path: '/manage-routes'
+      fullPath: '/manage-routes'
+      preLoaderRoute: typeof AuthenticatedManageRoutesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/manage-vehicles': {
+      id: '/_authenticated/manage-vehicles'
+      path: '/manage-vehicles'
+      fullPath: '/manage-vehicles'
+      preLoaderRoute: typeof AuthenticatedManageVehiclesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/manifest': {
@@ -585,6 +664,10 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHubsRoute: typeof AuthenticatedHubsRoute
   AuthenticatedJobsRoute: typeof AuthenticatedJobsRoute
   AuthenticatedLotsRoute: typeof AuthenticatedLotsRoute
+  AuthenticatedManageHubsRoute: typeof AuthenticatedManageHubsRoute
+  AuthenticatedManageMerchantsRoute: typeof AuthenticatedManageMerchantsRoute
+  AuthenticatedManageRoutesRoute: typeof AuthenticatedManageRoutesRoute
+  AuthenticatedManageVehiclesRoute: typeof AuthenticatedManageVehiclesRoute
   AuthenticatedManifestRoute: typeof AuthenticatedManifestRoute
   AuthenticatedPayoutsRoute: typeof AuthenticatedPayoutsRoute
   AuthenticatedProvidersRoute: typeof AuthenticatedProvidersRoute
@@ -603,6 +686,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHubsRoute: AuthenticatedHubsRoute,
   AuthenticatedJobsRoute: AuthenticatedJobsRoute,
   AuthenticatedLotsRoute: AuthenticatedLotsRoute,
+  AuthenticatedManageHubsRoute: AuthenticatedManageHubsRoute,
+  AuthenticatedManageMerchantsRoute: AuthenticatedManageMerchantsRoute,
+  AuthenticatedManageRoutesRoute: AuthenticatedManageRoutesRoute,
+  AuthenticatedManageVehiclesRoute: AuthenticatedManageVehiclesRoute,
   AuthenticatedManifestRoute: AuthenticatedManifestRoute,
   AuthenticatedPayoutsRoute: AuthenticatedPayoutsRoute,
   AuthenticatedProvidersRoute: AuthenticatedProvidersRoute,

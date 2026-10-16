@@ -16,8 +16,7 @@ function Page() {
   const riders = useRiderOptions();
   void riders; void hubs; void opts;
   const fields: Field[] = [
-    { key: "code", label: "Code", hideInTable: false, placeholder: "auto if blank" },
-    { key: "route_date", label: "Date", type: "date", required: true },
+    { key: "route_date", label: "Date", type: "date", required: true, render: (r) => `${String(r.code)} · ${String(r.route_date)}` },
     { key: "hub_id", label: "Hub", type: "select", options: hubs, render: (r) => hubs.find((h) => h.value === r.hub_id)?.label ?? "—" },
     { key: "rider_id", label: "Rider", type: "select", options: riders, render: (r) => riders.find((h) => h.value === r.rider_id)?.label ?? "—" },
     { key: "status", label: "Status", type: "select", options: opts("planned", "active", "completed", "cancelled"), required: true },

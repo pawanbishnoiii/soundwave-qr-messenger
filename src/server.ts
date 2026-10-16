@@ -44,13 +44,28 @@ function isH3SwallowedErrorBody(body: string): boolean {
   }
 }
 
+// Mobile browsers often cancel a page load (tab switch, refresh, weak network).
+// Those cancellations are not app failures and must never show the error page.
+function isClientAbort(request: Request, error?: unknown): boolean {
+  if (request.signal?.aborted) return true;
+  if (!error || typeof error !== "object") return false;
+  const e = error as { name?: string; message?: string; code?: string; cause?: unknown };
+  const text = `${e.name ?? ""} ${e.message ?? ""} ${e.code ?? ""}`.toLowerCase();
+  if (/abort|econnreset|epipe|socket hang up/.test(text)) return true;
+  return e.cause ? isClientAbort(request, e.cause) : false;
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
+      if (response.status >= 500 && isClientAbort(request)) {
+        return new Response(null, { status: 499 });
+      }
       return await normalizeCatastrophicSsrResponse(response);
     } catch (error) {
+      if (isClientAbort(request, error)) return new Response(null, { status: 499 });
       console.error(error);
       return new Response(renderErrorPage(), {
         status: 500,

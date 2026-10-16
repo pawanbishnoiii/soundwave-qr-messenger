@@ -10,33 +10,359 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as IntegrationsRouteImport } from './routes/integrations'
+import { Route as ResourcesRouteImport } from './routes/resources'
+import { Route as SolutionsRouteImport } from './routes/solutions'
+import { Route as TrackRouteImport } from './routes/track'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedDevelopersRouteImport } from './routes/_authenticated/developers'
+import { Route as AuthenticatedHubsRouteImport } from './routes/_authenticated/hubs'
+import { Route as AuthenticatedJobsRouteImport } from './routes/_authenticated/jobs'
+import { Route as AuthenticatedLotsRouteImport } from './routes/_authenticated/lots'
+import { Route as AuthenticatedManifestRouteImport } from './routes/_authenticated/manifest'
+import { Route as AuthenticatedPayoutsRouteImport } from './routes/_authenticated/payouts'
+import { Route as AuthenticatedProvidersRouteImport } from './routes/_authenticated/providers'
+import { Route as AuthenticatedReturnsRouteImport } from './routes/_authenticated/returns'
+import { Route as AuthenticatedRidersRouteImport } from './routes/_authenticated/riders'
+import { Route as AuthenticatedScanRouteImport } from './routes/_authenticated/scan'
+import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
+import { Route as DocsApiRouteImport } from './routes/docs.api'
+import { Route as DocsB2bRouteImport } from './routes/docs.b2b'
+import { Route as AuthenticatedShipmentsIndexRouteImport } from './routes/_authenticated/shipments.index'
+import { Route as AuthenticatedShipmentsIdRouteImport } from './routes/_authenticated/shipments.$id'
+import { Route as ApiPublicJobsWebhooksRouteImport } from './routes/api/public/jobs/webhooks'
+import { Route as ApiPublicTrackCodeRouteImport } from './routes/api/public/track.$code'
+import { Route as ApiPublicV1ShipmentsRouteImport } from './routes/api/public/v1/shipments'
+import { Route as ApiPublicCouriersPartnerIdWebhookRouteImport } from './routes/api/public/couriers.$partnerId.webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IntegrationsRoute = IntegrationsRouteImport.update({
+  id: '/integrations',
+  path: '/integrations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResourcesRoute = ResourcesRouteImport.update({
+  id: '/resources',
+  path: '/resources',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SolutionsRoute = SolutionsRouteImport.update({
+  id: '/solutions',
+  path: '/solutions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrackRoute = TrackRouteImport.update({
+  id: '/track',
+  path: '/track',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDevelopersRoute = AuthenticatedDevelopersRouteImport.update({
+  id: '/developers',
+  path: '/developers',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedHubsRoute = AuthenticatedHubsRouteImport.update({
+  id: '/hubs',
+  path: '/hubs',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedJobsRoute = AuthenticatedJobsRouteImport.update({
+  id: '/jobs',
+  path: '/jobs',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLotsRoute = AuthenticatedLotsRouteImport.update({
+  id: '/lots',
+  path: '/lots',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedManifestRoute = AuthenticatedManifestRouteImport.update({
+  id: '/manifest',
+  path: '/manifest',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPayoutsRoute = AuthenticatedPayoutsRouteImport.update({
+  id: '/payouts',
+  path: '/payouts',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedProvidersRoute = AuthenticatedProvidersRouteImport.update({
+  id: '/providers',
+  path: '/providers',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedReturnsRoute = AuthenticatedReturnsRouteImport.update({
+  id: '/returns',
+  path: '/returns',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedRidersRoute = AuthenticatedRidersRouteImport.update({
+  id: '/riders',
+  path: '/riders',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedScanRoute = AuthenticatedScanRouteImport.update({
+  id: '/scan',
+  path: '/scan',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const DocsApiRoute = DocsApiRouteImport.update({
+  id: '/docs/api',
+  path: '/docs/api',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsB2bRoute = DocsB2bRouteImport.update({
+  id: '/docs/b2b',
+  path: '/docs/b2b',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedShipmentsIndexRoute =
+  AuthenticatedShipmentsIndexRouteImport.update({
+    id: '/shipments/',
+    path: '/shipments/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedShipmentsIdRoute =
+  AuthenticatedShipmentsIdRouteImport.update({
+    id: '/shipments/$id',
+    path: '/shipments/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const ApiPublicJobsWebhooksRoute = ApiPublicJobsWebhooksRouteImport.update({
+  id: '/api/public/jobs/webhooks',
+  path: '/api/public/jobs/webhooks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicTrackCodeRoute = ApiPublicTrackCodeRouteImport.update({
+  id: '/api/public/track/$code',
+  path: '/api/public/track/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicV1ShipmentsRoute = ApiPublicV1ShipmentsRouteImport.update({
+  id: '/api/public/v1/shipments',
+  path: '/api/public/v1/shipments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicCouriersPartnerIdWebhookRoute =
+  ApiPublicCouriersPartnerIdWebhookRouteImport.update({
+    id: '/api/public/couriers/$partnerId/webhook',
+    path: '/api/public/couriers/$partnerId/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/integrations': typeof IntegrationsRoute
+  '/resources': typeof ResourcesRoute
+  '/solutions': typeof SolutionsRoute
+  '/track': typeof TrackRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/developers': typeof AuthenticatedDevelopersRoute
+  '/hubs': typeof AuthenticatedHubsRoute
+  '/jobs': typeof AuthenticatedJobsRoute
+  '/lots': typeof AuthenticatedLotsRoute
+  '/manifest': typeof AuthenticatedManifestRoute
+  '/payouts': typeof AuthenticatedPayoutsRoute
+  '/providers': typeof AuthenticatedProvidersRoute
+  '/returns': typeof AuthenticatedReturnsRoute
+  '/riders': typeof AuthenticatedRidersRoute
+  '/scan': typeof AuthenticatedScanRoute
+  '/team': typeof AuthenticatedTeamRoute
+  '/docs/api': typeof DocsApiRoute
+  '/docs/b2b': typeof DocsB2bRoute
+  '/shipments/$id': typeof AuthenticatedShipmentsIdRoute
+  '/shipments/': typeof AuthenticatedShipmentsIndexRoute
+  '/api/public/jobs/webhooks': typeof ApiPublicJobsWebhooksRoute
+  '/api/public/track/$code': typeof ApiPublicTrackCodeRoute
+  '/api/public/v1/shipments': typeof ApiPublicV1ShipmentsRoute
+  '/api/public/couriers/$partnerId/webhook': typeof ApiPublicCouriersPartnerIdWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/integrations': typeof IntegrationsRoute
+  '/resources': typeof ResourcesRoute
+  '/solutions': typeof SolutionsRoute
+  '/track': typeof TrackRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/developers': typeof AuthenticatedDevelopersRoute
+  '/hubs': typeof AuthenticatedHubsRoute
+  '/jobs': typeof AuthenticatedJobsRoute
+  '/lots': typeof AuthenticatedLotsRoute
+  '/manifest': typeof AuthenticatedManifestRoute
+  '/payouts': typeof AuthenticatedPayoutsRoute
+  '/providers': typeof AuthenticatedProvidersRoute
+  '/returns': typeof AuthenticatedReturnsRoute
+  '/riders': typeof AuthenticatedRidersRoute
+  '/scan': typeof AuthenticatedScanRoute
+  '/team': typeof AuthenticatedTeamRoute
+  '/docs/api': typeof DocsApiRoute
+  '/docs/b2b': typeof DocsB2bRoute
+  '/shipments/$id': typeof AuthenticatedShipmentsIdRoute
+  '/shipments': typeof AuthenticatedShipmentsIndexRoute
+  '/api/public/jobs/webhooks': typeof ApiPublicJobsWebhooksRoute
+  '/api/public/track/$code': typeof ApiPublicTrackCodeRoute
+  '/api/public/v1/shipments': typeof ApiPublicV1ShipmentsRoute
+  '/api/public/couriers/$partnerId/webhook': typeof ApiPublicCouriersPartnerIdWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/integrations': typeof IntegrationsRoute
+  '/resources': typeof ResourcesRoute
+  '/solutions': typeof SolutionsRoute
+  '/track': typeof TrackRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/developers': typeof AuthenticatedDevelopersRoute
+  '/_authenticated/hubs': typeof AuthenticatedHubsRoute
+  '/_authenticated/jobs': typeof AuthenticatedJobsRoute
+  '/_authenticated/lots': typeof AuthenticatedLotsRoute
+  '/_authenticated/manifest': typeof AuthenticatedManifestRoute
+  '/_authenticated/payouts': typeof AuthenticatedPayoutsRoute
+  '/_authenticated/providers': typeof AuthenticatedProvidersRoute
+  '/_authenticated/returns': typeof AuthenticatedReturnsRoute
+  '/_authenticated/riders': typeof AuthenticatedRidersRoute
+  '/_authenticated/scan': typeof AuthenticatedScanRoute
+  '/_authenticated/team': typeof AuthenticatedTeamRoute
+  '/docs/api': typeof DocsApiRoute
+  '/docs/b2b': typeof DocsB2bRoute
+  '/_authenticated/shipments/$id': typeof AuthenticatedShipmentsIdRoute
+  '/_authenticated/shipments/': typeof AuthenticatedShipmentsIndexRoute
+  '/api/public/jobs/webhooks': typeof ApiPublicJobsWebhooksRoute
+  '/api/public/track/$code': typeof ApiPublicTrackCodeRoute
+  '/api/public/v1/shipments': typeof ApiPublicV1ShipmentsRoute
+  '/api/public/couriers/$partnerId/webhook': typeof ApiPublicCouriersPartnerIdWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/integrations'
+    | '/resources'
+    | '/solutions'
+    | '/track'
+    | '/dashboard'
+    | '/developers'
+    | '/hubs'
+    | '/jobs'
+    | '/lots'
+    | '/manifest'
+    | '/payouts'
+    | '/providers'
+    | '/returns'
+    | '/riders'
+    | '/scan'
+    | '/team'
+    | '/docs/api'
+    | '/docs/b2b'
+    | '/shipments/$id'
+    | '/shipments/'
+    | '/api/public/jobs/webhooks'
+    | '/api/public/track/$code'
+    | '/api/public/v1/shipments'
+    | '/api/public/couriers/$partnerId/webhook'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/integrations'
+    | '/resources'
+    | '/solutions'
+    | '/track'
+    | '/dashboard'
+    | '/developers'
+    | '/hubs'
+    | '/jobs'
+    | '/lots'
+    | '/manifest'
+    | '/payouts'
+    | '/providers'
+    | '/returns'
+    | '/riders'
+    | '/scan'
+    | '/team'
+    | '/docs/api'
+    | '/docs/b2b'
+    | '/shipments/$id'
+    | '/shipments'
+    | '/api/public/jobs/webhooks'
+    | '/api/public/track/$code'
+    | '/api/public/v1/shipments'
+    | '/api/public/couriers/$partnerId/webhook'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/integrations'
+    | '/resources'
+    | '/solutions'
+    | '/track'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/developers'
+    | '/_authenticated/hubs'
+    | '/_authenticated/jobs'
+    | '/_authenticated/lots'
+    | '/_authenticated/manifest'
+    | '/_authenticated/payouts'
+    | '/_authenticated/providers'
+    | '/_authenticated/returns'
+    | '/_authenticated/riders'
+    | '/_authenticated/scan'
+    | '/_authenticated/team'
+    | '/docs/api'
+    | '/docs/b2b'
+    | '/_authenticated/shipments/$id'
+    | '/_authenticated/shipments/'
+    | '/api/public/jobs/webhooks'
+    | '/api/public/track/$code'
+    | '/api/public/v1/shipments'
+    | '/api/public/couriers/$partnerId/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  IntegrationsRoute: typeof IntegrationsRoute
+  ResourcesRoute: typeof ResourcesRoute
+  SolutionsRoute: typeof SolutionsRoute
+  TrackRoute: typeof TrackRoute
+  DocsApiRoute: typeof DocsApiRoute
+  DocsB2bRoute: typeof DocsB2bRoute
+  ApiPublicJobsWebhooksRoute: typeof ApiPublicJobsWebhooksRoute
+  ApiPublicTrackCodeRoute: typeof ApiPublicTrackCodeRoute
+  ApiPublicV1ShipmentsRoute: typeof ApiPublicV1ShipmentsRoute
+  ApiPublicCouriersPartnerIdWebhookRoute: typeof ApiPublicCouriersPartnerIdWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +374,243 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/integrations': {
+      id: '/integrations'
+      path: '/integrations'
+      fullPath: '/integrations'
+      preLoaderRoute: typeof IntegrationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resources': {
+      id: '/resources'
+      path: '/resources'
+      fullPath: '/resources'
+      preLoaderRoute: typeof ResourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/solutions': {
+      id: '/solutions'
+      path: '/solutions'
+      fullPath: '/solutions'
+      preLoaderRoute: typeof SolutionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/track': {
+      id: '/track'
+      path: '/track'
+      fullPath: '/track'
+      preLoaderRoute: typeof TrackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/developers': {
+      id: '/_authenticated/developers'
+      path: '/developers'
+      fullPath: '/developers'
+      preLoaderRoute: typeof AuthenticatedDevelopersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/hubs': {
+      id: '/_authenticated/hubs'
+      path: '/hubs'
+      fullPath: '/hubs'
+      preLoaderRoute: typeof AuthenticatedHubsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/jobs': {
+      id: '/_authenticated/jobs'
+      path: '/jobs'
+      fullPath: '/jobs'
+      preLoaderRoute: typeof AuthenticatedJobsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lots': {
+      id: '/_authenticated/lots'
+      path: '/lots'
+      fullPath: '/lots'
+      preLoaderRoute: typeof AuthenticatedLotsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/manifest': {
+      id: '/_authenticated/manifest'
+      path: '/manifest'
+      fullPath: '/manifest'
+      preLoaderRoute: typeof AuthenticatedManifestRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/payouts': {
+      id: '/_authenticated/payouts'
+      path: '/payouts'
+      fullPath: '/payouts'
+      preLoaderRoute: typeof AuthenticatedPayoutsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/providers': {
+      id: '/_authenticated/providers'
+      path: '/providers'
+      fullPath: '/providers'
+      preLoaderRoute: typeof AuthenticatedProvidersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/returns': {
+      id: '/_authenticated/returns'
+      path: '/returns'
+      fullPath: '/returns'
+      preLoaderRoute: typeof AuthenticatedReturnsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/riders': {
+      id: '/_authenticated/riders'
+      path: '/riders'
+      fullPath: '/riders'
+      preLoaderRoute: typeof AuthenticatedRidersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/scan': {
+      id: '/_authenticated/scan'
+      path: '/scan'
+      fullPath: '/scan'
+      preLoaderRoute: typeof AuthenticatedScanRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/team': {
+      id: '/_authenticated/team'
+      path: '/team'
+      fullPath: '/team'
+      preLoaderRoute: typeof AuthenticatedTeamRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/docs/api': {
+      id: '/docs/api'
+      path: '/docs/api'
+      fullPath: '/docs/api'
+      preLoaderRoute: typeof DocsApiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/b2b': {
+      id: '/docs/b2b'
+      path: '/docs/b2b'
+      fullPath: '/docs/b2b'
+      preLoaderRoute: typeof DocsB2bRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/shipments/': {
+      id: '/_authenticated/shipments/'
+      path: '/shipments'
+      fullPath: '/shipments/'
+      preLoaderRoute: typeof AuthenticatedShipmentsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/shipments/$id': {
+      id: '/_authenticated/shipments/$id'
+      path: '/shipments/$id'
+      fullPath: '/shipments/$id'
+      preLoaderRoute: typeof AuthenticatedShipmentsIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/public/jobs/webhooks': {
+      id: '/api/public/jobs/webhooks'
+      path: '/api/public/jobs/webhooks'
+      fullPath: '/api/public/jobs/webhooks'
+      preLoaderRoute: typeof ApiPublicJobsWebhooksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/track/$code': {
+      id: '/api/public/track/$code'
+      path: '/api/public/track/$code'
+      fullPath: '/api/public/track/$code'
+      preLoaderRoute: typeof ApiPublicTrackCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/shipments': {
+      id: '/api/public/v1/shipments'
+      path: '/api/public/v1/shipments'
+      fullPath: '/api/public/v1/shipments'
+      preLoaderRoute: typeof ApiPublicV1ShipmentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/couriers/$partnerId/webhook': {
+      id: '/api/public/couriers/$partnerId/webhook'
+      path: '/api/public/couriers/$partnerId/webhook'
+      fullPath: '/api/public/couriers/$partnerId/webhook'
+      preLoaderRoute: typeof ApiPublicCouriersPartnerIdWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedDevelopersRoute: typeof AuthenticatedDevelopersRoute
+  AuthenticatedHubsRoute: typeof AuthenticatedHubsRoute
+  AuthenticatedJobsRoute: typeof AuthenticatedJobsRoute
+  AuthenticatedLotsRoute: typeof AuthenticatedLotsRoute
+  AuthenticatedManifestRoute: typeof AuthenticatedManifestRoute
+  AuthenticatedPayoutsRoute: typeof AuthenticatedPayoutsRoute
+  AuthenticatedProvidersRoute: typeof AuthenticatedProvidersRoute
+  AuthenticatedReturnsRoute: typeof AuthenticatedReturnsRoute
+  AuthenticatedRidersRoute: typeof AuthenticatedRidersRoute
+  AuthenticatedScanRoute: typeof AuthenticatedScanRoute
+  AuthenticatedTeamRoute: typeof AuthenticatedTeamRoute
+  AuthenticatedShipmentsIdRoute: typeof AuthenticatedShipmentsIdRoute
+  AuthenticatedShipmentsIndexRoute: typeof AuthenticatedShipmentsIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedDevelopersRoute: AuthenticatedDevelopersRoute,
+  AuthenticatedHubsRoute: AuthenticatedHubsRoute,
+  AuthenticatedJobsRoute: AuthenticatedJobsRoute,
+  AuthenticatedLotsRoute: AuthenticatedLotsRoute,
+  AuthenticatedManifestRoute: AuthenticatedManifestRoute,
+  AuthenticatedPayoutsRoute: AuthenticatedPayoutsRoute,
+  AuthenticatedProvidersRoute: AuthenticatedProvidersRoute,
+  AuthenticatedReturnsRoute: AuthenticatedReturnsRoute,
+  AuthenticatedRidersRoute: AuthenticatedRidersRoute,
+  AuthenticatedScanRoute: AuthenticatedScanRoute,
+  AuthenticatedTeamRoute: AuthenticatedTeamRoute,
+  AuthenticatedShipmentsIdRoute: AuthenticatedShipmentsIdRoute,
+  AuthenticatedShipmentsIndexRoute: AuthenticatedShipmentsIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  IntegrationsRoute: IntegrationsRoute,
+  ResourcesRoute: ResourcesRoute,
+  SolutionsRoute: SolutionsRoute,
+  TrackRoute: TrackRoute,
+  DocsApiRoute: DocsApiRoute,
+  DocsB2bRoute: DocsB2bRoute,
+  ApiPublicJobsWebhooksRoute: ApiPublicJobsWebhooksRoute,
+  ApiPublicTrackCodeRoute: ApiPublicTrackCodeRoute,
+  ApiPublicV1ShipmentsRoute: ApiPublicV1ShipmentsRoute,
+  ApiPublicCouriersPartnerIdWebhookRoute:
+    ApiPublicCouriersPartnerIdWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,24 +1,52 @@
-import { createFileRoute } from "@tanstack/react-router";
-
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
-export const Route = createFileRoute("/")({
-  component: Index,
-});
-
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { ArrowUpRight, ArrowRight, ScanLine, Package, Truck, ShieldCheck, Search, Check, Layers, Radio } from 'lucide-react';
+import { useRef, useState } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
+import { PublicShell } from '@/components/PublicShell';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { photos } from '@/lib/photography';
+import { pageHead } from '@/lib/seo';
+import { ParcelJourney } from '@/components/ParcelJourney';
+gsap.registerPlugin(useGSAP, ScrollTrigger);
+export const Route = createFileRoute('/')({ head:()=>pageHead('Connected courier operations','Barcode-first shipment operations, courier partner exchange and delivery tracking in one Bnoy workspace.'), component:Landing });
+function Landing(){
+ const scope=useRef<HTMLDivElement>(null); const [code,setCode]=useState(''); const navigate=useNavigate();
+ useGSAP(()=>{
+  const mm=gsap.matchMedia();
+  mm.add('(prefers-reduced-motion: no-preference)',()=>{
+   gsap.from('[data-headline-line]',{yPercent:110,rotate:2,duration:1.1,stagger:.14,ease:'power4.out'});
+   gsap.from('[data-intro]',{y:18,opacity:0,duration:.8,stagger:.12,delay:.35,ease:'power3.out'});
+   gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach(el=>gsap.from(el,{y:28,opacity:0,duration:.8,ease:'power2.out',scrollTrigger:{trigger:el,start:'top 92%',once:true}}));
+   gsap.utils.toArray<HTMLElement>('[data-count]').forEach(el=>{const end=Number(el.dataset['count']);const o={v:0};gsap.to(o,{v:end,duration:1.4,ease:'power2.out',scrollTrigger:{trigger:el,start:'top 90%',once:true},onUpdate:()=>{el.textContent=String(Math.round(o.v));}});});
+   gsap.utils.toArray<SVGPathElement>('[data-route-path]').forEach(path=>{
+    const length=path.getTotalLength();
+    gsap.fromTo(path,{strokeDasharray:length,strokeDashoffset:length},{strokeDashoffset:0,ease:'none',scrollTrigger:{trigger:'.journey-body',start:'top 65%',end:'bottom 65%',scrub:.6}});
+   });
+   gsap.utils.toArray<HTMLElement>('[data-route-stop]').forEach(el=>gsap.from(el,{scale:.6,opacity:.4,duration:.5,scrollTrigger:{trigger:el,start:'top 72%',toggleActions:'play none none reverse'}}));
+   gsap.utils.toArray<HTMLElement>('[data-journey-image]').forEach(el=>gsap.from(el,{clipPath:'inset(12% 0 12% 0)',duration:1,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 85%',once:true}}));
+  });
+  return()=>mm.revert();
+ },{scope});
+ return <div ref={scope} className="landing-page"><PublicShell>
+ <section className="landing-hero relative isolate overflow-hidden bg-navy text-navy-foreground">
+  <img src={photos.warehouse} alt="Indian warehouse team sorting parcels on a conveyor" width={1920} height={1024} fetchPriority="high" className="absolute inset-0 -z-20 h-full w-full object-cover object-[65%_center]"/>
+  <div className="hero-shade absolute inset-0 -z-10"/>
+  <div className="public-container relative py-12 sm:py-16"><div className="max-w-2xl"><p data-intro className="flex items-center gap-2 text-[11px] font-semibold uppercase text-lime"><span className="h-px w-6 bg-lime"/>Built for the next mile</p><h1 className="hero-brand mt-5 font-semibold leading-[1.04]"><span className="headline-mask"><span data-headline-line>Bnoy</span></span><span className="headline-mask"><span data-headline-line>Logistics OS<span className="text-lime">.</span></span></span></h1><p className="mt-5 text-3xl leading-tight sm:text-4xl"><span className="headline-mask"><span data-headline-line className="font-serif italic">Every parcel. A connected journey.</span></span></p><p data-intro className="mt-5 max-w-md text-sm leading-7 text-navy-foreground/85">Bring your shipments, sorting teams and courier partners together. Less chasing updates. More moving forward.</p><div data-intro className="mt-7 flex flex-wrap gap-3"><Button asChild className="h-11 bg-lime text-navy hover:bg-lime/90"><Link to="/auth">Open your workspace<ArrowUpRight/></Link></Button><Button asChild variant="outline" className="h-11 border-navy-foreground/40 bg-transparent text-navy-foreground hover:bg-navy-foreground/10 hover:text-navy-foreground"><Link to="/solutions">Explore the platform<ArrowRight/></Link></Button></div></div><div data-intro className="hero-mile-marker mt-10 flex items-center gap-4 border-t border-navy-foreground/20 pt-4 text-[11px] text-navy-foreground/80"><span className="font-mono text-lime">01 — 06</span><span>First label → Final doorstep</span><span className="ml-auto font-mono hidden sm:block">CONNECTED BY BNOY</span></div></div>
+ </section>
+ <section className="border-b bg-card"><div className="public-container grid gap-5 py-6 md:grid-cols-[1fr_1.3fr] md:items-center"><div className="flex items-center gap-3"><Package className="size-5 text-primary"/><div><h2 className="text-sm font-semibold">Where’s your shipment?</h2><p className="mt-1 text-xs text-muted-foreground">One reference. The latest recorded status.</p></div></div><form className="flex gap-2" onSubmit={e=>{e.preventDefault();if(code.trim())navigate({to:'/track',search:{code:code.trim()}});}}><Input aria-label="Tracking number or order ID" value={code} onChange={e=>setCode(e.target.value)} placeholder="Enter tracking number or order ID" className="h-11 bg-background" maxLength={120} required/><Button type="submit" aria-label="Track shipment" className="h-11"><Search/><span className="hidden sm:inline">Track shipment</span></Button></form></div></section>
+ <section className="public-container py-14"><div className="flex flex-wrap items-center justify-between gap-6 border-b pb-10"><p className="max-w-xs text-sm leading-6 text-muted-foreground">Your operations, connected to the courier ecosystem.</p><div className="flex flex-wrap items-center gap-7 text-xl font-semibold text-foreground/70"><span>shiprocket</span><span>DELHIVERY</span><span className="text-sm font-medium text-muted-foreground">+ Your courier partner</span></div><span className="text-[10px] text-muted-foreground">Available adapters · connection required</span></div>
+ <div data-reveal className="mt-14 flex flex-wrap items-end justify-between gap-6"><div><p className="eyebrow">One workspace. Every handover.</p><h2 className="section-heading mt-3 max-w-xl">The moving parts.<br/>Finally working together.</h2></div><Link to="/solutions" className="flex items-center gap-2 text-sm font-semibold text-primary">Explore solutions<ArrowUpRight className="size-4"/></Link></div>
+ <div className="mt-8 grid gap-7 md:grid-cols-3">{[{image:photos.scanner,title:'A scan that moves things forward',text:'Print unique labels. Scan at handover. Keep each parcel tied to the right rider.',icon:ScanLine},{image:photos.conveyor,title:'Sorting without the guesswork',text:'Manager lots become rider work queues, with ownership confirmed at every scan.',icon:Layers},{image:photos.handover,title:'A clearer final mile',text:'Recorded delivery events, COD amounts and recipient verification in one place.',icon:Truck}].map((f,i)=><article data-reveal key={f.title}><div className="photo-frame aspect-[4/3]"><img src={f.image} alt={f.title} width={1280} height={1024} loading="lazy"/></div><div className="mt-5 flex items-center gap-2 text-[10px] font-semibold text-primary"><f.icon className="size-3.5"/>0{i+1} / OPERATIONS</div><h3 className="mt-3 text-lg font-semibold">{f.title}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{f.text}</p></article>)}</div>
+ </section>
+ <section aria-label="Platform highlights" className="relative overflow-hidden border-y bg-navy text-navy-foreground"><div className="grain pointer-events-none absolute inset-0 opacity-30"/><div className="overflow-hidden py-5"><div className="marquee-track flex w-max gap-10 whitespace-nowrap font-display text-4xl font-bold sm:text-6xl">{[0,1].map(k=><div key={k} aria-hidden={k===1} className="flex gap-10">{['Scan','Sort','Assign','Deliver','Verify OTP','Return','Settle COD'].map(w=><span key={w} className="flex items-center gap-10"><span className="text-outline">{w}</span><span className="text-lime">✦</span></span>)}</div>)}</div></div><div className="public-container grid grid-cols-2 gap-6 border-t border-navy-foreground/15 py-10 md:grid-cols-4">{[[1234,'Demo OTP for every handover',''],[48,'Hour SLA tracked per parcel','h'],[6,'Journey stages, one barcode',''],[4,'Roles, one connected team','']].map(([n,l,u])=><div key={l as string} data-reveal><p className="font-display text-4xl font-bold text-lime sm:text-5xl"><span data-count={n}>{n}</span>{u}</p><p className="mt-2 text-xs text-navy-foreground/75">{l}</p></div>)}</div></section>
+<ParcelJourney />
+ <section className="public-container py-16"><div className="grid items-center gap-10 lg:grid-cols-2"><div data-reveal><p className="eyebrow">Your network. Your way.</p><h2 className="section-heading mt-3">Built around the people<br/>behind every delivery.</h2><p className="mt-5 max-w-md text-sm leading-7 text-muted-foreground">Admins, distributors, managers and riders share a workspace—not the same permissions. Keep the right information with the right team.</p><ul className="mt-6 space-y-3 text-sm">{['Flexible manager and rider hierarchy','Rider parcel allocation through sorting scans','Courier orders in a dedicated exchange queue'].map(t=><li key={t} className="flex items-center gap-2"><Check className="size-4 text-primary"/>{t}</li>)}</ul><Button asChild variant="outline" className="mt-7"><Link to="/auth">Meet your workspace<ArrowUpRight/></Link></Button></div><div data-reveal className="photo-frame aspect-[4/3]"><img src={photos.operations} alt="Logistics managers reviewing operations together" width={1280} height={1024} loading="lazy"/></div></div></section>
+ <section className="bg-navy text-navy-foreground"><div className="public-container py-14"><div data-reveal className="flex flex-wrap items-end justify-between gap-5"><div><p className="text-[11px] font-semibold uppercase text-lime">From warehouse to doorstep</p><h2 className="section-heading mt-3">Real work. One connected system.</h2></div><Link to="/solutions" className="flex items-center gap-2 text-sm text-lime">See every operation<ArrowUpRight className="size-4"/></Link></div><div className="mt-8 grid grid-cols-2 gap-5 md:grid-cols-4">{[{src:photos.merchant,label:'Merchant fulfilment'},{src:photos.dispatch,label:'Fleet & dispatch'},{src:photos.rider,label:'Last-mile delivery'},{src:photos.packaging,label:'Careful handling'}].map(x=><article data-reveal key={x.label}><div className="photo-frame aspect-[4/5]"><img src={x.src} alt={x.label} width={1280} height={1024} loading="lazy"/></div><p className="mt-4 text-sm font-medium">{x.label}</p></article>)}</div></div></section>
+ <section className="public-container grid gap-8 py-16 md:grid-cols-2 md:items-center"><div data-reveal className="photo-frame aspect-[4/3]"><img src={photos.returnsDesk} alt="Returns team inspecting parcels at a hub" width={1280} height={960} loading="lazy"/></div><div data-reveal><p className="eyebrow">Returns & cancellations</p><h2 className="section-heading mt-3">Every parcel finds its way back.</h2><p className="mt-4 text-sm leading-7 text-muted-foreground">Riders collect returns at the customer's door, add multiple photos and share live location. Cancelled and returned parcels stay visible in tracking until they reach your hub.</p></div></section>
+ <section className="public-container grid gap-8 py-16 md:grid-cols-3">{[{i:ShieldCheck,t:'Access with boundaries',d:'Role-based permissions keep shipment and team information scoped to your network.'},{i:Radio,t:'Updates, not assumptions',d:'Tracking reflects recorded events. Courier feeds stay disconnected until credentials are configured.'},{i:Package,t:'Labels that belong to an order',d:'Unique tracking references, printable barcodes and QR codes keep physical parcels connected.'}].map(x=><div data-reveal key={x.t} className="border-t pt-6"><x.i className="size-5 text-primary"/><h3 className="mt-4 text-base font-semibold">{x.t}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{x.d}</p></div>)}</section>
+ <section className="border-t bg-accent/50"><div data-reveal className="public-container flex flex-wrap items-center justify-between gap-7 py-12"><div><p className="eyebrow">The next mile starts here</p><h2 className="mt-3 text-3xl font-semibold">Make room for better operations.</h2></div><Button asChild size="lg" className="h-12"><Link to="/auth">Get started with Bnoy<ArrowUpRight/></Link></Button></div></section>
+ </PublicShell></div>;
 }

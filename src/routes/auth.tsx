@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Brand } from "@/components/Brand";
-import hero from "@/assets/hero-dusk.jpg";
+import hero from "@/assets/hero-courier-woman.jpg";
 import { Reveal } from "@/components/motion";
 
 export const Route = createFileRoute("/auth")({
@@ -106,7 +106,7 @@ function AuthPage() {
         </div>
       </div>
       <div className="relative hidden overflow-hidden bg-gradient-hero lg:block">
-        <img src={hero} alt="Bnoy rider delivering through Jaipur at dusk" width={1920} height={1024} className="absolute inset-0 h-full w-full object-cover object-[70%_center]" />
+        <img src={hero} alt="Bnoy courier with a parcel" width={1920} height={1024} className="absolute inset-0 h-full w-full object-cover object-[70%_center]" />
         <Reveal className="absolute inset-x-0 bottom-0 space-y-4 bg-gradient-to-t from-navy via-navy/80 to-transparent p-10 text-navy-foreground" stagger={0.12}>
           <p data-reveal className="font-display text-3xl font-bold">Scan. Assign. Deliver.</p>
           <ol className="grid gap-2 text-sm">

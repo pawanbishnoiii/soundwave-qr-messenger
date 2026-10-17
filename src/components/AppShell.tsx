@@ -21,7 +21,7 @@ const GROUPS = [
     { to: "/lots", label: "Lots & sorting", icon: Layers, roles: LEADS },
     { to: "/returns", label: "Returns", icon: Undo2, roles: ALL },
     { to: "/cash", label: "Cash handovers", icon: Banknote, roles: ALL },
-    { to: "/wallet", label: "My wallet", icon: Wallet, roles: ["rider"] as Role[] },
+    { to: "/rider", label: "Rider app", icon: Wallet, roles: ["rider"] as Role[] },
   ] },
   { title: "Analytics & warehouse", items: [
     { to: "/hubs", label: "Hub network", icon: MapPin, roles: LEADS },
@@ -29,6 +29,7 @@ const GROUPS = [
     { to: "/manage-vehicles", label: "Fleet", icon: Truck, roles: LEADS },
     { to: "/manage-merchants", label: "Merchants", icon: Store, roles: LEADS },
     { to: "/manage-routes", label: "Routes", icon: RouteIcon, roles: LEADS },
+    { to: "/stop-planner", label: "Stop planner", icon: ListChecks, roles: LEADS },
     { to: "/route-planner", label: "AI route planner", icon: Sparkles, roles: ADMIN },
     { to: "/manifest", label: "Barcode manifest", icon: Barcode, roles: LEADS },
     { to: "/riders", label: "Rider performance", icon: Trophy, roles: LEADS },

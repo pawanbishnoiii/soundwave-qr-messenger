@@ -1652,6 +1652,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_stop_order: { Args: { _ids: string[] }; Returns: number }
       can_see_return: { Args: { _return_id: string }; Returns: boolean }
       can_see_shipment: {
         Args: { _s: Database["public"]["Tables"]["shipments"]["Row"] }

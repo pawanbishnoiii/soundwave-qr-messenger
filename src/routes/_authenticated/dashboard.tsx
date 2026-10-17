@@ -1,5 +1,5 @@
 import { pageHead } from "@/lib/seo";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Package, Truck, CheckCircle2, IndianRupee, ScanLine, Plus, Users, Eye, Banknote, Building2, Route as RouteIcon, Sparkles, Store, Undo2 } from "lucide-react";
 import { Reveal, CountUp } from "@/components/motion";
@@ -9,7 +9,6 @@ import heroDist from "@/assets/bnoy-warehouse.webp";
 import heroMgr from "@/assets/bnoy-hub.webp";
 import heroRider from "@/assets/bnoy-rider.webp";
 import { AppShell } from "@/components/AppShell";
-import { RiderHome } from "@/components/RiderHome";
 import { SeedWorkspaceButton } from "@/components/SeedWorkspaceButton";
 import { SetupWizard } from "@/components/SetupWizard";
 import { FailureCharts } from "@/components/FailureCharts";
@@ -35,7 +34,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 
 function Dashboard() {
   const { role } = useMe();
-  return role === "rider" ? <RiderHome /> : <LeadDashboard />;
+  return role === "rider" ? <Navigate to="/rider" replace /> : <LeadDashboard />;
 }
 
 function LeadDashboard() {

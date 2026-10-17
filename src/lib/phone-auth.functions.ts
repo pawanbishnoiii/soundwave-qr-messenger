@@ -5,7 +5,7 @@ export const phoneEmail = (phone: string) => `p${phone}@phone.bnoy.app`;
 
 const phoneRe = /^[6-9][0-9]{9}$/;
 
-type SmsSettings = { enabled?: boolean; provider?: "fast2sms" | "custom"; api_key?: string; url_template?: string };
+import { sendOtpVia, type SmsSettings } from "./sms";
 
 async function admin() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -23,21 +23,9 @@ async function sendSms(sb: Awaited<ReturnType<typeof admin>>, phone: string, cod
   const s = (data?.value ?? {}) as SmsSettings;
   if (!s.enabled) return false;
   try {
-    if (s.provider === "fast2sms" && s.api_key) {
-      const r = await fetch("https://www.fast2sms.com/dev/bulkV2", {
-        method: "POST",
-        headers: { authorization: s.api_key, "Content-Type": "application/json" },
-        body: JSON.stringify({ route: "otp", variables_values: code, numbers: phone }),
-      });
-      if (!r.ok) { console.error("SMS failed", r.status, await r.text()); return false; }
-      return true;
-    }
-    if (s.provider === "custom" && s.url_template) {
-      const url = s.url_template.replace("{phone}", encodeURIComponent(phone)).replace("{otp}", code);
-      const r = await fetch(url);
-      if (!r.ok) { console.error("SMS failed", r.status, await r.text()); return false; }
-      return true;
-    }
+    const r = await sendOtpVia(s, phone, code);
+    if (!r.ok) console.error("SMS failed", r.status, r.body);
+    return r.ok;
   } catch (e) { console.error("SMS error", e); }
   return false;
 }

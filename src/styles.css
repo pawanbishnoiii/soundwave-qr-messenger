@@ -240,3 +240,30 @@
   .journey-stop { margin-left: -44px; }
   .journey-copy h3 { font-size: 1.6rem; overflow-wrap: anywhere; }
 }
+
+/* Rider app: its own phone-first dark theme, separate from the main website */
+.rider-app {
+  --background: oklch(0.17 0.025 200);
+  --foreground: oklch(0.97 0.01 150);
+  --card: oklch(0.22 0.03 200);
+  --card-foreground: var(--foreground);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
+  --primary: oklch(0.87 0.2 128);
+  --primary-foreground: oklch(0.2 0.04 200);
+  --secondary: oklch(0.28 0.035 200);
+  --secondary-foreground: var(--foreground);
+  --muted: oklch(0.26 0.03 200);
+  --muted-foreground: oklch(0.72 0.03 190);
+  --accent: oklch(0.3 0.05 190);
+  --accent-foreground: var(--foreground);
+  --border: oklch(0.32 0.03 200);
+  --input: var(--border);
+  --ring: var(--primary);
+  --font-sans: "Sora", ui-sans-serif, system-ui, sans-serif;
+  font-family: "Sora", ui-sans-serif, system-ui, sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+}
+@keyframes sheet-up { from { transform: translateY(100%); } to { transform: none; } }
+@utility animate-sheet-up { animation: sheet-up 0.32s cubic-bezier(0.2, 0.9, 0.3, 1); }

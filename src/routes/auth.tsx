@@ -41,6 +41,7 @@ function AuthPage() {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState<"male" | "female" | "other" | "">("");
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => { if (data.user) navigate({ to: "/dashboard", replace: true }); });
@@ -55,7 +56,7 @@ function AuthPage() {
   }
 
   async function finish(withProfile: boolean) {
-    const r = await verify({ data: { phone, otp, ...(withProfile ? { name, age: Number(age), gender: gender as "male" } : {}) } });
+    const r = await verify({ data: { phone, otp, ...(withProfile ? { name, age: Number(age), gender: gender as "male", contactEmail: email.trim() } : {}) } });
     if (r.error) throw new Error(r.error);
     if (r.needsProfile) { setStep("profile"); return; }
     const { error } = await supabase.auth.verifyOtp({ token_hash: r.tokenHash!, type: "magiclink" });
@@ -78,6 +79,7 @@ function AuthPage() {
         const a = Number(age);
         if (!Number.isInteger(a) || a < 14 || a > 100) throw new Error("Enter a valid age (14–100)");
         if (!gender) throw new Error("Select your gender");
+        if (email.trim() && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim())) throw new Error("Enter a valid email or leave it empty");
         await finish(true);
       }
     } catch (err) {
@@ -161,6 +163,10 @@ function AuthPage() {
                       ))}
                     </div>
                   </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="email">Email <span className="font-normal text-muted-foreground">(optional · for order updates)</span></Label>
+                  <Input id="email" type="email" autoComplete="email" maxLength={200} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="h-11" />
                 </div>
               </>
             )}

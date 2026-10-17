@@ -15,12 +15,13 @@ const ADMIN: Role[] = ["admin"];
 const GROUPS = [
   { title: "Operations", items: [
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, roles: ALL },
-    { to: "/jobs", label: "Jobs", icon: ListChecks, roles: ALL },
+    { to: "/jobs", label: "Jobs", icon: ListChecks, roles: LEADS },
     { to: "/shipments", label: "Shipments", icon: Package, roles: ALL },
     { to: "/scan", label: "Scan", icon: ScanLine, roles: ALL },
-    { to: "/lots", label: "Lots", icon: Layers, roles: ALL },
+    { to: "/lots", label: "Lots & sorting", icon: Layers, roles: LEADS },
     { to: "/returns", label: "Returns", icon: Undo2, roles: ALL },
     { to: "/cash", label: "Cash handovers", icon: Banknote, roles: ALL },
+    { to: "/wallet", label: "My wallet", icon: Wallet, roles: ["rider"] as Role[] },
   ] },
   { title: "Analytics & warehouse", items: [
     { to: "/hubs", label: "Hub network", icon: MapPin, roles: LEADS },

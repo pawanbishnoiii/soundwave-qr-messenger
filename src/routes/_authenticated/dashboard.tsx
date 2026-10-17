@@ -1,7 +1,7 @@
 import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Package, Truck, CheckCircle2, IndianRupee, ScanLine, Plus, Users, Eye, Banknote, Building2, Route as RouteIcon, Sparkles, Store, Undo2, ListChecks } from "lucide-react";
+import { Package, Truck, CheckCircle2, IndianRupee, ScanLine, Plus, Users, Eye, Banknote, Building2, Route as RouteIcon, Sparkles, Store, Undo2 } from "lucide-react";
 import { Reveal, CountUp } from "@/components/motion";
 import { selectCls } from "@/lib/ui";
 import heroAdmin from "@/assets/bnoy-operations.webp";

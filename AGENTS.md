@@ -26,3 +26,4 @@
 - GSAP plugins are registered only behind `typeof window !== "undefined"` — why: module-scope registration starts a timer, which the Worker runtime forbids and crashes every published page.
 - Migrations must pass `bun run check:migrations` (no drop/truncate/re-create of baseline tables) — why: the empty baseline must never wipe the 27 existing tables.
 - AI Gateway JSON calls go through `src/lib/ai-gateway.server.ts` (dynamically imported inside handlers) — why: one streaming + error-handling path.
+- Riders may deliver only parcels already in their bucket (out_for_delivery) and cannot mark returns except via OTP cancel; enforced by the `rider_bucket_guard` trigger — why: the UI flow alone can be bypassed.

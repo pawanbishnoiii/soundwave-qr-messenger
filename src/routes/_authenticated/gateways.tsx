@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useMe } from "@/lib/auth";
 import { pageHead } from "@/lib/seo";
-import { testRazorpay, testSmsGateway } from "@/lib/gateways.functions";
+import { testRazorpay, testSmsGateway, testStripe } from "@/lib/gateways.functions";
 
 export const Route = createFileRoute("/_authenticated/gateways")({
   head: () => pageHead("Gateways — SMS, email & payments", "Connect an SMS gateway, SMTP mailbox and Razorpay for your logistics workspace."),
@@ -47,10 +47,10 @@ function Field({ label, value, onChange, type = "text", placeholder }: { label: 
 function Gateways() {
   const { role } = useMe();
   const qc = useQueryClient();
-  const sms = useSetting("sms"), smtp = useSetting("smtp"), rzp = useSetting("razorpay");
+  const sms = useSetting("sms"), smtp = useSetting("smtp"), rzp = useSetting("razorpay"), stripe = useSetting("stripe"), paytm = useSetting("paytm");
   const [busy, setBusy] = useState<string | null>(null);
   const [testPhone, setTestPhone] = useState("");
-  const tSms = useServerFn(testSmsGateway), tRzp = useServerFn(testRazorpay);
+  const tSms = useServerFn(testSmsGateway), tRzp = useServerFn(testRazorpay), tStripe = useServerFn(testStripe);
 
   if (role && role !== "admin") return <AppShell title="Gateways"><p className="text-sm text-muted-foreground">Only admins can manage gateways.</p></AppShell>;
 
@@ -70,11 +70,12 @@ function Gateways() {
       <p className="mb-6 max-w-2xl text-sm text-muted-foreground">Until an SMS gateway is turned on, login and tracking codes are shown on screen. Settings are visible to admins only.</p>
       <div className="grid gap-6 lg:grid-cols-2">
         <Card icon={<MessageSquareText className="size-4 text-primary" />} title="SMS gateway (OTP)" status={!!sms.v.enabled}>
-          <div className="grid grid-cols-2 gap-2">
-            {(["fast2sms", "custom"] as const).map((p) => (
-              <button key={p} type="button" onClick={() => sms.setV({ ...sms.v, provider: p })} className={`h-10 rounded-md border text-sm ${sms.v.provider === p ? "border-primary bg-primary text-primary-foreground" : "hover:bg-muted"}`}>{p === "fast2sms" ? "Fast2SMS" : "Custom URL"}</button>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {([["fast2sms", "Fast2SMS"], ["2factor", "2Factor"], ["msg91", "MSG91"], ["custom", "Custom URL"]] as const).map(([p, l]) => (
+              <button key={p} type="button" onClick={() => sms.setV({ ...sms.v, provider: p })} className={`h-10 rounded-md border text-sm ${sms.v.provider === p ? "border-primary bg-primary text-primary-foreground" : "hover:bg-muted"}`}>{l}</button>
             ))}
           </div>
+          {(sms.v.provider === "msg91" || sms.v.provider === "2factor") && <Field label={sms.v.provider === "msg91" ? "OTP template ID" : "Template name (optional)"} value={sms.v.template_id} onChange={(x) => sms.setV({ ...sms.v, template_id: x })} />}
           {sms.v.provider === "custom"
             ? <Field label="Request URL" value={sms.v.url_template} onChange={(x) => sms.setV({ ...sms.v, url_template: x })} placeholder="https://api.example.com/send?to={phone}&otp={otp}&key=..." />
             : <Field label="API key" type="password" value={sms.v.api_key} onChange={(x) => sms.setV({ ...sms.v, api_key: x })} />}
@@ -109,6 +110,22 @@ function Gateways() {
             <Button onClick={() => save("razorpay", rzp.v)} disabled={busy === "razorpay"}>{busy === "razorpay" && <Loader2 className="animate-spin" />}Save</Button>
             <Button variant="outline" disabled={busy === "trzp"} onClick={() => test(() => tRzp(), "trzp")}><PlugZap />Check keys</Button>
           </div>
+        </Card>
+
+        <Card icon={<CreditCard className="size-4 text-primary" />} title="Stripe payments" status={!!stripe.v.publishable_key && !!stripe.v.secret_key}>
+          <Field label="Publishable key" value={stripe.v.publishable_key} onChange={(x) => stripe.setV({ ...stripe.v, publishable_key: x })} placeholder="pk_live_..." />
+          <Field label="Secret key" type="password" value={stripe.v.secret_key} onChange={(x) => stripe.setV({ ...stripe.v, secret_key: x })} placeholder="sk_live_..." />
+          <div className="flex gap-2">
+            <Button onClick={() => save("stripe", stripe.v)} disabled={busy === "stripe"}>{busy === "stripe" && <Loader2 className="animate-spin" />}Save</Button>
+            <Button variant="outline" disabled={busy === "tstripe"} onClick={() => test(() => tStripe(), "tstripe")}><PlugZap />Check keys</Button>
+          </div>
+        </Card>
+
+        <Card icon={<CreditCard className="size-4 text-primary" />} title="Paytm payments" status={!!paytm.v.merchant_id && !!paytm.v.merchant_key}>
+          <Field label="Merchant ID (MID)" value={paytm.v.merchant_id} onChange={(x) => paytm.setV({ ...paytm.v, merchant_id: x })} />
+          <Field label="Merchant key" type="password" value={paytm.v.merchant_key} onChange={(x) => paytm.setV({ ...paytm.v, merchant_key: x })} />
+          <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!!paytm.v.production} onChange={(e) => paytm.setV({ ...paytm.v, production: e.target.checked })} /> Live mode (off = staging)</label>
+          <Button onClick={() => save("paytm", paytm.v)} disabled={busy === "paytm"}>{busy === "paytm" && <Loader2 className="animate-spin" />}Save</Button>
         </Card>
       </div>
     </AppShell>

@@ -626,24 +626,33 @@ export type Database = {
       payout_settings: {
         Row: {
           distributor_delivery: number
+          franchise_commission_pct: number
           id: number
+          manager_commission_pct: number
           manager_delivery: number
+          rider_cod_commission_pct: number
           rider_delivery: number
           rider_return: number
           updated_at: string
         }
         Insert: {
           distributor_delivery?: number
+          franchise_commission_pct?: number
           id?: number
+          manager_commission_pct?: number
           manager_delivery?: number
+          rider_cod_commission_pct?: number
           rider_delivery?: number
           rider_return?: number
           updated_at?: string
         }
         Update: {
           distributor_delivery?: number
+          franchise_commission_pct?: number
           id?: number
+          manager_commission_pct?: number
           manager_delivery?: number
+          rider_cod_commission_pct?: number
           rider_delivery?: number
           rider_return?: number
           updated_at?: string

@@ -29,6 +29,13 @@
       "when": 1792203829894,
       "tag": "0003_providers_admin_only_read",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792205091881,
+      "tag": "0004_rider_bucket_guard_commissions",
+      "breakpoints": true
     }
   ]
 }

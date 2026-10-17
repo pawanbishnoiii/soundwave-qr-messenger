@@ -57,13 +57,14 @@ export const ROLE_LABEL: Record<AppRole, string> = {
   distributor: "Distributor",
   manager: "Manager",
   rider: "Rider",
+  warehouse: "Warehouse",
 };
 
-export const ROLE_RANK: Record<AppRole, number> = { admin: 4, distributor: 3, manager: 2, rider: 1 };
+export const ROLE_RANK: Record<AppRole, number> = { admin: 5, distributor: 3, manager: 2, rider: 1, warehouse: 1 };
 
 /** Roles a user of `role` is allowed to create under themselves / their team. */
 export function creatableRoles(role: AppRole | null | undefined): AppRole[] {
-  if (role === "admin") return ["distributor", "manager", "rider", "admin"];
+  if (role === "admin") return ["distributor", "manager", "rider", "warehouse", "admin"];
   if (role === "distributor") return ["manager", "rider"];
   if (role === "manager") return ["rider"];
   return [];

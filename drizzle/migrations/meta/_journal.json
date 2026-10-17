@@ -15,6 +15,20 @@
       "when": 1792216781733,
       "tag": "0001_return_guard_stop_order",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792218271954,
+      "tag": "0002_add_warehouse_role",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792218296916,
+      "tag": "0003_warehouse_tables_profile_address_cod_settlement",
+      "breakpoints": true
     }
   ]
 }

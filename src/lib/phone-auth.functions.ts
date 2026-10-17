@@ -52,6 +52,11 @@ const verifySchema = z.object({
   age: z.number().int().min(14).max(100).optional(),
   gender: z.enum(["male", "female", "other"]).optional(),
   contactEmail: z.string().trim().email().max(200).optional().or(z.literal("")),
+  address: z.string().trim().max(300).optional(),
+  state: z.string().trim().max(80).optional(),
+  district: z.string().trim().max(80).optional(),
+  pincode: z.string().trim().regex(/^[0-9]{6}$/).optional().or(z.literal("")),
+  password: z.string().min(6).max(72).optional(),
 });
 
 /** Step 2: verify code; new numbers must include name, age and gender. Returns a token hash for verifyOtp. */
@@ -75,20 +80,27 @@ export const verifyPhoneOtp = createServerFn({ method: "POST" })
       const { data: u } = await sb.auth.admin.getUserById(prof.id);
       if (u?.user?.email) email = u.user.email;
     } else {
-      if (!data.name || !data.age || !data.gender) return { error: null, needsProfile: true, tokenHash: null };
+      if (!data.name || !data.age || !data.gender || !data.contactEmail || !data.password) return { error: null, needsProfile: true, tokenHash: null };
       const { data: c, error } = await sb.auth.admin.createUser({
-        email, password: crypto.randomUUID() + "Aa1!", email_confirm: true,
+        email, password: data.password, email_confirm: true,
         user_metadata: { full_name: data.name, phone: full, age: data.age, gender: data.gender },
       });
       if (error && !/already/i.test(error.message)) return { error: error.message, needsProfile: false, tokenHash: null };
-      if (c?.user) await sb.from("profiles").update({ full_name: data.name, phone: full, age: data.age, gender: data.gender, email: data.contactEmail || null }).eq("id", c.user.id);
+      if (c?.user) await sb.from("profiles").update({
+        full_name: data.name, phone: full, age: data.age, gender: data.gender, email: data.contactEmail,
+        address: data.address || null, state: data.state || null, district: data.district || null, pincode: data.pincode || null,
+      }).eq("id", c.user.id);
     }
     await sb.from("phone_otps").update({ used: true }).eq("id", row.id);
     const { data: link, error } = await sb.auth.admin.generateLink({ type: "magiclink", email });
     if (error || !link?.properties?.hashed_token) return { error: error?.message ?? "Could not sign in", needsProfile: false, tokenHash: null };
     // Recover accounts whose profile row was missing
     if (link.user && !prof) {
-      await sb.from("profiles").upsert({ id: link.user.id, full_name: data.name ?? "", phone: full, age: data.age ?? null, gender: data.gender ?? null });
+      await sb.from("profiles").upsert({
+        id: link.user.id, full_name: data.name ?? "", phone: full, age: data.age ?? null, gender: data.gender ?? null,
+        email: data.contactEmail || null, address: data.address || null, state: data.state || null,
+        district: data.district || null, pincode: data.pincode || null,
+      });
     }
     return { error: null, needsProfile: false, tokenHash: link.properties.hashed_token };
   });

@@ -119,6 +119,7 @@ export type Database = {
           mismatch_note: string | null
           received_amount: number | null
           resolved_at: string | null
+          settled_at: string | null
           shipment_count: number
           stage: string
           status: string
@@ -133,6 +134,7 @@ export type Database = {
           mismatch_note?: string | null
           received_amount?: number | null
           resolved_at?: string | null
+          settled_at?: string | null
           shipment_count?: number
           stage: string
           status?: string
@@ -147,6 +149,7 @@ export type Database = {
           mismatch_note?: string | null
           received_amount?: number | null
           resolved_at?: string | null
+          settled_at?: string | null
           shipment_count?: number
           stage?: string
           status?: string
@@ -785,34 +788,46 @@ export type Database = {
       }
       profiles: {
         Row: {
+          address: string | null
           age: number | null
           created_at: string
+          district: string | null
           email: string | null
           full_name: string
           gender: string | null
           id: string
           parent_id: string | null
           phone: string | null
+          pincode: string | null
+          state: string | null
         }
         Insert: {
+          address?: string | null
           age?: number | null
           created_at?: string
+          district?: string | null
           email?: string | null
           full_name?: string
           gender?: string | null
           id: string
           parent_id?: string | null
           phone?: string | null
+          pincode?: string | null
+          state?: string | null
         }
         Update: {
+          address?: string | null
           age?: number | null
           created_at?: string
+          district?: string | null
           email?: string | null
           full_name?: string
           gender?: string | null
           id?: string
           parent_id?: string | null
           phone?: string | null
+          pincode?: string | null
+          state?: string | null
         }
         Relationships: [
           {
@@ -1647,6 +1662,170 @@ export type Database = {
           },
         ]
       }
+      wh_bag_items: {
+        Row: {
+          bag_id: string
+          created_at: string
+          id: string
+          product_id: string | null
+          qty: number
+          shipment_id: string | null
+        }
+        Insert: {
+          bag_id: string
+          created_at?: string
+          id?: string
+          product_id?: string | null
+          qty?: number
+          shipment_id?: string | null
+        }
+        Update: {
+          bag_id?: string
+          created_at?: string
+          id?: string
+          product_id?: string | null
+          qty?: number
+          shipment_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wh_bag_items_bag_id_fkey"
+            columns: ["bag_id"]
+            isOneToOne: false
+            referencedRelation: "wh_bags"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wh_bag_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "wh_products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wh_bag_items_shipment_id_fkey"
+            columns: ["shipment_id"]
+            isOneToOne: false
+            referencedRelation: "shipments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wh_bags: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string | null
+          destination: string
+          dispatched_at: string | null
+          hub_id: string | null
+          id: string
+          kind: string
+          pincode: string | null
+          sealed_at: string | null
+          status: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by?: string | null
+          destination: string
+          dispatched_at?: string | null
+          hub_id?: string | null
+          id?: string
+          kind?: string
+          pincode?: string | null
+          sealed_at?: string | null
+          status?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          destination?: string
+          dispatched_at?: string | null
+          hub_id?: string | null
+          id?: string
+          kind?: string
+          pincode?: string | null
+          sealed_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wh_bags_hub_id_fkey"
+            columns: ["hub_id"]
+            isOneToOne: false
+            referencedRelation: "hubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wh_locations: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          name: string
+          pincode: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          name: string
+          pincode?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          name?: string
+          pincode?: string | null
+        }
+        Relationships: []
+      }
+      wh_products: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          location_id: string | null
+          name: string
+          quantity: number
+          sku: string
+          weight_kg: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          location_id?: string | null
+          name: string
+          quantity?: number
+          sku: string
+          weight_kg?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          location_id?: string | null
+          name?: string
+          quantity?: number
+          sku?: string
+          weight_kg?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wh_products_location_fk"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "wh_locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -1892,6 +2071,7 @@ export type Database = {
           mismatch_note: string | null
           received_amount: number | null
           resolved_at: string | null
+          settled_at: string | null
           shipment_count: number
           stage: string
           status: string
@@ -1940,6 +2120,7 @@ export type Database = {
           mismatch_note: string | null
           received_amount: number | null
           resolved_at: string | null
+          settled_at: string | null
           shipment_count: number
           stage: string
           status: string
@@ -1956,7 +2137,7 @@ export type Database = {
       track_with_otp: { Args: { _code: string; _otp: string }; Returns: Json }
     }
     Enums: {
-      app_role: "admin" | "distributor" | "manager" | "rider"
+      app_role: "admin" | "distributor" | "manager" | "rider" | "warehouse"
       shipment_status:
         | "created"
         | "pickup_scheduled"
@@ -2099,7 +2280,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "distributor", "manager", "rider"],
+      app_role: ["admin", "distributor", "manager", "rider", "warehouse"],
       shipment_status: [
         "created",
         "pickup_scheduled",

@@ -51,6 +51,7 @@ const verifySchema = z.object({
   name: z.string().trim().min(2).max(120).optional(),
   age: z.number().int().min(14).max(100).optional(),
   gender: z.enum(["male", "female", "other"]).optional(),
+  contactEmail: z.string().trim().email().max(200).optional().or(z.literal("")),
 });
 
 /** Step 2: verify code; new numbers must include name, age and gender. Returns a token hash for verifyOtp. */
@@ -80,7 +81,7 @@ export const verifyPhoneOtp = createServerFn({ method: "POST" })
         user_metadata: { full_name: data.name, phone: full, age: data.age, gender: data.gender },
       });
       if (error && !/already/i.test(error.message)) return { error: error.message, needsProfile: false, tokenHash: null };
-      if (c?.user) await sb.from("profiles").update({ full_name: data.name, phone: full, age: data.age, gender: data.gender }).eq("id", c.user.id);
+      if (c?.user) await sb.from("profiles").update({ full_name: data.name, phone: full, age: data.age, gender: data.gender, email: data.contactEmail || null }).eq("id", c.user.id);
     }
     await sb.from("phone_otps").update({ used: true }).eq("id", row.id);
     const { data: link, error } = await sb.auth.admin.generateLink({ type: "magiclink", email });

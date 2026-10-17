@@ -18,7 +18,7 @@ export const Route = createFileRoute("/_authenticated/gateways")({
   component: Gateways,
 });
 
-type Settings = { [k: string]: string | boolean | undefined; enabled?: boolean; provider?: string; api_key?: string; url_template?: string; host?: string; port?: string; user?: string; password?: string; from_name?: string; key_id?: string; key_secret?: string };
+type Settings = { [k: string]: string | boolean | undefined; enabled?: boolean; provider?: string; api_key?: string; url_template?: string; host?: string; port?: string; user?: string; password?: string; from_name?: string; template_id?: string; publishable_key?: string; secret_key?: string; merchant_id?: string; merchant_key?: string; production?: boolean; key_id?: string; key_secret?: string };
 
 function useSetting(key: string) {
   const q = useQuery({ queryKey: ["app_settings", key], queryFn: async () => ((await supabase.from("app_settings").select("value").eq("key", key).maybeSingle()).data?.value ?? {}) as Settings });

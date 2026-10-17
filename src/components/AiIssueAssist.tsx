@@ -29,8 +29,8 @@ export function AiIssueAssist({ shipmentId }: { shipmentId: string }) {
 
   return (
     <section className="rounded-lg border bg-card p-5 shadow-card">
-      <h2 className="flex items-center gap-2 font-bold"><Sparkles className="h-4 w-4 text-primary" />AI delivery issue assist</h2>
-      <p className="mt-1 text-xs text-muted-foreground">Describe the problem. AI classifies it using this parcel's status and suggests the next step.</p>
+      <h2 className="flex items-center gap-2 font-bold"><Sparkles className="h-4 w-4 text-primary" />AI failed-delivery recovery</h2>
+      <p className="mt-1 text-xs text-muted-foreground">Enter the failed-delivery note. AI reads this parcel's tracking history, finds the likely cause and recommends a practical recovery action.</p>
       <form onSubmit={submit} className="mt-4 space-y-3">
         <Textarea value={text} onChange={(e) => setText(e.target.value)} rows={3} minLength={5} maxLength={2000} required placeholder="e.g. Customer not picking calls, shop was closed at the address" />
         <Button type="submit" disabled={busy || text.trim().length < 5}>{busy ? <Loader2 className="animate-spin" /> : <Sparkles />} Analyse issue</Button>

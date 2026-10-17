@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { useMe } from "@/lib/auth";
+import { useMe, useTeam } from "@/lib/auth";
+import { useShipments } from "@/lib/shipments";
 import { useBonuses, usePayoutSettings } from "@/lib/payouts";
 import { inr } from "@/lib/status";
 
@@ -23,6 +24,9 @@ const RATE_FIELDS = [
   { key: "rider_return", label: "Rider · per return collected" },
   { key: "manager_delivery", label: "Manager · per delivery in team" },
   { key: "distributor_delivery", label: "Distributor · per delivery in network" },
+  { key: "franchise_commission_pct", label: "Franchise commission · % of COD", pct: true },
+  { key: "manager_commission_pct", label: "Manager commission · % of COD", pct: true },
+  { key: "rider_cod_commission_pct", label: "Rider commission · % of COD", pct: true },
 ] as const;
 
 function Payouts() {
@@ -34,6 +38,15 @@ function Payouts() {
   const [rates, setRates] = useState<Record<string, string>>({});
   const [b, setB] = useState({ name: "", kind: "festival", rider_bonus: "5", manager_bonus: "0", distributor_bonus: "0", starts_on: "", ends_on: "" });
   const today = new Date().toISOString().slice(0, 10);
+  const { data: team = [] } = useTeam();
+  const { data: ships = [] } = useShipments();
+  const pct = (k: "franchise_commission_pct" | "manager_commission_pct") => Number(settings?.[k] ?? 0) / 100;
+  const franchise = team.filter((t) => t.role === "distributor" || t.role === "manager").map((t) => {
+    const mine = ships.filter((x) => (t.role === "distributor" ? x.distributor_id : x.manager_id) === t.id && x.status === "delivered");
+    const cod = mine.reduce((a, x) => a + Number(x.cod_amount), 0);
+    const pending = mine.filter((x) => !x.cod_handover_id).reduce((a, x) => a + Number(x.cod_amount), 0);
+    return { ...t, delivered: mine.length, cod, pending, commission: cod * pct(t.role === "distributor" ? "franchise_commission_pct" : "manager_commission_pct") };
+  });
 
   useEffect(() => {
     if (settings) setRates(Object.fromEntries(RATE_FIELDS.map((f) => [f.key, String(settings[f.key])])));
@@ -80,7 +93,7 @@ function Payouts() {
               <div key={f.key} className="grid grid-cols-[minmax(0,1fr)_120px] items-center gap-3">
                 <Label htmlFor={f.key}>{f.label}</Label>
                 <div className="relative">
-                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">₹</span>
+                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{"pct" in f ? "%" : "₹"}</span>
                   <Input id={f.key} type="number" min={0} step="0.5" className="pl-7" disabled={!admin} value={rates[f.key] ?? ""} onChange={(e) => setRates({ ...rates, [f.key]: e.target.value })} />
                 </div>
               </div>
@@ -128,6 +141,23 @@ function Payouts() {
           </ul>
         </section>
       </div>
+      {admin && (
+        <section className="mt-6 rounded-xl border bg-card p-6 shadow-card">
+          <h2 className="font-semibold">Franchise & manager cash</h2>
+          <p className="mt-1 text-sm text-muted-foreground">COD collected in each franchise (distributor) and manager team, cash not yet settled, and commission at the rates above.</p>
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="text-left text-xs uppercase text-muted-foreground"><tr><th className="py-2">Name</th><th>Role</th><th className="text-right">Delivered</th><th className="text-right">COD collected</th><th className="text-right">Not settled</th><th className="text-right">Commission</th></tr></thead>
+              <tbody className="divide-y">
+                {franchise.map((f) => (
+                  <tr key={f.id}><td className="py-2 font-medium">{f.full_name}</td><td className="capitalize">{f.role === "distributor" ? "Franchise" : "Manager"}</td><td className="text-right tabular">{f.delivered}</td><td className="text-right tabular">{inr(f.cod)}</td><td className="text-right tabular text-coral">{inr(f.pending)}</td><td className="text-right font-semibold tabular text-success">{inr(Math.round(f.commission))}</td></tr>
+                ))}
+                {franchise.length === 0 && <tr><td colSpan={6} className="py-4 text-muted-foreground">No franchises or managers yet.</td></tr>}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
     </AppShell>
   );
 }

@@ -11,7 +11,7 @@ import { Button } from "./ui/button";
 import { useMe } from "@/lib/auth";
 import { useShipments } from "@/lib/shipments";
 import { riderStats, useRatings, useWalletTxns } from "@/lib/rider";
-import { fmtDate, inr, type Shipment } from "@/lib/status";
+import { inr, type Shipment } from "@/lib/status";
 
 /** App-style home for riders: today's work, wallet, rating and accuracy. */
 export function RiderHome() {
@@ -22,11 +22,13 @@ export function RiderHome() {
   const { data: ratings = [] } = useRatings();
   const [deliver, setDeliver] = useState<Shipment | null>(null);
   const [cancel, setCancel] = useState<Shipment | null>(null);
-  const [tab, setTab] = useState<"todo" | "done">("todo");
+  const [tab, setTab] = useState<"bucket" | "load" | "done">("bucket");
   const [open, setOpen] = useState<string | null>(null);
   if (!user) return null;
   const st = riderStats(user.id, rows, txns, ratings);
-  const todo = rows.filter((s) => s.rider_id === user.id && ["assigned", "picked_up", "in_transit", "out_for_delivery"].includes(s.status));
+  const todo = rows.filter((s) => s.rider_id === user.id && ["assigned", "picked_up", "hub_received", "sorted", "in_transit", "out_for_delivery", "reattempt"].includes(s.status));
+  const bucket = todo.filter((s) => s.status === "out_for_delivery");
+  const toLoad = todo.filter((s) => s.status !== "out_for_delivery");
   const refresh = () => { qc.invalidateQueries({ queryKey: ["shipments"] }); qc.invalidateQueries({ queryKey: ["wallet"] }); };
 
   const tiles = [
@@ -37,7 +39,7 @@ export function RiderHome() {
   ];
 
   const done = rows.filter((s) => s.rider_id === user.id && ["delivered", "failed", "returned", "cancelled"].includes(s.status) && new Date(s.updated_at).toDateString() === new Date().toDateString());
-  const list = tab === "todo" ? todo : done;
+  const list = tab === "bucket" ? bucket : tab === "load" ? toLoad : done;
   const ordered = [...list].sort((a, b) => (a.route_seq ?? 999) - (b.route_seq ?? 999));
 
   return (
@@ -66,15 +68,18 @@ export function RiderHome() {
           {st.codPending > 0 && <Link data-reveal to="/cash" className="mt-3 flex items-center justify-between rounded-xl bg-lime px-3 py-2 text-sm font-semibold text-navy">Cash in hand {inr(st.codPending)} <span>Hand over →</span></Link>}
         </Reveal>
 
-        <div role="tablist" className="grid grid-cols-2 rounded-full border bg-card p-1 text-sm font-semibold">
-          {(["todo", "done"] as const).map((k) => (
-            <button key={k} role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={`rounded-full py-2 transition-colors ${tab === k ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>
-              {k === "todo" ? `My route (${todo.length})` : `Done today (${done.length})`}
-            </button>
+        <Link to="/scan" className="group flex items-center gap-4 rounded-3xl border-2 border-dashed border-primary/40 bg-accent/60 p-4 transition-colors hover:border-primary">
+          <span className="grid size-14 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-glow transition-transform group-hover:scale-105"><ScanLine className="size-7" /></span>
+          <span className="flex-1"><span className="block font-display text-lg font-bold">Scan parcel barcode</span><span className="text-sm text-muted-foreground">Load into your bucket, then deliver or cancel</span></span>
+        </Link>
+
+        <div role="tablist" className="grid grid-cols-3 rounded-full border bg-card p-1 text-xs font-semibold sm:text-sm">
+          {([["bucket", `In bucket (${bucket.length})`], ["load", `To load (${toLoad.length})`], ["done", `Done (${done.length})`]] as const).map(([k, l]) => (
+            <button key={k} role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={`rounded-full py-2 transition-colors ${tab === k ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>{l}</button>
           ))}
         </div>
 
-        {ordered.length === 0 && <p className="rounded-2xl border border-dashed bg-card p-8 text-center text-sm text-muted-foreground">{tab === "todo" ? "No parcels pending. Scan a label to pick one up." : "Nothing closed yet today."}</p>}
+        {ordered.length === 0 && <p className="rounded-2xl border border-dashed bg-card p-8 text-center text-sm text-muted-foreground">{tab === "bucket" ? "Bucket is empty. Scan a parcel barcode to load it before delivering." : tab === "load" ? "No parcels waiting to be loaded." : "Nothing closed yet today."}</p>}
         <Reveal as="ul" className="space-y-3" stagger={0.05}>
           {ordered.map((s, i) => {
             const isOpen = open === s.id;
@@ -95,7 +100,13 @@ export function RiderHome() {
                     </div>
                   </div>
                 </button>
-                {isOpen && tab === "todo" && (
+                {isOpen && tab === "load" && (
+                  <div className="grid gap-2 border-t bg-muted/30 p-3">
+                    <Button asChild size="sm" variant="hero"><Link to="/scan"><ScanLine /> Scan to load into bucket</Link></Button>
+                    <Button asChild variant="ghost" size="sm"><Link to="/shipments/$id" params={{ id: s.id }}>Full details</Link></Button>
+                  </div>
+                )}
+                {isOpen && tab === "bucket" && (
                   <div className="grid grid-cols-2 gap-2 border-t bg-muted/30 p-3">
                     <Button asChild variant="outline" size="sm"><a href={`tel:${s.receiver_phone}`}><Phone /> Call</a></Button>
                     <Button asChild variant="outline" size="sm"><a target="_blank" rel="noreferrer" href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${s.receiver_address}, ${s.city} ${s.pincode ?? ""}`)}`}><Navigation /> Navigate</a></Button>
@@ -109,15 +120,7 @@ export function RiderHome() {
           })}
         </Reveal>
 
-        <section className="rounded-2xl border bg-card p-4 shadow-card">
-          <h2 className="font-bold">Earnings</h2>
-          <ul className="mt-2 divide-y text-sm">
-            {txns.filter((t) => t.rider_id === user.id).slice(0, 8).map((t) => (
-              <li key={t.id} className="flex justify-between py-2"><span>{t.note ?? t.kind}<br /><span className="text-xs text-muted-foreground">{fmtDate(t.created_at)}</span></span><span className="font-semibold text-success">+{inr(Number(t.amount))}</span></li>
-            ))}
-            {!txns.some((t) => t.rider_id === user.id) && <li className="py-3 text-muted-foreground">Deliver parcels to start earning — credits appear here automatically.</li>}
-          </ul>
-        </section>
+        <Link to="/wallet" className="flex items-center justify-between rounded-2xl border bg-card p-4 shadow-card"><span className="flex items-center gap-2 font-semibold"><Wallet className="size-4 text-primary" />Wallet & earnings</span><span className="text-sm text-primary">{inr(st.wallet)} →</span></Link>
       </div>
       <Link to="/scan" aria-label="Scan parcel" className="fixed bottom-6 right-6 z-30 grid h-16 w-16 place-items-center rounded-full bg-primary text-primary-foreground shadow-card lg:hidden"><ScanLine className="h-7 w-7" /></Link>
       <OtpDialog shipment={deliver} onClose={() => setDeliver(null)} onDone={refresh} />

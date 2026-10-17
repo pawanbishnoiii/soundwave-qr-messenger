@@ -124,7 +124,7 @@ function Detail() {
             {s.notes && <p className="mt-4 rounded-lg bg-muted p-3 text-sm">{s.notes}</p>}
           </section>
 
-          {role === "admin" && <AiIssueAssist shipmentId={s.id} />}
+          {role && role !== "rider" && <AiIssueAssist shipmentId={s.id} />}
 
           <section className="rounded-lg border bg-card p-5 shadow-card">
             <h2 className="font-bold">Actions</h2>

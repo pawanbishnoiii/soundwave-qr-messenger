@@ -36,6 +36,7 @@ import { Route as AuthenticatedRidersRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedRoutePlannerRouteImport } from './routes/_authenticated/route-planner'
 import { Route as AuthenticatedScanRouteImport } from './routes/_authenticated/scan'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
+import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
 import { Route as DocsApiRouteImport } from './routes/docs.api'
 import { Route as DocsB2bRouteImport } from './routes/docs.b2b'
 import { Route as AuthenticatedShipmentsIndexRouteImport } from './routes/_authenticated/shipments.index'
@@ -182,6 +183,11 @@ const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
   path: '/team',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const DocsApiRoute = DocsApiRouteImport.update({
   id: '/docs/api',
   path: '/docs/api',
@@ -248,6 +254,7 @@ export interface FileRoutesByFullPath {
   '/route-planner': typeof AuthenticatedRoutePlannerRoute
   '/scan': typeof AuthenticatedScanRoute
   '/team': typeof AuthenticatedTeamRoute
+  '/wallet': typeof AuthenticatedWalletRoute
   '/docs/api': typeof DocsApiRoute
   '/docs/b2b': typeof DocsB2bRoute
   '/shipments/$id': typeof AuthenticatedShipmentsIdRoute
@@ -283,6 +290,7 @@ export interface FileRoutesByTo {
   '/route-planner': typeof AuthenticatedRoutePlannerRoute
   '/scan': typeof AuthenticatedScanRoute
   '/team': typeof AuthenticatedTeamRoute
+  '/wallet': typeof AuthenticatedWalletRoute
   '/docs/api': typeof DocsApiRoute
   '/docs/b2b': typeof DocsB2bRoute
   '/shipments/$id': typeof AuthenticatedShipmentsIdRoute
@@ -320,6 +328,7 @@ export interface FileRoutesById {
   '/_authenticated/route-planner': typeof AuthenticatedRoutePlannerRoute
   '/_authenticated/scan': typeof AuthenticatedScanRoute
   '/_authenticated/team': typeof AuthenticatedTeamRoute
+  '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/docs/api': typeof DocsApiRoute
   '/docs/b2b': typeof DocsB2bRoute
   '/_authenticated/shipments/$id': typeof AuthenticatedShipmentsIdRoute
@@ -357,6 +366,7 @@ export interface FileRouteTypes {
     | '/route-planner'
     | '/scan'
     | '/team'
+    | '/wallet'
     | '/docs/api'
     | '/docs/b2b'
     | '/shipments/$id'
@@ -392,6 +402,7 @@ export interface FileRouteTypes {
     | '/route-planner'
     | '/scan'
     | '/team'
+    | '/wallet'
     | '/docs/api'
     | '/docs/b2b'
     | '/shipments/$id'
@@ -428,6 +439,7 @@ export interface FileRouteTypes {
     | '/_authenticated/route-planner'
     | '/_authenticated/scan'
     | '/_authenticated/team'
+    | '/_authenticated/wallet'
     | '/docs/api'
     | '/docs/b2b'
     | '/_authenticated/shipments/$id'
@@ -643,6 +655,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTeamRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/wallet': {
+      id: '/_authenticated/wallet'
+      path: '/wallet'
+      fullPath: '/wallet'
+      preLoaderRoute: typeof AuthenticatedWalletRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/docs/api': {
       id: '/docs/api'
       path: '/docs/api'
@@ -716,6 +735,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedRoutePlannerRoute: typeof AuthenticatedRoutePlannerRoute
   AuthenticatedScanRoute: typeof AuthenticatedScanRoute
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRoute
+  AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
   AuthenticatedShipmentsIdRoute: typeof AuthenticatedShipmentsIdRoute
   AuthenticatedShipmentsIndexRoute: typeof AuthenticatedShipmentsIndexRoute
 }
@@ -741,6 +761,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedRoutePlannerRoute: AuthenticatedRoutePlannerRoute,
   AuthenticatedScanRoute: AuthenticatedScanRoute,
   AuthenticatedTeamRoute: AuthenticatedTeamRoute,
+  AuthenticatedWalletRoute: AuthenticatedWalletRoute,
   AuthenticatedShipmentsIdRoute: AuthenticatedShipmentsIdRoute,
   AuthenticatedShipmentsIndexRoute: AuthenticatedShipmentsIndexRoute,
 }

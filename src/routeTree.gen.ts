@@ -35,6 +35,7 @@ import { Route as AuthenticatedReturnsRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedRidersRouteImport } from './routes/_authenticated/riders'
 import { Route as AuthenticatedRoutePlannerRouteImport } from './routes/_authenticated/route-planner'
 import { Route as AuthenticatedScanRouteImport } from './routes/_authenticated/scan'
+import { Route as AuthenticatedStopPlannerRouteImport } from './routes/_authenticated/stop-planner'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
 import { Route as DocsApiRouteImport } from './routes/docs.api'
@@ -178,6 +179,12 @@ const AuthenticatedScanRoute = AuthenticatedScanRouteImport.update({
   path: '/scan',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedStopPlannerRoute =
+  AuthenticatedStopPlannerRouteImport.update({
+    id: '/stop-planner',
+    path: '/stop-planner',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
   id: '/team',
   path: '/team',
@@ -253,6 +260,7 @@ export interface FileRoutesByFullPath {
   '/riders': typeof AuthenticatedRidersRoute
   '/route-planner': typeof AuthenticatedRoutePlannerRoute
   '/scan': typeof AuthenticatedScanRoute
+  '/stop-planner': typeof AuthenticatedStopPlannerRoute
   '/team': typeof AuthenticatedTeamRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/docs/api': typeof DocsApiRoute
@@ -289,6 +297,7 @@ export interface FileRoutesByTo {
   '/riders': typeof AuthenticatedRidersRoute
   '/route-planner': typeof AuthenticatedRoutePlannerRoute
   '/scan': typeof AuthenticatedScanRoute
+  '/stop-planner': typeof AuthenticatedStopPlannerRoute
   '/team': typeof AuthenticatedTeamRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/docs/api': typeof DocsApiRoute
@@ -327,6 +336,7 @@ export interface FileRoutesById {
   '/_authenticated/riders': typeof AuthenticatedRidersRoute
   '/_authenticated/route-planner': typeof AuthenticatedRoutePlannerRoute
   '/_authenticated/scan': typeof AuthenticatedScanRoute
+  '/_authenticated/stop-planner': typeof AuthenticatedStopPlannerRoute
   '/_authenticated/team': typeof AuthenticatedTeamRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/docs/api': typeof DocsApiRoute
@@ -365,6 +375,7 @@ export interface FileRouteTypes {
     | '/riders'
     | '/route-planner'
     | '/scan'
+    | '/stop-planner'
     | '/team'
     | '/wallet'
     | '/docs/api'
@@ -401,6 +412,7 @@ export interface FileRouteTypes {
     | '/riders'
     | '/route-planner'
     | '/scan'
+    | '/stop-planner'
     | '/team'
     | '/wallet'
     | '/docs/api'
@@ -438,6 +450,7 @@ export interface FileRouteTypes {
     | '/_authenticated/riders'
     | '/_authenticated/route-planner'
     | '/_authenticated/scan'
+    | '/_authenticated/stop-planner'
     | '/_authenticated/team'
     | '/_authenticated/wallet'
     | '/docs/api'
@@ -648,6 +661,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedScanRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/stop-planner': {
+      id: '/_authenticated/stop-planner'
+      path: '/stop-planner'
+      fullPath: '/stop-planner'
+      preLoaderRoute: typeof AuthenticatedStopPlannerRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/team': {
       id: '/_authenticated/team'
       path: '/team'
@@ -734,6 +754,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedRidersRoute: typeof AuthenticatedRidersRoute
   AuthenticatedRoutePlannerRoute: typeof AuthenticatedRoutePlannerRoute
   AuthenticatedScanRoute: typeof AuthenticatedScanRoute
+  AuthenticatedStopPlannerRoute: typeof AuthenticatedStopPlannerRoute
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRoute
   AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
   AuthenticatedShipmentsIdRoute: typeof AuthenticatedShipmentsIdRoute
@@ -760,6 +781,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedRidersRoute: AuthenticatedRidersRoute,
   AuthenticatedRoutePlannerRoute: AuthenticatedRoutePlannerRoute,
   AuthenticatedScanRoute: AuthenticatedScanRoute,
+  AuthenticatedStopPlannerRoute: AuthenticatedStopPlannerRoute,
   AuthenticatedTeamRoute: AuthenticatedTeamRoute,
   AuthenticatedWalletRoute: AuthenticatedWalletRoute,
   AuthenticatedShipmentsIdRoute: AuthenticatedShipmentsIdRoute,

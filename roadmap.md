@@ -38,3 +38,13 @@
 - [x] Admin setup wizard; phone-only profiles (no placeholder email saved)
 - [x] Rider app redesign; new hero photo; OTP-verified /track, public tracking API removed
 - [ ] Real SMS for OTPs — needs SMS provider
+
+## Oct 17 big upgrade (plan approved)
+- [x] Separate phone-first rider app (/rider): own theme/font, bottom tabs, instant scan → parcel sheet, camera closes
+- [x] Returns blocked before a delivery attempt (database rule)
+- [x] Rule-based stop planner with risk flags, applies order to rider route
+- [ ] Warehouse role + sorting/packing/bags pages
+- [ ] Customer payment page (Razorpay/Stripe/Paytm) + confirmation
+- [ ] Email sending + admin "Send now"
+- [ ] Landing + tracking page upgrade, role menu cleanup, more libraries
+- [ ] Full role-by-role test

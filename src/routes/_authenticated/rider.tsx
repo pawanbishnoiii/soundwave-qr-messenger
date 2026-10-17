@@ -196,7 +196,7 @@ function ParcelSheet({ s, onClose }: { s: Shipment; onClose: () => void }) {
 
   async function move(to: "out_for_delivery" | "failed", failure?: string) {
     setBusy(true);
-    const { error } = await supabase.rpc("scan_transition", { _code: s.tracking_code, _to: to, _source: "rider_app", _failure: failure });
+    const { error } = await supabase.rpc("scan_transition", { _code: s.tracking_code, _to: to, _source: "rider_app", ...(failure ? { _failure: failure } : {}) });
     setBusy(false);
     if (error) { playError(); toast.error(error.message); return; }
     playSuccess(); setFailing(false);

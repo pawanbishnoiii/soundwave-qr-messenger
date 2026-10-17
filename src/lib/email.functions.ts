@@ -66,7 +66,7 @@ export const sendOutboxNow = createServerFn({ method: "POST" })
     for (const r of rows) {
       const s = r.shipment_id ? ship.get(r.shipment_id) : null;
       const t = s?.tracking_code ?? "", n = s?.receiver_name ?? "there", c = s?.city ?? "your city";
-      const tpl = (KIND[r.kind] ?? KIND.dispatched)(t, n, c);
+      const tpl = (KIND[r.kind] ?? KIND["dispatched"]!)(t, n, c);
       const origin = process.env["APP_ORIGIN"] ?? "https://sound-wave-scanner.lovable.app";
       const res = await sendSmtpEmail(cfg, r.to_email, tpl.subject, emailHtml(tpl.title, [tpl.line], t ? { label: "Track your parcel", url: `${origin}/track?code=${t}` } : undefined));
       if (res.ok) {

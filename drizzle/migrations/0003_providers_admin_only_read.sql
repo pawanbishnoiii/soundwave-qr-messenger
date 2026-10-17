@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "staff read providers" ON public.providers;

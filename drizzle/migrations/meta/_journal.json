@@ -43,6 +43,13 @@
       "when": 1792205278683,
       "tag": "0005_rider_guard_allow_otp_cancel",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792207613019,
+      "tag": "0006_payments_and_email_outbox",
+      "breakpoints": true
     }
   ]
 }

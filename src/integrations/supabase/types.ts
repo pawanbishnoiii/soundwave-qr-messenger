@@ -275,6 +275,50 @@ export type Database = {
           },
         ]
       }
+      email_outbox: {
+        Row: {
+          attempts: number
+          created_at: string
+          error: string | null
+          id: string
+          kind: string
+          sent_at: string | null
+          shipment_id: string | null
+          status: string
+          to_email: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          error?: string | null
+          id?: string
+          kind: string
+          sent_at?: string | null
+          shipment_id?: string | null
+          status?: string
+          to_email: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          error?: string | null
+          id?: string
+          kind?: string
+          sent_at?: string | null
+          shipment_id?: string | null
+          status?: string
+          to_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_outbox_shipment_id_fkey"
+            columns: ["shipment_id"]
+            isOneToOne: false
+            referencedRelation: "shipments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       finance_ledger: {
         Row: {
           amount: number
@@ -577,6 +621,56 @@ export type Database = {
           },
           {
             foreignKeyName: "partner_orders_shipment_id_fkey"
+            columns: ["shipment_id"]
+            isOneToOne: false
+            referencedRelation: "shipments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          error: string | null
+          gateway: string
+          gateway_order_id: string | null
+          gateway_payment_id: string | null
+          id: string
+          paid_at: string | null
+          shipment_id: string
+          status: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          error?: string | null
+          gateway: string
+          gateway_order_id?: string | null
+          gateway_payment_id?: string | null
+          id?: string
+          paid_at?: string | null
+          shipment_id: string
+          status?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          error?: string | null
+          gateway?: string
+          gateway_order_id?: string | null
+          gateway_payment_id?: string | null
+          id?: string
+          paid_at?: string | null
+          shipment_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_shipment_id_fkey"
             columns: ["shipment_id"]
             isOneToOne: false
             referencedRelation: "shipments"
@@ -1100,6 +1194,7 @@ export type Database = {
           pincode: string | null
           promised_by: string | null
           receiver_address: string
+          receiver_email: string | null
           receiver_name: string
           receiver_phone: string
           rider_id: string | null
@@ -1149,6 +1244,7 @@ export type Database = {
           pincode?: string | null
           promised_by?: string | null
           receiver_address: string
+          receiver_email?: string | null
           receiver_name: string
           receiver_phone: string
           rider_id?: string | null
@@ -1198,6 +1294,7 @@ export type Database = {
           pincode?: string | null
           promised_by?: string | null
           receiver_address?: string
+          receiver_email?: string | null
           receiver_name?: string
           receiver_phone?: string
           rider_id?: string | null
@@ -1597,6 +1694,7 @@ export type Database = {
           pincode: string | null
           promised_by: string | null
           receiver_address: string
+          receiver_email: string | null
           receiver_name: string
           receiver_phone: string
           rider_id: string | null
@@ -1659,6 +1757,7 @@ export type Database = {
           pincode: string | null
           promised_by: string | null
           receiver_address: string
+          receiver_email: string | null
           receiver_name: string
           receiver_phone: string
           rider_id: string | null
@@ -1734,6 +1833,7 @@ export type Database = {
           pincode: string | null
           promised_by: string | null
           receiver_address: string
+          receiver_email: string | null
           receiver_name: string
           receiver_phone: string
           rider_id: string | null

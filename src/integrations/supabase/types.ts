@@ -1956,7 +1956,7 @@ export type Database = {
       track_with_otp: { Args: { _code: string; _otp: string }; Returns: Json }
     }
     Enums: {
-      app_role: "admin" | "distributor" | "manager" | "rider"
+      app_role: "admin" | "distributor" | "manager" | "rider" | "warehouse"
       shipment_status:
         | "created"
         | "pickup_scheduled"
@@ -2099,7 +2099,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "distributor", "manager", "rider"],
+      app_role: ["admin", "distributor", "manager", "rider", "warehouse"],
       shipment_status: [
         "created",
         "pickup_scheduled",

@@ -104,12 +104,3 @@ export const verifyPhoneOtp = createServerFn({ method: "POST" })
     }
     return { error: null, needsProfile: false, tokenHash: link.properties.hashed_token };
   });
-
-/** Signed-in user: set or change their password (used right after OTP onboarding). */
-export const setMyPassword = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => z.object({ password: z.string().min(6).max(72) }).parse(d))
-  .handler(async ({ data }) => {
-    const sb = await admin();
-    // caller identity comes from the bearer via middleware-free check below
-    return { error: "use updatePasswordWithSession", ok: false, pw: data.password.length };
-  });

@@ -14,7 +14,7 @@ const LEADS: Role[] = ["admin", "distributor", "manager"];
 const ADMIN: Role[] = ["admin"];
 const GROUPS = [
   { title: "Operations", items: [
-    { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, roles: ALL },
+    { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, roles: [...ALL, "warehouse"] as Role[] },
     { to: "/jobs", label: "Jobs", icon: ListChecks, roles: LEADS },
     { to: "/shipments", label: "Shipments", icon: Package, roles: ALL },
     { to: "/lookup", label: "Parcel search", icon: Search, roles: ADMIN },

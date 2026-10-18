@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { Box, Camera, Lock, PackagePlus, Plus, Printer, ScanLine, Send, ShoppingBag } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +13,9 @@ import { QrScanner } from "@/components/QrScanner";
 import { Pill } from "@/components/CrudPage";
 import { useMe } from "@/lib/auth";
 import { pageHead } from "@/lib/seo";
+import { captureScanLocation } from "@/lib/location";
+import { LabelPhotoReader } from "@/components/LabelPhotoReader";
+import { ReceivingPanel } from "@/components/ReceivingPanel";
 
 export const Route = createFileRoute("/_authenticated/warehouse")({
   head: () => pageHead("Warehouse sorting & packing", "Scan products into stock, pack them into bags or boxes and print dispatch bills."),
@@ -27,6 +30,9 @@ function Warehouse() {
   const qc = useQueryClient();
   const [scan, setScan] = useState("");
   const [camera, setCamera] = useState(false);
+  const scanning = useRef(false);
+  const lastScan = useRef({ code: "", time: 0 });
+  const scanInput = useRef<HTMLInputElement>(null);
   const [name, setName] = useState("");
   const [bagId, setBagId] = useState<string | null>(null);
   const [dest, setDest] = useState(""); const [pin, setPin] = useState(""); const [kind, setKind] = useState<"bag" | "box">("bag");
@@ -46,6 +52,10 @@ function Warehouse() {
 
   async function handleCode(raw: string) {
     const code = raw.trim(); if (!code) return;
+    if (scanning.current || (lastScan.current.code === code && Date.now() - lastScan.current.time < 3000)) return;
+    scanning.current = true;
+    try {
+    await captureScanLocation();
     setScan("");
     if (bag) {
       if (bag.status !== "open") { toast.error("This bag is sealed"); return; }
@@ -54,21 +64,26 @@ function Warehouse() {
       if (!s && !prod) { toast.error(`No parcel or product with code ${code}`); return; }
       const { error } = await supabase.from("wh_bag_items").insert({ bag_id: bag.id, shipment_id: s?.id ?? null, product_id: prod?.id ?? null, qty: 1 });
       if (error) { toast.error(error.message); return; }
-      toast.success(`${s ? s.tracking_code : prod!.name} added to ${bag.code}`); refresh(); return;
+      toast.success(`${s ? s.tracking_code : prod?.name} added to ${bag.code}`); lastScan.current = { code, time: Date.now() }; refresh(); return;
     }
     const existing = q.data?.products.find((p) => p.sku === code);
     if (existing) {
       const { error } = await supabase.from("wh_products").update({ quantity: existing.quantity + 1 }).eq("id", existing.id);
       error ? toast.error(error.message) : toast.success(`${existing.name}: ${existing.quantity + 1} in stock`);
     } else {
-      const { error } = await supabase.from("wh_products").insert({ sku: code, name: name.trim() || `Product ${code}`, quantity: 1, created_by: user!.id });
+      if (!user) return;
+      const { error } = await supabase.from("wh_products").insert({ sku: code, name: name.trim() || `Product ${code}`, quantity: 1, created_by: user.id });
       error ? toast.error(error.message) : toast.success(`New product ${code} added`); setName("");
     }
     refresh();
+    } catch (error) { toast.error(error instanceof Error ? error.message : "Scan failed"); }
+    finally { scanning.current = false; scanInput.current?.focus(); }
   }
   async function createBag() {
+    if (!user) return;
+    if (!dest.trim()) { toast.error("Enter a destination before creating a bag"); return; }
     const code = `${kind === "bag" ? "BAG" : "BOX"}-${Date.now().toString(36).toUpperCase()}`;
-    const { data, error } = await supabase.from("wh_bags").insert({ code, kind, destination: dest.trim() || "Unassigned", pincode: pin || null, status: "open", created_by: user!.id }).select().single();
+    const { data, error } = await supabase.from("wh_bags").insert({ code, kind, destination: dest.trim(), pincode: pin || null, status: "open", created_by: user.id }).select().single();
     if (error) { toast.error(error.message); return; }
     toast.success(`${code} created — scan items into it`); setBagId(data.id); setDest(""); setPin(""); refresh();
   }
@@ -88,13 +103,16 @@ function Warehouse() {
         </div>
         <p className="mt-1 text-sm text-muted-foreground">{bag ? "Scan a parcel tracking barcode or product SKU to put it in this bag." : "Scan a product barcode/QR. A new code creates the product; a known code adds one more to stock."}</p>
         <form className="mt-4 flex flex-wrap gap-2" onSubmit={(e) => { e.preventDefault(); void handleCode(scan); }}>
-          <Input autoFocus aria-label="Barcode" placeholder="Scan or type barcode" value={scan} onChange={(e) => setScan(e.target.value)} className="h-11 max-w-xs font-mono" />
+          <Input ref={scanInput} autoFocus aria-label="Barcode" placeholder="Scan or type barcode" value={scan} onChange={(e) => setScan(e.target.value)} className="h-11 max-w-xs font-mono" />
           {!bag && <Input aria-label="Product name" placeholder="Product name (for new items)" value={name} onChange={(e) => setName(e.target.value)} className="h-11 max-w-xs" />}
           <Button type="submit" className="h-11"><Plus />Add</Button>
           <Button type="button" variant="outline" className="h-11" onClick={() => setCamera((c) => !c)}><Camera />{camera ? "Close camera" : "Camera"}</Button>
         </form>
-        {camera && <div className="mt-4 max-w-sm overflow-hidden rounded-xl"><QrScanner onScan={(c) => { setCamera(false); void handleCode(c); }} /></div>}
+        {camera && <div className="mt-4 max-w-sm overflow-hidden rounded-xl"><QrScanner onScan={(c) => { void handleCode(c); }} /></div>}
+        <div className="mt-5"><LabelPhotoReader onSelect={(code) => { setScan(code); scanInput.current?.focus(); }} /></div>
       </section>
+
+      <ReceivingPanel />
 
       <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
         <section className="space-y-2"><h2 className="flex items-center gap-2 font-display text-lg font-semibold"><PackagePlus className="size-5 text-primary" />Stock ({q.data?.products.length ?? 0})</h2>

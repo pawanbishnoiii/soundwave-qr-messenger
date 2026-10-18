@@ -60,4 +60,4 @@
 
 ## Remix setup (Oct 18)
 - [x] Update SMTP_APP_PASSWORD through the secure form
-- [ ] Clear copied migration files and scaffold an empty baseline without changing application tables or data
+- [x] Clear copied migration files and scaffold an empty baseline without changing application tables or data

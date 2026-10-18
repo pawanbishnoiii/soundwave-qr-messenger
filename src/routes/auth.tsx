@@ -59,6 +59,7 @@ function AuthPage() {
   async function sendCode() {
     if (!/^[6-9][0-9]{9}$/.test(phone)) throw new Error("Enter a valid 10-digit mobile number");
     const r = await request({ data: { phone } });
+    if (!r) throw new Error("Server did not respond — please try again");
     if (r.error) throw new Error(r.error);
     setDevCode(r.devCode); setIsNew(r.isNew); setOtp(""); setStep("otp");
     toast.success(r.sent ? `Code sent to +91 ${phone}` : "Code generated — shown on screen until SMS is connected");
@@ -83,6 +84,7 @@ function AuthPage() {
         } : {}),
       },
     });
+    if (!r) throw new Error("Server did not respond — please try again");
     if (r.error) throw new Error(r.error);
     if (r.needsProfile) { setStep("profile"); return; }
     const { error } = await supabase.auth.verifyOtp({ token_hash: r.tokenHash!, type: "magiclink" });

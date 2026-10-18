@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { QrScanner } from "@/components/QrScanner";
 import { parseScanned } from "@/lib/shipments";
 import { playError, playSuccess, unlockAudio } from "@/lib/sound";
-import pickupImg from "@/assets/rider-store-pickup.jpg";
+import pickupImg from "@/assets/rider-hero.png";
 
 /** Daily pickup at the franchise store: scan many parcels in a row, each goes straight into the rider's bucket. */
 export function StorePickupCard() {
@@ -14,7 +14,7 @@ export function StorePickupCard() {
   return (
     <>
       <button onClick={() => { unlockAudio(); setOpen(true); }} className="relative block h-32 w-full overflow-hidden rounded-3xl text-left transition-transform active:scale-[0.98]">
-        <img src={pickupImg} alt="" loading="lazy" width={1024} height={640} className="absolute inset-0 h-full w-full object-cover" />
+        <img src={pickupImg} alt="" loading="lazy" className="absolute right-1 top-0 h-full w-36 object-contain" />
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
         <div className="relative flex h-full flex-col justify-center p-5">
           <Store className="h-6 w-6 text-primary" />

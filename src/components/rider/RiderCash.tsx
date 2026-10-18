@@ -8,7 +8,6 @@ import { Banknote, CheckCircle2, ChevronRight, KeyRound, Mail, UserRound, X } fr
 import { supabase } from "@/integrations/supabase/client";
 import { sendHandoverOtpEmail } from "@/lib/email.functions";
 import { inr } from "@/lib/status";
-import handoverImg from "@/assets/rider-cash-handover.jpg";
 
 type Receiver = { id: string; full_name: string; phone: string | null; role: string };
 type Handover = { id: string; code: string; expected_amount: number; status: string; shipment_count: number; created_at: string; to_user: string | null };
@@ -36,7 +35,6 @@ export function CashCard({ uid }: { uid: string }) {
   return (
     <>
       <button onClick={() => setOpen(true)} className="relative w-full overflow-hidden rounded-3xl border border-border bg-card text-left transition-transform active:scale-[0.98]">
-        <img src={handoverImg} alt="" loading="lazy" width={1024} height={640} className="h-28 w-full object-cover opacity-80" />
         <div className="flex items-center justify-between p-4">
           <span className="flex items-center gap-3">
             <span className="grid h-11 w-11 place-items-center rounded-2xl bg-primary/15 text-primary"><Banknote className="h-5 w-5" /></span>

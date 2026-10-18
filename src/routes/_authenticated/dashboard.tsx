@@ -7,7 +7,7 @@ import { selectCls } from "@/lib/ui";
 import heroAdmin from "@/assets/bnoy-operations.webp";
 import heroDist from "@/assets/bnoy-warehouse.webp";
 import heroMgr from "@/assets/bnoy-hub.webp";
-import heroRider from "@/assets/bnoy-rider.webp";
+import heroRider from "@/assets/rider-hero.png";
 import { AppShell } from "@/components/AppShell";
 import { SeedWorkspaceButton } from "@/components/SeedWorkspaceButton";
 import { SetupWizard } from "@/components/SetupWizard";

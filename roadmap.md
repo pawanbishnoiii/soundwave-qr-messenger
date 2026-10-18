@@ -48,3 +48,12 @@
 - [ ] Email sending + admin "Send now"
 - [ ] Landing + tracking page upgrade, role menu cleanup, more libraries
 - [ ] Full role-by-role test
+
+## Oct 18
+- [x] Staff Cash page shows handover code for riders
+- [x] Customer payment page /pay (Razorpay/Stripe/Paytm, test mode) + confirmation
+- [x] Warehouse page: scan products, bags/boxes, scan parcels in, seal, dispatch, print bill
+- [x] Tracking: free OpenStreetMap map + pay online button
+- [x] Gmail SMTP defaults + provider/port/security options
+- [x] Landing: pinned horizontal scroll reel, letter animation, magnetic buttons; replaced 2 branded photos
+- [ ] Deeper rider app redesign, admin parcel lookup by customer phone/location, full signed-in role test

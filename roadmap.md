@@ -61,3 +61,12 @@
 ## Remix setup (Oct 18)
 - [x] Update SMTP_APP_PASSWORD through the secure form
 - [x] Clear copied migration files and scaffold an empty baseline without changing application tables or data
+
+## Courier platform expansion (Oct 18)
+- [x] Connect Google Maps Platform
+- [ ] Research 31+ websites for franchise receiving and partner exchange practices
+- [ ] Admin login/map rules, Google-first fallback, mandatory location and scan GPS
+- [ ] Warehouse label-photo OCR without generative AI, destination rules, hands-free bags and bulk receipts
+- [ ] Live tracking, secure admin user-dashboard preview, 100+ demo parcels and expanded team
+- [ ] Rider clay-only imagery; landing section order and GSAP refinement
+- [ ] Database automation/jobs and signed-in checks across every existing role

@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { canLogin, type LoginMode } from "./auth-rules";
 
 export const phoneEmail = (phone: string) => `p${phone}@phone.bnoy.app`;
 
@@ -38,7 +39,8 @@ export const requestPhoneOtp = createServerFn({ method: "POST" })
     const { count } = await sb.from("phone_otps").select("id", { count: "exact", head: true })
       .eq("phone", data.phone).gt("created_at", new Date(Date.now() - 10 * 60_000).toISOString());
     if ((count ?? 0) >= 5) return { error: "Too many codes requested. Try again in 10 minutes.", devCode: null, isNew: false, sent: false };
-    const code = String(Math.floor(100000 + Math.random() * 900000));
+    const random = new Uint32Array(1); crypto.getRandomValues(random);
+    const code = String(100000 + (random[0] ?? 0) % 900000);
     await sb.from("phone_otps").insert({ phone: data.phone, code });
     const sent = await sendSms(sb, data.phone, code);
     const prof = await findProfile(sb, data.phone);
@@ -57,6 +59,7 @@ const verifySchema = z.object({
   district: z.string().trim().max(80).optional(),
   pincode: z.string().trim().regex(/^[0-9]{6}$/).optional().or(z.literal("")),
   password: z.string().min(6).max(72).optional(),
+  purpose: z.enum(["login", "signup", "recovery"]).default("login"),
 });
 
 /** Step 2: verify code; new numbers must include name, age and gender. Returns a token hash for verifyOtp. */
@@ -75,6 +78,9 @@ export const verifyPhoneOtp = createServerFn({ method: "POST" })
 
     const full = "+91" + data.phone;
     const prof = await findProfile(sb, data.phone);
+    const { data: policyRow } = await sb.from("app_settings").select("value").eq("key", "auth_policy").maybeSingle();
+    const currentPolicy = (policyRow?.value ?? {}) as { mode?: LoginMode };
+    if (prof && !canLogin(currentPolicy.mode ?? "both", "otp", data.purpose)) return { error: "One-time code login is disabled by your admin. Use your password.", needsProfile: false, tokenHash: null };
     let email = phoneEmail(data.phone);
     if (prof) {
       const { data: u } = await sb.auth.admin.getUserById(prof.id);
@@ -109,4 +115,24 @@ export const verifyPhoneOtp = createServerFn({ method: "POST" })
       });
     }
     return { error: null, needsProfile: false, tokenHash: link.properties.hashed_token };
+  });
+
+export const loginWithPhonePassword = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => z.object({ phone: z.string().regex(phoneRe), password: z.string().min(6).max(72) }).parse(input))
+  .handler(async ({ data }) => {
+    const sb = await admin();
+    const { data: row } = await sb.from("app_settings").select("value").eq("key", "auth_policy").maybeSingle();
+    const policy = (row?.value ?? {}) as { mode?: LoginMode };
+    if (!canLogin(policy.mode ?? "both", "password")) throw new Error("Password login is disabled. Use a one-time code.");
+    const profile = await findProfile(sb, data.phone);
+    if (!profile) throw new Error("Wrong number or password");
+    const { data: account } = await sb.auth.admin.getUserById(profile.id);
+    if (!account.user?.email) throw new Error("Wrong number or password");
+    const { createClient } = await import("@supabase/supabase-js");
+    const url = process.env['SUPABASE_URL']; const key = process.env['SUPABASE_PUBLISHABLE_KEY'];
+    if (!url || !key) throw new Error("Login connection unavailable");
+    const client = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+    const { data: result, error } = await client.auth.signInWithPassword({ email: account.user.email, password: data.password });
+    if (error || !result.session) throw new Error("Wrong number or password");
+    return { access_token: result.session.access_token, refresh_token: result.session.refresh_token };
   });

@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { DEMO_PARCEL_COUNT } from "./auth-rules";
 
 /** Demo team members. Each signs in with their number + demo OTP 1234. */
 export const DEMO_TEAM = [
@@ -8,6 +9,13 @@ export const DEMO_TEAM = [
   { phone: "9000000003", name: "Ravi Rider", role: "rider", parent: "9000000002" },
   { phone: "9000000004", name: "Sunil Rider", role: "rider", parent: "9000000002" },
   { phone: "9000000005", name: "Imran Rider", role: "rider", parent: "9000000001" },
+  { phone: "9000000006", name: "Meena Warehouse", role: "warehouse", parent: "9000000001" },
+  { phone: "9000000007", name: "Kavita Manager", role: "manager", parent: "9000000001" },
+  { phone: "9000000008", name: "Amit Rider", role: "rider", parent: "9000000007" },
+  { phone: "9000000009", name: "Pooja Warehouse", role: "warehouse", parent: "9000000007" },
+  { phone: "9000000010", name: "Anjali Distributor", role: "distributor", parent: null },
+  { phone: "9000000011", name: "Vikram Manager", role: "manager", parent: "9000000010" },
+  { phone: "9000000012", name: "Sandeep Rider", role: "rider", parent: "9000000011" },
 ] as const;
 
 const STATUSES = ["created", "assigned", "picked_up", "in_transit", "out_for_delivery", "delivered", "delivered", "failed", "returned"] as const;
@@ -53,7 +61,8 @@ export const seedDemoWorkspace = createServerFn({ method: "POST" })
     }
 
     const riders = DEMO_TEAM.filter((m) => m.role === "rider").map((m) => ids[m.phone]);
-    const rows = Array.from({ length: 40 }, () => {
+    const { count: existingDemo } = await supabaseAdmin.from("shipments").select("id", { count: "exact", head: true }).eq("is_demo", true).eq("created_by", userId);
+    const rows = Array.from({ length: Math.max(0, DEMO_PARCEL_COUNT - (existingDemo ?? 0)) }, () => {
       const status = pick(STATUSES);
       const rider = status === "created" ? null : pick(riders);
       const cod = Math.random() < 0.65 ? 100 + Math.floor(Math.random() * 30) * 50 : 0;
@@ -61,13 +70,15 @@ export const seedDemoWorkspace = createServerFn({ method: "POST" })
         sender_name: pick(SENDERS), sender_phone: "98" + String(Math.floor(Math.random() * 1e8)).padStart(8, "0"),
         receiver_name: pick(NAMES), receiver_phone: "9" + String(Math.floor(Math.random() * 1e9)).padStart(9, "0"),
         receiver_address: `${1 + Math.floor(Math.random() * 250)}, Ward ${1 + Math.floor(Math.random() * 30)}, Main Bazaar`,
-        city: pick(CITIES), pincode: "335" + String(Math.floor(Math.random() * 1000)).padStart(3, "0"),
+        city: pick(CITIES), pincode: "335001",
         weight_kg: Math.round((0.2 + Math.random() * 5) * 100) / 100, cod_amount: cod,
         cod_collected: status === "delivered" && Math.random() < 0.6,
         status, rider_id: rider, created_by: userId, is_demo: true, notes: "DEMO ORDER",
       };
     });
-    const { error } = await supabaseAdmin.from("shipments").insert(rows as never);
-    if (error) throw new Error(error.message);
+    if (rows.length) {
+      const { error } = await supabaseAdmin.from("shipments").insert(rows as never);
+      if (error) throw new Error(error.message);
+    }
     return { users: createdUsers, shipments: rows.length };
   });

@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { ArrowLeft, KeyRound, Loader2, Lock, MessageSquareText, ShieldCheck, Smartphone, UserRound } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
-import { phoneEmail, requestPhoneOtp, verifyPhoneOtp } from "@/lib/phone-auth.functions";
+import { loginWithPhonePassword, requestPhoneOtp, verifyPhoneOtp } from "@/lib/phone-auth.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,6 +36,7 @@ function AuthPage() {
   const navigate = useNavigate();
   const request = useServerFn(requestPhoneOtp);
   const verify = useServerFn(verifyPhoneOtp);
+  const passwordSignIn = useServerFn(loginWithPhonePassword);
   const [step, setStep] = useState<Step>("phone");
   const [mode, setMode] = useState<Mode>("otp");
   const [forgot, setForgot] = useState(false);
@@ -73,7 +74,8 @@ function AuthPage() {
   async function passwordLogin() {
     if (!/^[6-9][0-9]{9}$/.test(phone)) throw new Error("Enter a valid 10-digit mobile number");
     if (password.length < 6) throw new Error("Enter your password");
-    const { error } = await supabase.auth.signInWithPassword({ email: phoneEmail(phone), password });
+    const session = await passwordSignIn({ data: { phone, password } });
+    const { error } = await supabase.auth.setSession(session);
     if (error) throw new Error("Wrong number or password — or use the code option");
     toast.success("Signed in");
     navigate({ to: "/dashboard", replace: true });
@@ -82,7 +84,7 @@ function AuthPage() {
   async function finish(withProfile: boolean) {
     const r = await verify({
       data: {
-        phone, otp,
+        phone, otp, purpose: forgot ? "recovery" : withProfile ? "signup" : "login",
         ...(withProfile ? {
           name, age: Number(age), gender: gender as "male", contactEmail: email.trim(),
           address: address.trim(), state, district, pincode, ...(needPw ? { password } : {}),
@@ -92,7 +94,8 @@ function AuthPage() {
     if (!r) throw new Error("Server did not respond — please try again");
     if (r.error) throw new Error(r.error);
     if (r.needsProfile) { setStep("profile"); return; }
-    const { error } = await supabase.auth.verifyOtp({ token_hash: r.tokenHash!, type: "magiclink" });
+    if (!r.tokenHash) throw new Error("Sign-in could not be completed. Request a new code.");
+    const { error } = await supabase.auth.verifyOtp({ token_hash: r.tokenHash, type: "magiclink" });
     if (error) throw error;
     if (forgot) { setStep("newpw"); return; }
     toast.success(withProfile ? "Account created — welcome!" : "Signed in");

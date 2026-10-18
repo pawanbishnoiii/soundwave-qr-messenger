@@ -7,6 +7,7 @@ import { useMe } from "@/lib/auth";
 import { ROLE_LABEL } from "@/lib/status";
 import { Brand } from "./Brand";
 import { Button } from "./ui/button";
+import { ProfileCompletion } from "./ProfileCompletion";
 
 type Role = "admin" | "distributor" | "manager" | "rider";
 const ALL: Role[] = ["admin", "distributor", "manager", "rider"];
@@ -148,7 +149,7 @@ export function AppShell({ title, actions, children }: { title: string; actions?
             <Button asChild variant="hero" size="sm" className="mt-5"><Link to="/jobs">Open my jobs</Link></Button>
           </div>
         ) : (
-          children
+          <><ProfileCompletion />{children}</>
         )}
       </main>
 

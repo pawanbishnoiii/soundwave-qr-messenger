@@ -126,7 +126,7 @@ function TrackPage() {
             <Reveal stagger={0.05}>
               <div data-reveal className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
                 <div className="min-w-0">
-                  <p className="truncate font-mono text-lg font-bold">{t.tracking_code}</p>
+                  <button type="button" onClick={() => { navigator.clipboard.writeText(t.tracking_code); toast.success("Tracking number copied"); }} className="flex max-w-full items-center gap-2 font-mono text-lg font-bold" aria-label="Copy tracking number"><span className="truncate">{t.tracking_code}</span><Copy className="h-4 w-4 shrink-0 text-muted-foreground" /></button>
                   <p className="text-sm text-muted-foreground">For {t.receiver} · {t.city}</p>
                 </div>
                 <StatusBadge status={t.status} />
@@ -153,6 +153,15 @@ function TrackPage() {
               <Button variant="outline" className="mt-2" onClick={() => { setStep("code"); setT(null); setOtp(""); }}>Track another parcel</Button>
             </Reveal>
           )}
+        </div>
+        <div className="mx-auto mt-8 grid max-w-2xl gap-3 sm:grid-cols-3">
+          {[
+            { i: ShieldCheck, h: "Private by design", d: "Your parcel details show only after the code is confirmed." },
+            { i: Clock, h: "Updated every scan", d: "Each hub and rider scan adds a new step to the journey." },
+            { i: Headphones, h: "Need help?", d: "Share your tracking number with the seller or our support team." },
+          ].map(({ i: I, h, d }) => (
+            <div key={h} className="rounded-2xl border bg-card p-4"><I className="h-5 w-5 text-primary" /><p className="mt-2 text-sm font-semibold">{h}</p><p className="mt-1 text-xs text-muted-foreground">{d}</p></div>
+          ))}
         </div>
       </main>
     </PublicShell>

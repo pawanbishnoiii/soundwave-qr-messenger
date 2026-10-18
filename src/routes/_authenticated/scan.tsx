@@ -18,6 +18,7 @@ import { parseScanned } from "@/lib/shipments";
 import { playError, playSuccess, unlockAudio } from "@/lib/sound";
 import { selectCls } from "@/lib/ui";
 import { STATUS_META, type Shipment } from "@/lib/status";
+import { captureScanLocation } from "@/lib/location";
 
 
 export const Route = createFileRoute("/_authenticated/scan")({
@@ -69,6 +70,7 @@ function ScanPage() {
     last.current = { code, t: now };
     setBusy(true);
     try {
+      const fix = await captureScanLocation();
       if (isRider) {
         const clean = code.replace(/[^A-Z0-9-]/gi, "").toUpperCase();
         let { data: s } = await supabase.from("shipments").select("*").eq("tracking_code", clean).maybeSingle();
@@ -111,13 +113,9 @@ function ScanPage() {
             failure = window.prompt("Failure reason (e.g. Customer not reachable, Address incomplete)")?.trim() || null;
             if (!failure) throw new Error("Failure reason required");
           }
-          const pos = await new Promise<GeolocationPosition | null>((res) => {
-            if (!navigator.geolocation) return res(null);
-            navigator.geolocation.getCurrentPosition(res, () => res(null), { timeout: 2500, maximumAge: 120000 });
-          });
           const { data: u, error: ue } = await supabase.rpc("scan_transition", {
             _code: shipment.tracking_code, _to: mode, _source: "camera",
-            ...(pos ? { _lat: pos.coords.latitude, _lng: pos.coords.longitude } : {}),
+            _lat: fix.lat, _lng: fix.lng,
             ...(failure ? { _failure: failure } : {}),
           });
           if (ue) throw ue;
@@ -143,7 +141,8 @@ function ScanPage() {
     }
     setBusy(true);
     try {
-      const { data, error } = await supabase.rpc("scan_transition", { _code: active.tracking_code, _to: to, _source: "camera", ...(failure ? { _failure: failure } : {}) });
+      const fix = await captureScanLocation();
+      const { data, error } = await supabase.rpc("scan_transition", { _code: active.tracking_code, _to: to, _source: "camera", _lat: fix.lat, _lng: fix.lng, ...(failure ? { _failure: failure } : {}) });
       if (error) throw error;
       const sh = (data as unknown as { shipment: Shipment }).shipment;
       setActive(sh);

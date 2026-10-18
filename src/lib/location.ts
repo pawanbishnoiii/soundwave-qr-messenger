@@ -1,3 +1,4 @@
+import { supabase } from "@/integrations/supabase/client";
 export type ScanLocation = { lat: number; lng: number; accuracy: number; captured_at: string };
 
 export function validLocation(location: ScanLocation, now = Date.now()) {
@@ -19,4 +20,13 @@ export async function requireLocation(): Promise<ScanLocation> {
   const location = { lat: position.coords.latitude, lng: position.coords.longitude, accuracy: position.coords.accuracy, captured_at: new Date(position.timestamp).toISOString() };
   if (!validLocation(location)) throw new Error("Your location is outdated. Please try again.");
   return location;
+}
+
+export async function captureScanLocation() {
+  const fix = await requireLocation();
+  const { data, error: authError } = await supabase.auth.getUser();
+  if (authError || !data.user) throw new Error("Sign in required");
+  const { error } = await supabase.from("staff_locations").upsert({ user_id: data.user.id, ...fix });
+  if (error) throw new Error(error.message);
+  return fix;
 }

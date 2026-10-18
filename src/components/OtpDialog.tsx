@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { playError, playSuccess } from "@/lib/sound";
 import type { Shipment } from "@/lib/status";
+import { captureScanLocation } from "@/lib/location";
 
 /** Sends the (demo) OTP to the receiver and confirms delivery once it is entered. */
 export function OtpDialog({ shipment, onClose, onDone }: { shipment: Shipment | null; onClose: () => void; onDone?: (s: Shipment) => void }) {
@@ -32,11 +33,9 @@ export function OtpDialog({ shipment, onClose, onDone }: { shipment: Shipment | 
     e.preventDefault();
     if (!shipment) return;
     setBusy(true);
-    const pos = await new Promise<GeolocationPosition | null>((res) => {
-      if (!navigator.geolocation) return res(null);
-      navigator.geolocation.getCurrentPosition(res, () => res(null), { timeout: 4000, maximumAge: 60000 });
-    });
-    const { data, error } = await supabase.rpc("deliver_with_otp", { _id: shipment.id, _otp: otp, ...(pos ? { _lat: pos.coords.latitude, _lng: pos.coords.longitude } : {}) });
+    let fix;
+    try { fix = await captureScanLocation(); } catch (error) { setBusy(false); toast.error(error instanceof Error ? error.message : "Location required"); return; }
+    const { data, error } = await supabase.rpc("deliver_with_otp", { _id: shipment.id, _otp: otp, _lat: fix.lat, _lng: fix.lng });
     setBusy(false);
     if (error) { playError(); toast.error(error.message); return; }
     if (!data) { playError(); toast.error("Incorrect OTP"); return; }

@@ -19,6 +19,7 @@ import { STATUS_META, inr, type Shipment } from "@/lib/status";
 import { playError, playSuccess, unlockAudio } from "@/lib/sound";
 import { pageHead } from "@/lib/seo";
 import riderArt from "@/assets/rider-hero.png";
+import { captureScanLocation } from "@/lib/location";
 import { CashCard } from "@/components/rider/RiderCash";
 import { StorePickupCard } from "@/components/rider/StorePickup";
 
@@ -196,6 +197,7 @@ function ScanTab({ mine, all, onFound }: { mine: Shipment[]; all: Shipment[]; on
     if (busy) return;
     const code = parseScanned(text);
     setBusy(true);
+    try { await captureScanLocation(); } catch (error) { setBusy(false); toast.error(error instanceof Error ? error.message : "Location required"); return; }
     const own = mine.find((s) => s.tracking_code.toUpperCase() === code);
     if (own) { playSuccess(); onFound(own); return; }
     const { data, error } = await supabase.rpc("claim_shipment", { _code: code });
@@ -232,7 +234,9 @@ function ParcelSheet({ s, onClose }: { s: Shipment; onClose: () => void }) {
 
   async function move(to: "out_for_delivery" | "failed", failure?: string) {
     setBusy(true);
-    const { error } = await supabase.rpc("scan_transition", { _code: s.tracking_code, _to: to, _source: "rider_app", ...(failure ? { _failure: failure } : {}) });
+    let fix;
+    try { fix = await captureScanLocation(); } catch (error) { setBusy(false); toast.error(error instanceof Error ? error.message : "Location required"); return; }
+    const { error } = await supabase.rpc("scan_transition", { _code: s.tracking_code, _to: to, _source: "rider_app", _lat: fix.lat, _lng: fix.lng, ...(failure ? { _failure: failure } : {}) });
     setBusy(false);
     if (error) { playError(); toast.error(error.message); return; }
     playSuccess(); setFailing(false);

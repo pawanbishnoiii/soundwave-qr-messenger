@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { playError, playSuccess } from "@/lib/sound";
 import type { Shipment } from "@/lib/status";
+import { captureScanLocation } from "@/lib/location";
 
 /** Rider calls the customer and cancels only with the customer's OTP (demo: 1234). No wallet credit on cancel. */
 export function CancelOtpDialog({ shipment, onClose, onDone }: { shipment: Shipment | null; onClose: () => void; onDone?: () => void }) {
@@ -19,6 +20,7 @@ export function CancelOtpDialog({ shipment, onClose, onDone }: { shipment: Shipm
     e.preventDefault();
     if (!shipment) return;
     setBusy(true);
+    try { await captureScanLocation(); } catch (error) { setBusy(false); toast.error(error instanceof Error ? error.message : "Location required"); return; }
     const { data, error } = await supabase.rpc("cancel_with_otp", { _id: shipment.id, _otp: otp, _reason: reason.trim().slice(0, 300) });
     setBusy(false);
     if (error) { playError(); toast.error(error.message); return; }

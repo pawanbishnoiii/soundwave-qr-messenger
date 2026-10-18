@@ -8,6 +8,7 @@ import { Banknote, CheckCircle2, ChevronRight, KeyRound, Mail, UserRound, X } fr
 import { supabase } from "@/integrations/supabase/client";
 import { sendHandoverOtpEmail } from "@/lib/email.functions";
 import { inr } from "@/lib/status";
+import { captureScanLocation } from "@/lib/location";
 
 type Receiver = { id: string; full_name: string; phone: string | null; role: string };
 type Handover = { id: string; code: string; expected_amount: number; status: string; shipment_count: number; created_at: string; to_user: string | null };
@@ -68,6 +69,7 @@ function HandoverSheet({ uid, onClose }: { uid: string; onClose: () => void }) {
   async function start() {
     if (!to) { toast.error("Pick who is receiving the cash"); return; }
     setBusy(true);
+    try { await captureScanLocation(); } catch (error) { setBusy(false); toast.error(error instanceof Error ? error.message : "Location required"); return; }
     const { data: r, error } = await supabase.rpc("rider_start_handover", { _to: to });
     if (error) { setBusy(false); toast.error(error.message); return; }
     const id = (r as { id: string }).id;
@@ -79,6 +81,7 @@ function HandoverSheet({ uid, onClose }: { uid: string; onClose: () => void }) {
   }
   async function verify(id: string) {
     setBusy(true);
+    try { await captureScanLocation(); } catch (error) { setBusy(false); toast.error(error instanceof Error ? error.message : "Location required"); return; }
     const { data: ok, error } = await supabase.rpc("verify_handover_otp", { _id: id, _otp: otp });
     setBusy(false);
     if (error) { toast.error(error.message); return; }

@@ -68,7 +68,7 @@ function Warehouse() {
   }
   async function createBag() {
     const code = `${kind === "bag" ? "BAG" : "BOX"}-${Date.now().toString(36).toUpperCase()}`;
-    const { data, error } = await supabase.from("wh_bags").insert({ code, kind, destination: dest || null, pincode: pin || null, status: "open", created_by: user!.id }).select().single();
+    const { data, error } = await supabase.from("wh_bags").insert({ code, kind, destination: dest.trim() || "Unassigned", pincode: pin || null, status: "open", created_by: user!.id }).select().single();
     if (error) { toast.error(error.message); return; }
     toast.success(`${code} created — scan items into it`); setBagId(data.id); setDest(""); setPin(""); refresh();
   }

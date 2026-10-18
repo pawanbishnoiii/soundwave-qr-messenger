@@ -1,6 +1,6 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { LayoutDashboard, Package, ScanLine, Users, LogOut, Menu, X, Layers, Plug, Undo2, KeyRound, Trophy, ListChecks, Wallet, MapPin, Barcode, Building2, Truck, Store, Route as RouteIcon, Banknote, Sparkles, PlugZap } from "lucide-react";
+import { LayoutDashboard, Package, ScanLine, Users, LogOut, Menu, X, Layers, Plug, Undo2, KeyRound, Trophy, ListChecks, Wallet, MapPin, Barcode, Building2, Truck, Store, Route as RouteIcon, Banknote, Sparkles, PlugZap, Search } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMe } from "@/lib/auth";
@@ -14,9 +14,10 @@ const LEADS: Role[] = ["admin", "distributor", "manager"];
 const ADMIN: Role[] = ["admin"];
 const GROUPS = [
   { title: "Operations", items: [
-    { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, roles: ALL },
+    { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, roles: [...ALL, "warehouse"] as Role[] },
     { to: "/jobs", label: "Jobs", icon: ListChecks, roles: LEADS },
     { to: "/shipments", label: "Shipments", icon: Package, roles: ALL },
+    { to: "/lookup", label: "Parcel search", icon: Search, roles: ADMIN },
     { to: "/scan", label: "Scan", icon: ScanLine, roles: ALL },
     { to: "/lots", label: "Lots & sorting", icon: Layers, roles: LEADS },
     { to: "/returns", label: "Returns", icon: Undo2, roles: ALL },

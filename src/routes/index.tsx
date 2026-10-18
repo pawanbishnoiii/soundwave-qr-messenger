@@ -21,9 +21,9 @@ function Landing(){
   const mm=gsap.matchMedia();
   mm.add('(prefers-reduced-motion: no-preference)',()=>{
    gsap.from('[data-headline-line]',{yPercent:110,rotate:2,duration:1.1,stagger:.14,ease:'power4.out'});
-   gsap.fromTo('[data-hero-img]',{scale:1.12},{scale:1,duration:1.8,ease:'power3.out'});
-   gsap.to('[data-hero-img]',{yPercent:-12,ease:'none',scrollTrigger:{trigger:'.landing-hero',start:'top top',end:'bottom top',scrub:true}});
-   const hero=document.querySelector<HTMLElement>('.landing-hero');const img=document.querySelector('[data-hero-img]');const qx=gsap.quickTo(img,'x',{duration:1,ease:'power3'});const qy=gsap.quickTo(img,'y',{duration:1,ease:'power3'});const move=(e:PointerEvent)=>{const r=hero!.getBoundingClientRect();qx(((e.clientX-r.left)/r.width-.5)*-24);qy(((e.clientY-r.top)/r.height-.5)*-16);};hero?.addEventListener('pointermove',move);
+   gsap.fromTo('[data-hero-img]',{scale:1.18,opacity:0},{scale:1.08,opacity:1,duration:1.6,ease:'power2.out'});
+   gsap.to('[data-hero-img]',{yPercent:6,ease:'none',scrollTrigger:{trigger:'.landing-hero',start:'top top',end:'bottom top',scrub:true}});
+   const hero=null as HTMLElement|null;const move=()=>{};
    gsap.from('[data-char]',{yPercent:120,rotateX:-90,opacity:0,transformOrigin:'50% 100%',duration:1,stagger:.07,delay:.15,ease:'back.out(1.8)'});
    gsap.utils.toArray<HTMLElement>('.landing-hero a').forEach(btn=>{const bx=gsap.quickTo(btn,'x',{duration:.4,ease:'power3'}),by=gsap.quickTo(btn,'y',{duration:.4,ease:'power3'});btn.addEventListener('pointermove',e=>{const r=btn.getBoundingClientRect();bx((e.clientX-r.left-r.width/2)*.3);by((e.clientY-r.top-r.height/2)*.4);});btn.addEventListener('pointerleave',()=>{bx(0);by(0);});});
    gsap.to('.hero-shade',{opacity:.95,ease:'none',scrollTrigger:{trigger:'.landing-hero',start:'top top',end:'bottom top',scrub:true}});
@@ -36,13 +36,13 @@ function Landing(){
    });
    gsap.utils.toArray<HTMLElement>('[data-route-stop]').forEach(el=>gsap.from(el,{scale:.6,opacity:.4,duration:.5,scrollTrigger:{trigger:el,start:'top 72%',toggleActions:'play none none reverse'}}));
    gsap.utils.toArray<HTMLElement>('[data-journey-image]').forEach(el=>gsap.from(el,{clipPath:'inset(12% 0 12% 0)',duration:1,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 85%',once:true}}));
-   return()=>hero?.removeEventListener('pointermove',move);
+   void hero;void move;
   });
   return()=>mm.revert();
  },{scope});
  return <div ref={scope} className="landing-page"><PublicShell>
  <section className="landing-hero relative isolate overflow-hidden bg-navy text-navy-foreground">
-  <img data-hero-img src={heroDusk} alt="Smiling Bnoy courier holding a QR-labelled parcel in Jaipur" width={1920} height={1024} fetchPriority="high" className="absolute inset-0 -z-20 h-[115%] w-full object-cover object-[70%_center] will-change-transform"/>
+  <img data-hero-img src={heroDusk} alt="Smiling Bnoy courier holding a QR-labelled parcel in Jaipur" width={1920} height={1024} fetchPriority="high" className="absolute inset-0 -z-20 h-full w-full scale-[1.08] object-cover object-[70%_center] will-change-transform"/>
   <div className="hero-shade absolute inset-0 -z-10"/>
   <div className="public-container relative py-12 sm:py-16"><div className="max-w-2xl"><p data-intro className="flex items-center gap-2 text-[11px] font-semibold uppercase text-lime"><span className="h-px w-6 bg-lime"/>Built for the next mile</p><h1 className="hero-brand mt-5 font-semibold leading-[1.04]"><span className="headline-mask"><span data-headline-line className='inline-flex'>{'Bnoy'.split('').map((c,i)=><span key={i} data-char className='inline-block'>{c}</span>)}</span></span><span className="headline-mask"><span data-headline-line>Logistics OS<span className="text-lime">.</span></span></span></h1><p className="mt-5 text-3xl leading-tight sm:text-4xl"><span className="headline-mask"><span data-headline-line className="font-serif italic">Every parcel. A connected journey.</span></span></p><p data-intro className="mt-5 max-w-md text-sm leading-7 text-navy-foreground/85">Bring your shipments, sorting teams and courier partners together. Less chasing updates. More moving forward.</p><div data-intro className="mt-7 flex flex-wrap gap-3"><Button asChild className="h-11 bg-lime text-navy hover:bg-lime/90"><Link to="/auth">Open your workspace<ArrowUpRight/></Link></Button><Button asChild variant="outline" className="h-11 border-navy-foreground/40 bg-transparent text-navy-foreground hover:bg-navy-foreground/10 hover:text-navy-foreground"><Link to="/solutions">Explore the platform<ArrowRight/></Link></Button></div></div><div data-intro className="hero-mile-marker mt-10 flex items-center gap-4 border-t border-navy-foreground/20 pt-4 text-[11px] text-navy-foreground/80"><span className="font-mono text-lime">01 — 06</span><span>First label → Final doorstep</span><span className="ml-auto font-mono hidden sm:block">CONNECTED BY BNOY</span></div></div>
  </section>

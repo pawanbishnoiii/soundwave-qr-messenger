@@ -96,6 +96,7 @@ function Today({ uid, name, stats, route, onOpen, goScan }: { uid: string; name:
         <p className="mt-2 text-sm opacity-80">{stats.accuracyToday != null ? `${stats.accuracyToday}% success today` : "No deliveries closed yet today"}</p>
         <img src={riderArt} alt="" width={1024} height={768} className="pointer-events-none absolute -bottom-4 -right-8 w-44" />
       </header>
+      <DayProgress done={stats.deliveredToday} left={route.filter((r) => r.status === "out_for_delivery").length} load={route.filter((r) => r.status !== "out_for_delivery").length} />
       <div className="grid grid-cols-2 gap-3">
         {tiles.map((t) => (
           <div key={t.label} className="rounded-2xl border border-border bg-card p-4">
@@ -123,6 +124,32 @@ function Today({ uid, name, stats, route, onOpen, goScan }: { uid: string; name:
         </button>
       )}
     </div>
+  );
+}
+
+function DayProgress({ done, left, load }: { done: number; left: number; load: number }) {
+  const total = done + left + load; const pct = total ? Math.round((done / total) * 100) : 0; const C = 2 * Math.PI * 34;
+  const steps = [
+    { t: "Load parcels at store", sub: load ? `${load} waiting to scan` : "All loaded", ok: load === 0 },
+    { t: "Deliver with customer OTP", sub: left ? `${left} in your bucket` : "Bucket clear", ok: left === 0 && done > 0 },
+    { t: "Hand over cash at store", sub: "Staff tells you the code", ok: false },
+  ];
+  return (
+    <section className="flex items-center gap-4 rounded-3xl border border-border bg-card p-4">
+      <svg viewBox="0 0 80 80" className="h-20 w-20 shrink-0 -rotate-90" aria-label={`${pct}% of today's parcels done`}>
+        <circle cx="40" cy="40" r="34" fill="none" stroke="var(--muted)" strokeWidth="8" />
+        <circle cx="40" cy="40" r="34" fill="none" stroke="var(--primary)" strokeWidth="8" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={C - (C * pct) / 100} style={{ transition: "stroke-dashoffset 1s ease" }} />
+        <text x="40" y="46" textAnchor="middle" className="rotate-90 fill-foreground text-lg font-bold" transform="rotate(90 40 40)">{pct}%</text>
+      </svg>
+      <ol className="flex-1 space-y-2">
+        {steps.map((st, i) => (
+          <li key={st.t} className="flex items-start gap-2">
+            <span className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full text-[10px] font-bold ${st.ok ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>{st.ok ? "✓" : i + 1}</span>
+            <span><span className="block text-sm font-semibold leading-tight">{st.t}</span><span className="text-xs text-muted-foreground">{st.sub}</span></span>
+          </li>
+        ))}
+      </ol>
+    </section>
   );
 }
 

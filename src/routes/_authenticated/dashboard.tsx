@@ -34,7 +34,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 
 function Dashboard() {
   const { role } = useMe();
-  return role === "rider" ? <Navigate to="/rider" replace /> : <LeadDashboard />;
+  return role === "rider" ? <Navigate to="/rider" replace /> : role === "warehouse" ? <Navigate to="/warehouse" replace /> : <LeadDashboard />;
 }
 
 function LeadDashboard() {

@@ -1,2 +1,0 @@
--- Empty baseline for the remixed project.
--- Existing database tables and data are intentionally unchanged.

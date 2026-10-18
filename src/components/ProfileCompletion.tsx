@@ -23,11 +23,11 @@ export function ProfileCompletion() {
   const missing = !p["full_name"] || !p["state"] || !p["district"] || !p["age"] || !p["gender"] || (policy?.email_required && !p["email"]);
   if (!missing) return null;
 
-  async function save(e: React.FormEvent) {
+  async function save(e: React.FormEvent): Promise<void> {
     e.preventDefault();
-    if (v("full_name").trim().length < 2) return toast.error("Enter your full name");
-    if (!v("state") || !v("district")) return toast.error("Select state and district");
-    if (policy?.email_required && !v("email").includes("@")) return toast.error("Email is required");
+    if (v("full_name").trim().length < 2) { toast.error("Enter your full name"); return; }
+    if (!v("state") || !v("district")) { toast.error("Select state and district"); return; }
+    if (policy?.email_required && !v("email").includes("@")) { toast.error("Email is required"); return; }
     setBusy(true);
     const age = Number(v("age")) || null;
     const { error } = await supabase.from("profiles").update({
@@ -35,7 +35,7 @@ export function ProfileCompletion() {
       state: v("state"), district: v("district"), address: v("address").trim() || null, pincode: v("pincode") || null,
     }).eq("id", user!.id);
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Profile updated");
     qc.invalidateQueries({ queryKey: ["me"] });
   }

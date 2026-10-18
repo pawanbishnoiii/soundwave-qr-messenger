@@ -8,9 +8,12 @@ async function getSmtp(sb: { from: (t: string) => unknown }) {
   const { data } = await (sb.from("app_settings") as { select: (c: string) => { eq: (k: string, v: string) => { maybeSingle: () => Promise<{ data: { value: unknown } | null }> } } })
     .select("value").eq("key", "smtp").maybeSingle();
   const s = (data?.value ?? {}) as SmtpSettings;
+  // Default: the workspace Gmail account; app password lives in a deployment secret.
+  const host = s.host || "smtp.gmail.com";
+  const user = s.user || "bnoy.studios@gmail.com";
   const pass = s.password || process.env["SMTP_APP_PASSWORD"] || "";
-  if (!s.enabled || !s.host || !s.user || !pass) return null;
-  return { host: s.host, port: Number(s.port || 587), user: s.user, pass, fromName: s.from_name || "Bnoy Logistics" };
+  if (s.enabled === false || !pass) return null;
+  return { host, port: Number(s.port || 465), user, pass: pass.replace(/\s+/g, ""), fromName: s.from_name || "Bnoy Logistics" };
 }
 
 async function assertAdmin(context: { supabase: unknown; userId: string }) {

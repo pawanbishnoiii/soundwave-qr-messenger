@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IntegrationsRouteImport } from './routes/integrations'
+import { Route as PayRouteImport } from './routes/pay'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as TrackRouteImport } from './routes/track'
@@ -39,6 +40,7 @@ import { Route as AuthenticatedScanRouteImport } from './routes/_authenticated/s
 import { Route as AuthenticatedStopPlannerRouteImport } from './routes/_authenticated/stop-planner'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
+import { Route as AuthenticatedWarehouseRouteImport } from './routes/_authenticated/warehouse'
 import { Route as DocsApiRouteImport } from './routes/docs.api'
 import { Route as DocsB2bRouteImport } from './routes/docs.b2b'
 import { Route as AuthenticatedShipmentsIndexRouteImport } from './routes/_authenticated/shipments.index'
@@ -64,6 +66,11 @@ const AuthRoute = AuthRouteImport.update({
 const IntegrationsRoute = IntegrationsRouteImport.update({
   id: '/integrations',
   path: '/integrations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PayRoute = PayRouteImport.update({
+  id: '/pay',
+  path: '/pay',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResourcesRoute = ResourcesRouteImport.update({
@@ -201,6 +208,11 @@ const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
   path: '/wallet',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedWarehouseRoute = AuthenticatedWarehouseRouteImport.update({
+  id: '/warehouse',
+  path: '/warehouse',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const DocsApiRoute = DocsApiRouteImport.update({
   id: '/docs/api',
   path: '/docs/api',
@@ -244,6 +256,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/integrations': typeof IntegrationsRoute
+  '/pay': typeof PayRoute
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/track': typeof TrackRoute
@@ -270,6 +283,7 @@ export interface FileRoutesByFullPath {
   '/stop-planner': typeof AuthenticatedStopPlannerRoute
   '/team': typeof AuthenticatedTeamRoute
   '/wallet': typeof AuthenticatedWalletRoute
+  '/warehouse': typeof AuthenticatedWarehouseRoute
   '/docs/api': typeof DocsApiRoute
   '/docs/b2b': typeof DocsB2bRoute
   '/shipments/$id': typeof AuthenticatedShipmentsIdRoute
@@ -282,6 +296,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/integrations': typeof IntegrationsRoute
+  '/pay': typeof PayRoute
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/track': typeof TrackRoute
@@ -308,6 +323,7 @@ export interface FileRoutesByTo {
   '/stop-planner': typeof AuthenticatedStopPlannerRoute
   '/team': typeof AuthenticatedTeamRoute
   '/wallet': typeof AuthenticatedWalletRoute
+  '/warehouse': typeof AuthenticatedWarehouseRoute
   '/docs/api': typeof DocsApiRoute
   '/docs/b2b': typeof DocsB2bRoute
   '/shipments/$id': typeof AuthenticatedShipmentsIdRoute
@@ -322,6 +338,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/integrations': typeof IntegrationsRoute
+  '/pay': typeof PayRoute
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/track': typeof TrackRoute
@@ -348,6 +365,7 @@ export interface FileRoutesById {
   '/_authenticated/stop-planner': typeof AuthenticatedStopPlannerRoute
   '/_authenticated/team': typeof AuthenticatedTeamRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
+  '/_authenticated/warehouse': typeof AuthenticatedWarehouseRoute
   '/docs/api': typeof DocsApiRoute
   '/docs/b2b': typeof DocsB2bRoute
   '/_authenticated/shipments/$id': typeof AuthenticatedShipmentsIdRoute
@@ -362,6 +380,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/integrations'
+    | '/pay'
     | '/resources'
     | '/solutions'
     | '/track'
@@ -388,6 +407,7 @@ export interface FileRouteTypes {
     | '/stop-planner'
     | '/team'
     | '/wallet'
+    | '/warehouse'
     | '/docs/api'
     | '/docs/b2b'
     | '/shipments/$id'
@@ -400,6 +420,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/integrations'
+    | '/pay'
     | '/resources'
     | '/solutions'
     | '/track'
@@ -426,6 +447,7 @@ export interface FileRouteTypes {
     | '/stop-planner'
     | '/team'
     | '/wallet'
+    | '/warehouse'
     | '/docs/api'
     | '/docs/b2b'
     | '/shipments/$id'
@@ -439,6 +461,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/integrations'
+    | '/pay'
     | '/resources'
     | '/solutions'
     | '/track'
@@ -465,6 +488,7 @@ export interface FileRouteTypes {
     | '/_authenticated/stop-planner'
     | '/_authenticated/team'
     | '/_authenticated/wallet'
+    | '/_authenticated/warehouse'
     | '/docs/api'
     | '/docs/b2b'
     | '/_authenticated/shipments/$id'
@@ -479,6 +503,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   IntegrationsRoute: typeof IntegrationsRoute
+  PayRoute: typeof PayRoute
   ResourcesRoute: typeof ResourcesRoute
   SolutionsRoute: typeof SolutionsRoute
   TrackRoute: typeof TrackRoute
@@ -517,6 +542,13 @@ declare module '@tanstack/react-router' {
       path: '/integrations'
       fullPath: '/integrations'
       preLoaderRoute: typeof IntegrationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pay': {
+      id: '/pay'
+      path: '/pay'
+      fullPath: '/pay'
+      preLoaderRoute: typeof PayRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/resources': {
@@ -701,6 +733,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWalletRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/warehouse': {
+      id: '/_authenticated/warehouse'
+      path: '/warehouse'
+      fullPath: '/warehouse'
+      preLoaderRoute: typeof AuthenticatedWarehouseRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/docs/api': {
       id: '/docs/api'
       path: '/docs/api'
@@ -777,6 +816,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedStopPlannerRoute: typeof AuthenticatedStopPlannerRoute
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRoute
   AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
+  AuthenticatedWarehouseRoute: typeof AuthenticatedWarehouseRoute
   AuthenticatedShipmentsIdRoute: typeof AuthenticatedShipmentsIdRoute
   AuthenticatedShipmentsIndexRoute: typeof AuthenticatedShipmentsIndexRoute
 }
@@ -805,6 +845,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedStopPlannerRoute: AuthenticatedStopPlannerRoute,
   AuthenticatedTeamRoute: AuthenticatedTeamRoute,
   AuthenticatedWalletRoute: AuthenticatedWalletRoute,
+  AuthenticatedWarehouseRoute: AuthenticatedWarehouseRoute,
   AuthenticatedShipmentsIdRoute: AuthenticatedShipmentsIdRoute,
   AuthenticatedShipmentsIndexRoute: AuthenticatedShipmentsIndexRoute,
 }
@@ -817,6 +858,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   IntegrationsRoute: IntegrationsRoute,
+  PayRoute: PayRoute,
   ResourcesRoute: ResourcesRoute,
   SolutionsRoute: SolutionsRoute,
   TrackRoute: TrackRoute,

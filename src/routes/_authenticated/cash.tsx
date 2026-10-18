@@ -88,7 +88,8 @@ function CashPage() {
             {incoming.map((h) => (
               <div key={h.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border bg-card p-4">
                 <div><p className="font-mono font-semibold">{h.code}</p><p className="text-sm text-muted-foreground">{name(h.from_user)} · {h.shipment_count} parcels · {fmtDate(h.created_at)}</p></div>
-                <div className="flex items-center gap-3"><span className="text-lg font-bold">{inr(h.expected_amount)}</span>
+                <div className="flex flex-wrap items-center gap-3"><span className="text-lg font-bold">{inr(h.expected_amount)}</span>
+                  <HandoverCode id={h.id} />
                   <Button size="sm" onClick={() => { setResolve(h); setAmt(String(h.expected_amount)); setNote(""); }}><CheckCircle2 /> Count & receive</Button></div>
               </div>))}
           </section>
@@ -120,6 +121,21 @@ function CashPage() {
       </Dialog>
     </AppShell>
   );
+}
+
+function HandoverCode({ id }: { id: string }) {
+  const [code, setCode] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  async function reveal() {
+    setBusy(true);
+    const { data, error } = await supabase.rpc("get_handover_otp", { _id: id });
+    setBusy(false);
+    if (error) { toast.error(error.message); return; }
+    if (!data) { toast.error("No active code for this handover"); return; }
+    setCode(data as string);
+  }
+  if (code) return <span aria-label="Handover verification code" className="rounded-lg border-2 border-dashed border-primary bg-primary/10 px-3 py-1 font-mono text-lg font-bold tracking-[0.3em] text-primary">{code}</span>;
+  return <Button size="sm" variant="outline" onClick={reveal} disabled={busy}>{busy ? <Loader2 className="animate-spin" /> : <Lock />} Show code for rider</Button>;
 }
 
 function Stat({ label, value, sub }: { label: string; value: number; sub: string }) {

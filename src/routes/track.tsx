@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
+import { ClientOnly, Link } from "@tanstack/react-router";
 import { z } from "zod";
 import { toast } from "sonner";
 import { CheckCircle2, Circle, Search, ShieldCheck, Loader2, MapPin, ArrowLeft, Package } from "lucide-react";
@@ -11,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Reveal } from "@/components/motion";
 import { STATUS_FLOW, STATUS_META, fmtDate, inr, type ShipmentStatus } from "@/lib/status";
+const TrackMap = lazy(() => import("@/components/TrackMap"));
 import trackHero from "@/assets/bnoy-handover.webp";
 
 type Tracked = {
@@ -63,6 +65,7 @@ function TrackPage() {
     setT(data as unknown as Tracked); setStep("done");
   }
   const reached = new Map(t?.events.map((e) => [e.status, e]) ?? []);
+  const stops = useMemo(() => t ? [...t.events.filter((e) => e.hub).map((e) => ({ label: `${STATUS_META[e.status].label} · ${e.hub}`, query: `${e.hub}, India`, done: true })), { label: `Destination · ${t.city}`, query: `${t.city}, India`, done: t.status === "delivered" }] : [], [t]);
   const progress = t ? Math.round(((STATUS_FLOW.indexOf(t.status) + 1) / STATUS_FLOW.length) * 100) : 0;
 
   return (
@@ -125,6 +128,8 @@ function TrackPage() {
                 {t.receiver_address && <p className="flex gap-2"><MapPin className="h-4 w-4 shrink-0 text-primary" />{t.receiver_address}</p>}
                 <p className="flex gap-2"><Package className="h-4 w-4 shrink-0 text-primary" />{t.delivered_at ? `Delivered ${fmtDate(t.delivered_at)}` : t.promised_by ? `Expected by ${fmtDate(t.promised_by)}` : "In progress"}{Number(t.cod_amount) > 0 && ` · Pay ${inr(Number(t.cod_amount))} on delivery`}</p>
               </div>
+              <div data-reveal className="mt-5"><ClientOnly fallback={<div className="h-72 animate-pulse rounded-xl bg-muted" />}><Suspense fallback={<div className="h-72 animate-pulse rounded-xl bg-muted" />}><TrackMap stops={stops} /></Suspense></ClientOnly></div>
+              {Number(t.cod_amount) > 0 && t.status !== "delivered" && <Button asChild className="mt-4 w-full"><Link to="/pay" search={{ code: t.tracking_code }}>Pay {inr(Number(t.cod_amount))} online now</Link></Button>}
               <ol className="mt-6 space-y-0 border-l-2 border-border pl-6">
                 {STATUS_FLOW.map((s) => {
                   const ev = reached.get(s);

@@ -71,33 +71,23 @@ function TrackPage() {
   return (
     <PublicShell>
       <section className="relative isolate overflow-hidden bg-navy text-navy-foreground">
-        <img src={trackHero} alt="" className="absolute inset-0 -z-10 h-full w-full object-cover opacity-25" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-navy via-navy/90 to-navy/40" />
-        <div className="public-container grid gap-8 py-14 sm:py-20 lg:grid-cols-[1.2fr_1fr] lg:items-end">
+        <img src={trackHero} alt="" className="absolute inset-0 -z-10 h-full w-full object-cover object-center opacity-30" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-navy via-navy/90 to-navy/60" />
+        <div className={`public-container grid gap-10 py-12 sm:py-16 ${step === "done" ? "" : "lg:grid-cols-[1fr_minmax(0,460px)] lg:items-center"}`}>
           <Reveal className="max-w-xl">
             <p data-reveal className="inline-flex items-center gap-2 rounded-full border border-navy-foreground/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-lime"><ShieldCheck className="h-3.5 w-3.5" /> Secure tracking</p>
             <h1 data-reveal className="mt-4 font-display text-4xl font-bold sm:text-6xl">Where's my parcel?</h1>
             <p data-reveal className="mt-3 text-sm text-navy-foreground/80 sm:text-base">Enter your tracking number, confirm with a one-time code, and follow every step from pickup to your door.</p>
+            <div data-reveal className="mt-8 grid max-w-md grid-cols-3 gap-3">
+              {[{ i: Search, t: "Enter code" }, { i: ShieldCheck, t: "Verify OTP" }, { i: Truck, t: "Live journey" }].map(({ i: I, t: l }, n) => (
+                <div key={l} className={`rounded-2xl border p-3 backdrop-blur ${["code", "otp", "done"].indexOf(step) >= n ? "border-lime/50 bg-lime/10" : "border-navy-foreground/15 bg-navy-foreground/5"}`}>
+                  <I className="h-5 w-5 text-lime" /><p className="mt-2 text-xs font-semibold">{l}</p>
+                </div>
+              ))}
+            </div>
           </Reveal>
-          <Reveal stagger={0.08} className="grid grid-cols-3 gap-3">
-            {[{ i: Search, t: "Enter code" }, { i: ShieldCheck, t: "Verify OTP" }, { i: Truck, t: "Live journey" }].map(({ i: I, t: l }) => (
-              <div data-reveal key={l} className="rounded-2xl border border-navy-foreground/15 bg-navy-foreground/5 p-4 backdrop-blur">
-                <I className="h-5 w-5 text-lime" /><p className="mt-3 text-xs font-semibold">{l}</p>
-              </div>
-            ))}
-          </Reveal>
-        </div>
-      </section>
-
-      <main className="public-container -mt-10 pb-20">
-        <div className="mx-auto max-w-2xl rounded-2xl border bg-card p-6 shadow-card sm:p-8">
-          <ol className="mb-6 flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-            {["Parcel details", "Verify OTP", "Journey"].map((l, i) => {
-              const active = ["code", "otp", "done"].indexOf(step) >= i;
-              return <li key={l} className="flex flex-1 items-center gap-2"><span className={`grid h-6 w-6 place-items-center rounded-full ${active ? "bg-primary text-primary-foreground" : "bg-muted"}`}>{i + 1}</span><span className={active ? "text-foreground" : ""}>{l}</span></li>;
-            })}
-          </ol>
-
+          {step !== "done" && (
+        <div className="w-full rounded-2xl border bg-card p-6 text-card-foreground shadow-card sm:p-7">
           {step === "code" && (
             <form onSubmit={requestOtp} className="space-y-4">
               <div><Label htmlFor="code">Tracking number or order ID</Label>
@@ -122,7 +112,14 @@ function TrackPage() {
             </form>
           )}
 
-          {step === "done" && t && (
+        </div>
+          )}
+        </div>
+      </section>
+
+      <main className="public-container py-10 pb-20">
+        {step === "done" && t && (
+        <div className="mx-auto max-w-3xl rounded-2xl border bg-card p-6 shadow-card sm:p-8">
             <Reveal stagger={0.05}>
               <div data-reveal className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
                 <div className="min-w-0">
@@ -152,8 +149,8 @@ function TrackPage() {
               </ol>
               <Button variant="outline" className="mt-2" onClick={() => { setStep("code"); setT(null); setOtp(""); }}>Track another parcel</Button>
             </Reveal>
-          )}
         </div>
+        )}
         <div className="mx-auto mt-8 grid max-w-2xl gap-3 sm:grid-cols-3">
           {[
             { i: ShieldCheck, h: "Private by design", d: "Your parcel details show only after the code is confirmed." },

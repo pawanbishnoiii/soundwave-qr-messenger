@@ -1696,6 +1696,8 @@ export type Database = {
           bag_id: string
           created_at: string
           id: string
+          lat: number | null
+          lng: number | null
           product_id: string | null
           qty: number
           shipment_id: string | null
@@ -1704,6 +1706,8 @@ export type Database = {
           bag_id: string
           created_at?: string
           id?: string
+          lat?: number | null
+          lng?: number | null
           product_id?: string | null
           qty?: number
           shipment_id?: string | null
@@ -1712,6 +1716,8 @@ export type Database = {
           bag_id?: string
           created_at?: string
           id?: string
+          lat?: number | null
+          lng?: number | null
           product_id?: string | null
           qty?: number
           shipment_id?: string | null

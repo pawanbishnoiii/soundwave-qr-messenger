@@ -12,6 +12,8 @@ import { Brand } from "@/components/Brand";
 import { STATE_NAMES, districtsOf } from "@/lib/india";
 import hero from "@/assets/hero-courier-woman.jpg";
 import { Reveal } from "@/components/motion";
+import { PasswordStrength } from "@/components/PasswordStrength";
+import { isStrongPassword, useAuthPolicy } from "@/lib/public-settings";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -51,6 +53,9 @@ function AuthPage() {
   const [district, setDistrict] = useState("");
   const [pincode, setPincode] = useState("");
   const [password, setPassword] = useState("");
+  const policy = useAuthPolicy().data ?? { mode: "both" as const, email_required: false };
+  const needPw = policy.mode !== "otp";
+  useEffect(() => { if (policy.mode !== "both") setMode(policy.mode); }, [policy.mode]);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => { if (data.user) navigate({ to: "/dashboard", replace: true }); });
@@ -80,7 +85,7 @@ function AuthPage() {
         phone, otp,
         ...(withProfile ? {
           name, age: Number(age), gender: gender as "male", contactEmail: email.trim(),
-          address: address.trim(), state, district, pincode, password,
+          address: address.trim(), state, district, pincode, ...(needPw ? { password } : {}),
         } : {}),
       },
     });
@@ -95,7 +100,7 @@ function AuthPage() {
   }
 
   async function saveNewPassword() {
-    if (password.length < 6) throw new Error("Password must be at least 6 characters");
+    if (!isStrongPassword(password)) throw new Error("Choose a stronger password — follow the checklist below the box");
     const { error } = await supabase.auth.updateUser({ password });
     if (error) throw error;
     toast.success("Password set — you're signed in");
@@ -120,8 +125,9 @@ function AuthPage() {
         const a = Number(age);
         if (!Number.isInteger(a) || a < 14 || a > 100) throw new Error("Enter a valid age (14–100)");
         if (!gender) throw new Error("Select your gender");
-        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim())) throw new Error("Email is required for order updates");
-        if (password.length < 6) throw new Error("Choose a password of at least 6 characters");
+        if (email.trim() && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim())) throw new Error("Enter a valid email");
+        if (policy.email_required && !email.trim()) throw new Error("Email is required for order updates");
+        if (needPw && !isStrongPassword(password)) throw new Error("Choose a stronger password — follow the checklist below the box");
         if (!state) throw new Error("Select your state");
         if (!district) throw new Error("Select your district");
         if (pincode && !/^[0-9]{6}$/.test(pincode)) throw new Error("Enter a valid 6-digit pincode");
@@ -162,7 +168,7 @@ function AuthPage() {
             {step === "phone" ? "One page for everyone — riders, managers, distributors and admins." : step === "otp" ? `We sent a 6-digit code to +91 ${phone}.` : step === "newpw" ? "Choose a password you will use to sign in next time." : "New number — just once. The very first account becomes the Admin."}
           </p>
 
-          {step === "phone" && (
+          {step === "phone" && policy.mode === "both" && (
             <div className="mt-6 grid grid-cols-2 gap-1 rounded-xl bg-muted p-1">
               {([["otp", "Code (OTP)"], ["password", "Password"]] as const).map(([m, l]) => (
                 <button key={m} type="button" onClick={() => { setMode(m); setForgot(false); }}
@@ -185,7 +191,7 @@ function AuthPage() {
                   <div className="space-y-1.5">
                     <Label htmlFor="pw">Password</Label>
                     <Input id="pw" type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} className="h-12" />
-                    <button type="button" className="text-xs font-medium text-primary" onClick={() => setForgot(true)}>Forgot password? Reset with a code</button>
+                    <button type="button" className="text-xs font-medium text-primary" onClick={() => { setForgot(true); setMode("otp"); }}>Forgot password? Reset with a code</button>
                   </div>
                 )}
               </>
@@ -213,7 +219,7 @@ function AuthPage() {
               <div className="space-y-1.5">
                 <Label htmlFor="npw">New password</Label>
                 <Input id="npw" type="password" autoComplete="new-password" required minLength={6} autoFocus value={password} onChange={(e) => setPassword(e.target.value)} className="h-12" />
-                <p className="text-xs text-muted-foreground">At least 6 characters. Use it with your mobile number next time.</p>
+                <PasswordStrength value={password} />
               </div>
             )}
             {step === "profile" && (
@@ -238,13 +244,14 @@ function AuthPage() {
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="email">Email <span className="text-destructive">*</span> <span className="font-normal text-muted-foreground">(for order updates)</span></Label>
-                  <Input id="email" type="email" required autoComplete="email" maxLength={200} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="h-11" />
+                  <Label htmlFor="email">Email {policy.email_required ? <span className="text-destructive">*</span> : <span className="font-normal text-muted-foreground">(optional)</span>}</Label>
+                  <Input id="email" type="email" required={policy.email_required} autoComplete="email" maxLength={200} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="h-11" />
                 </div>
-                <div className="space-y-1.5">
+                {needPw && <div className="space-y-1.5">
                   <Label htmlFor="pw2">Create password <span className="text-destructive">*</span></Label>
-                  <Input id="pw2" type="password" autoComplete="new-password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} className="h-11" />
-                </div>
+                  <Input id="pw2" type="password" autoComplete="new-password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} className="h-11" />
+                  <PasswordStrength value={password} />
+                </div>}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
                     <Label htmlFor="state">State <span className="text-destructive">*</span></Label>

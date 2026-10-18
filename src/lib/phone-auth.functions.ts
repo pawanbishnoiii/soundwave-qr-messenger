@@ -93,7 +93,7 @@ export const verifyPhoneOtp = createServerFn({ method: "POST" })
       });
       if (error && !/already/i.test(error.message)) return { error: error.message, needsProfile: false, tokenHash: null };
       if (c?.user) await sb.from("profiles").update({
-        full_name: data.name, phone: full, age: data.age, gender: data.gender, email: data.contactEmail,
+        full_name: data.name, phone: full, age: data.age, gender: data.gender, email: data.contactEmail || null,
         address: data.address || null, state: data.state || null, district: data.district || null, pincode: data.pincode || null,
       }).eq("id", c.user.id);
     }

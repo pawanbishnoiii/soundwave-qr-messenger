@@ -68,10 +68,10 @@ function HandoverSheet({ uid, onClose }: { uid: string; onClose: () => void }) {
   const refresh = () => qc.invalidateQueries({ queryKey: ["rider-cash", uid] });
 
   async function start() {
-    if (!to) return toast.error("Pick who is receiving the cash");
+    if (!to) { toast.error("Pick who is receiving the cash"); return; }
     setBusy(true);
     const { data: r, error } = await supabase.rpc("rider_start_handover", { _to: to });
-    if (error) { setBusy(false); return toast.error(error.message); }
+    if (error) { setBusy(false); toast.error(error.message); return; }
     const id = (r as { id: string }).id;
     try { const m = await mail({ data: { id } }); toast.message(m.message); } catch { toast.message("Staff can see the code in their Cash page"); }
     setBusy(false); refresh();
@@ -83,8 +83,8 @@ function HandoverSheet({ uid, onClose }: { uid: string; onClose: () => void }) {
     setBusy(true);
     const { data: ok, error } = await supabase.rpc("verify_handover_otp", { _id: id, _otp: otp });
     setBusy(false);
-    if (error) return toast.error(error.message);
-    if (!ok) return toast.error("Wrong code — ask staff again");
+    if (error) { toast.error(error.message); return; }
+    if (!ok) { toast.error("Wrong code — ask staff again"); return; }
     confetti({ particleCount: 100, spread: 70, origin: { y: 0.7 } });
     toast.success("Cash handed over"); setOtp(""); refresh();
   }

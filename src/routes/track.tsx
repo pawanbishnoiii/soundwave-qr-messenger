@@ -3,7 +3,7 @@ import { lazy, Suspense, useMemo, useState } from "react";
 import { ClientOnly, Link } from "@tanstack/react-router";
 import { z } from "zod";
 import { toast } from "sonner";
-import { CheckCircle2, Circle, Search, ShieldCheck, Loader2, MapPin, ArrowLeft, Package } from "lucide-react";
+import { CheckCircle2, Circle, Search, ShieldCheck, Loader2, MapPin, ArrowLeft, Package, Truck, Copy, Clock, Headphones } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PublicShell } from "@/components/PublicShell";
 import { Button } from "@/components/ui/button";
@@ -71,12 +71,20 @@ function TrackPage() {
   return (
     <PublicShell>
       <section className="relative isolate overflow-hidden bg-navy text-navy-foreground">
-        <img src={trackHero} alt="" className="absolute inset-0 -z-10 h-full w-full object-cover opacity-30" />
-        <div className="public-container py-14 sm:py-20">
+        <img src={trackHero} alt="" className="absolute inset-0 -z-10 h-full w-full object-cover opacity-25" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-navy via-navy/90 to-navy/40" />
+        <div className="public-container grid gap-8 py-14 sm:py-20 lg:grid-cols-[1.2fr_1fr] lg:items-end">
           <Reveal className="max-w-xl">
-            <p data-reveal className="text-xs font-semibold uppercase tracking-[0.2em] text-lime">Secure tracking</p>
-            <h1 data-reveal className="mt-3 font-display text-4xl font-bold sm:text-5xl">Where's my parcel?</h1>
-            <p data-reveal className="mt-3 text-sm text-navy-foreground/80">For your privacy, we send a one-time code to the phone number on the parcel before showing its journey.</p>
+            <p data-reveal className="inline-flex items-center gap-2 rounded-full border border-navy-foreground/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-lime"><ShieldCheck className="h-3.5 w-3.5" /> Secure tracking</p>
+            <h1 data-reveal className="mt-4 font-display text-4xl font-bold sm:text-6xl">Where's my parcel?</h1>
+            <p data-reveal className="mt-3 text-sm text-navy-foreground/80 sm:text-base">Enter your tracking number, confirm with a one-time code, and follow every step from pickup to your door.</p>
+          </Reveal>
+          <Reveal stagger={0.08} className="grid grid-cols-3 gap-3">
+            {[{ i: Search, t: "Enter code" }, { i: ShieldCheck, t: "Verify OTP" }, { i: Truck, t: "Live journey" }].map(({ i: I, t: l }) => (
+              <div data-reveal key={l} className="rounded-2xl border border-navy-foreground/15 bg-navy-foreground/5 p-4 backdrop-blur">
+                <I className="h-5 w-5 text-lime" /><p className="mt-3 text-xs font-semibold">{l}</p>
+              </div>
+            ))}
           </Reveal>
         </div>
       </section>
@@ -118,7 +126,7 @@ function TrackPage() {
             <Reveal stagger={0.05}>
               <div data-reveal className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
                 <div className="min-w-0">
-                  <p className="truncate font-mono text-lg font-bold">{t.tracking_code}</p>
+                  <button type="button" onClick={() => { navigator.clipboard.writeText(t.tracking_code); toast.success("Tracking number copied"); }} className="flex max-w-full items-center gap-2 font-mono text-lg font-bold" aria-label="Copy tracking number"><span className="truncate">{t.tracking_code}</span><Copy className="h-4 w-4 shrink-0 text-muted-foreground" /></button>
                   <p className="text-sm text-muted-foreground">For {t.receiver} · {t.city}</p>
                 </div>
                 <StatusBadge status={t.status} />
@@ -145,6 +153,15 @@ function TrackPage() {
               <Button variant="outline" className="mt-2" onClick={() => { setStep("code"); setT(null); setOtp(""); }}>Track another parcel</Button>
             </Reveal>
           )}
+        </div>
+        <div className="mx-auto mt-8 grid max-w-2xl gap-3 sm:grid-cols-3">
+          {[
+            { i: ShieldCheck, h: "Private by design", d: "Your parcel details show only after the code is confirmed." },
+            { i: Clock, h: "Updated every scan", d: "Each hub and rider scan adds a new step to the journey." },
+            { i: Headphones, h: "Need help?", d: "Share your tracking number with the seller or our support team." },
+          ].map(({ i: I, h, d }) => (
+            <div key={h} className="rounded-2xl border bg-card p-4"><I className="h-5 w-5 text-primary" /><p className="mt-2 text-sm font-semibold">{h}</p><p className="mt-1 text-xs text-muted-foreground">{d}</p></div>
+          ))}
         </div>
       </main>
     </PublicShell>

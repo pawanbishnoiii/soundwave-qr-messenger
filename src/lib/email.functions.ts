@@ -79,3 +79,37 @@ export const sendOutboxNow = createServerFn({ method: "POST" })
     }
     return { ok: failed === 0, message: `Sent ${sent}, failed ${failed}`, sent, failed };
   });
+
+/** Rider: email the handover OTP to the receiving staff, and a receipt to the rider. */
+export const sendHandoverOtpEmail = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: h } = await supabaseAdmin.from("cod_handovers").select("id,code,from_user,to_user,expected_amount,shipment_count,status").eq("id", data.id).maybeSingle();
+    if (!h || h.from_user !== context.userId) throw new Error("Handover not found");
+    if (h.status !== "submitted") return { ok: false, message: "Already confirmed" };
+    const { data: otp } = await supabaseAdmin.from("cod_handover_otps").select("code").eq("handover_id", h.id).maybeSingle();
+    const { data: people } = await supabaseAdmin.from("profiles").select("id,full_name,email").in("id", [h.from_user, h.to_user].filter(Boolean) as string[]);
+    const rider = people?.find((p) => p.id === h.from_user), staff = people?.find((p) => p.id === h.to_user);
+    const cfg = await getSmtp(supabaseAdmin);
+    if (!cfg) return { ok: false, message: "Email is not set up yet — staff can see the code in their Cash page" };
+    const { sendSmtpEmail, emailHtml } = await import("./smtp.server");
+    const amt = `₹${Number(h.expected_amount).toLocaleString("en-IN")}`;
+    const out: string[] = [];
+    if (staff?.email && otp) {
+      const r = await sendSmtpEmail(cfg, staff.email, `Cash handover code ${otp.code} — ${amt} from ${rider?.full_name ?? "rider"}`, emailHtml("Cash handover code", [
+        `${rider?.full_name ?? "A rider"} is handing you ${amt} for ${h.shipment_count} COD parcels (handover ${h.code}).`,
+        `Count the cash first. Then tell the rider this code: <b style="font-size:24px;letter-spacing:4px">${otp.code}</b>`,
+      ]));
+      if (r.ok) out.push("staff");
+    }
+    if (rider?.email) {
+      const r = await sendSmtpEmail(cfg, rider.email, `Handover ${h.code} started — ${amt}`, emailHtml("Handover started", [
+        `You are handing ${amt} for ${h.shipment_count} parcels to ${staff?.full_name ?? "franchise staff"}.`,
+        "Ask them for the 6-digit code after they count the cash, and enter it in your app.",
+      ]));
+      if (r.ok) out.push("rider");
+    }
+    return { ok: out.length > 0, message: out.length ? "Code emailed" : "No email on file — staff can see the code in their Cash page" };
+  });

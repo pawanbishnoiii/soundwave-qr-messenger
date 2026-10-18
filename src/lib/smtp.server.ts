@@ -1,6 +1,6 @@
 // Minimal SMTP client for the Cloudflare Worker runtime (no Node APIs).
 // Supports port 465 (implicit TLS) and 587/25 (STARTTLS) with AUTH LOGIN.
-import { connect, type Socket } from "cloudflare:sockets";
+import type { Socket } from "cloudflare:sockets";
 
 export type SmtpConfig = {
   host: string;
@@ -87,6 +87,8 @@ export async function sendSmtpEmail(
   let conn: SmtpConn | null = null;
   try {
     const implicitTls = cfg.port === 465;
+    const sockMod = "cloudflare:sockets";
+    const { connect } = (await import(/* @vite-ignore */ sockMod)) as typeof import("cloudflare:sockets");
     const sock = connect(
       { hostname: cfg.host, port: cfg.port },
       { secureTransport: implicitTls ? "on" : "starttls", allowHalfOpen: false },

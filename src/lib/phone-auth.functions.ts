@@ -80,9 +80,15 @@ export const verifyPhoneOtp = createServerFn({ method: "POST" })
       const { data: u } = await sb.auth.admin.getUserById(prof.id);
       if (u?.user?.email) email = u.user.email;
     } else {
-      if (!data.name || !data.age || !data.gender || !data.contactEmail || !data.password) return { error: null, needsProfile: true, tokenHash: null };
+      if (!data.name || !data.age || !data.gender) return { error: null, needsProfile: true, tokenHash: null };
+      const { data: pol } = await sb.from("app_settings").select("value").eq("key", "auth_policy").maybeSingle();
+      const policy = (pol?.value ?? {}) as { mode?: string; email_required?: boolean };
+      if (policy.email_required && !data.contactEmail) return { error: "Email is required", needsProfile: true, tokenHash: null };
+      if (policy.mode !== "otp" && !data.password) return { error: "Choose a password", needsProfile: true, tokenHash: null };
+      // OTP-only accounts get a random strong password they never need to know.
+      const password = data.password || `${crypto.randomUUID()}Aa1!`;
       const { data: c, error } = await sb.auth.admin.createUser({
-        email, password: data.password, email_confirm: true,
+        email, password, email_confirm: true,
         user_metadata: { full_name: data.name, phone: full, age: data.age, gender: data.gender },
       });
       if (error && !/already/i.test(error.message)) return { error: error.message, needsProfile: false, tokenHash: null };

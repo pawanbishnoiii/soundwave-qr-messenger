@@ -24,6 +24,7 @@ const GROUPS = [
     { to: "/rider", label: "Rider app", icon: Wallet, roles: ["rider"] as Role[] },
   ] },
   { title: "Analytics & warehouse", items: [
+    { to: "/warehouse", label: "Warehouse & bags", icon: Package, roles: ["admin", "warehouse"] as Role[] },
     { to: "/hubs", label: "Hub network", icon: MapPin, roles: LEADS },
     { to: "/manage-hubs", label: "Hubs & branches", icon: Building2, roles: LEADS },
     { to: "/manage-vehicles", label: "Fleet", icon: Truck, roles: LEADS },

@@ -29,8 +29,8 @@ export default function TrackMap({ stops }: { stops: Stop[] }) {
         const last = i === pts.length - 1;
         L.circleMarker([lat, lon], { radius: last ? 10 : 7, color: s.done ? "#16a34a" : "#94a3b8", fillOpacity: 0.85, weight: 3 }).addTo(map).bindTooltip(s.label, { permanent: last, direction: "top" });
       });
-      if (pts.length > 1) L.polyline(pts.map(([a, b]) => [a, b]), { color: "#2563eb", weight: 3, dashArray: "6 8" }).addTo(map);
-      map.fitBounds(L.latLngBounds(pts.map(([a, b]) => [a, b])), { padding: [40, 40], maxZoom: 11 });
+      if (pts.length > 1) L.polyline(pts.map(([a, b]) => [a, b] as L.LatLngTuple), { color: "#2563eb", weight: 3, dashArray: "6 8" }).addTo(map);
+      map.fitBounds(L.latLngBounds(pts.map(([a, b]) => [a, b] as L.LatLngTuple)), { padding: [40, 40], maxZoom: 11 });
     })();
     return () => { cancelled = true; map.remove(); };
   }, [stops]);

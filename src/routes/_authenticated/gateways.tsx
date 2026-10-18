@@ -91,14 +91,14 @@ function Gateways() {
           <p className="text-xs text-muted-foreground">Default: Gmail · bnoy.studios@gmail.com · port 465 SSL/TLS. The app password is stored securely; leave Password empty to use it.</p>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {([["gmail", "Gmail", "smtp.gmail.com", "465", "ssl"], ["hostinger", "Hostinger", "smtp.hostinger.com", "465", "ssl"], ["outlook", "Outlook", "smtp.office365.com", "587", "starttls"], ["custom", "Custom", "", "587", "starttls"]] as const).map(([p, l, h, port, sec]) => (
-              <button key={p} type="button" onClick={() => smtp.setV({ ...smtp.v, provider: p, host: h || smtp.v.host, port, security: sec })} className={`h-10 rounded-md border text-sm ${(smtp.v.provider ?? "gmail") === p ? "border-primary bg-primary text-primary-foreground" : "hover:bg-muted"}`}>{l}</button>
+              <button key={p} type="button" onClick={() => smtp.setV({ ...smtp.v, provider: p, host: h || smtp.v.host || "", port, security: sec })} className={`h-10 rounded-md border text-sm ${(smtp.v.provider ?? "gmail") === p ? "border-primary bg-primary text-primary-foreground" : "hover:bg-muted"}`}>{l}</button>
             ))}
           </div>
           <div className="grid grid-cols-[1fr_90px_130px] gap-2">
             <Field label="Mail server" value={smtp.v.host} onChange={(x) => smtp.setV({ ...smtp.v, host: x })} placeholder="smtp.gmail.com" />
             <Field label="Port" value={smtp.v.port} onChange={(x) => smtp.setV({ ...smtp.v, port: x })} placeholder="465" />
             <div className="space-y-1"><Label htmlFor="smtpsec">Security</Label>
-              <select id="smtpsec" className="h-9 w-full rounded-md border bg-background px-2 text-sm" value={(smtp.v.security as string) ?? "ssl"} onChange={(e) => smtp.setV({ ...smtp.v, security: e.target.value, port: e.target.value === "ssl" ? "465" : "587" })}>
+              <select id="smtpsec" className="h-9 w-full rounded-md border bg-background px-2 text-sm" value={(smtp.v["security"] as string) ?? "ssl"} onChange={(e) => smtp.setV({ ...smtp.v, security: e.target.value, port: e.target.value === "ssl" ? "465" : "587" })}>
                 <option value="ssl">SSL/TLS (465)</option><option value="starttls">STARTTLS (587)</option>
               </select></div>
           </div>

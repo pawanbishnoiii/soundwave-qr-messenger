@@ -57,3 +57,7 @@
 - [x] Gmail SMTP defaults + provider/port/security options
 - [x] Landing: pinned horizontal scroll reel, letter animation, magnetic buttons; replaced 2 branded photos
 - [ ] Deeper rider app redesign, admin parcel lookup by customer phone/location, full signed-in role test
+
+## Remix setup (Oct 18)
+- [x] Update SMTP_APP_PASSWORD through the secure form
+- [x] Clear copied migration files and scaffold an empty baseline without changing application tables or data

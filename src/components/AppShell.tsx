@@ -44,6 +44,7 @@ const GROUPS = [
     { to: "/developers", label: "API & webhooks", icon: KeyRound, roles: ADMIN },
     { to: "/company", label: "Company & branding", icon: Building2, roles: ADMIN },
     { to: "/gateways", label: "Gateways (SMS, email, pay)", icon: PlugZap, roles: ADMIN },
+    { to: "/login-maps", label: "Login rules & maps", icon: KeyRound, roles: ADMIN },
   ] },
 ] as const;
 const NAV = GROUPS.flatMap((g) => [...g.items]) as Array<(typeof GROUPS)[number]["items"][number]>;
@@ -155,7 +156,7 @@ export function AppShell({ title, actions, children }: { title: string; actions?
 
       {/* Mobile bottom bar */}
       <nav className="fixed inset-x-0 bottom-0 z-40 grid auto-cols-fr grid-flow-col border-t bg-card pb-[env(safe-area-inset-bottom)] lg:hidden">
-        {NAV.slice(0, 5).map((n) => (
+        {NAV.filter((n) => role && (n.roles as readonly string[]).includes(role)).slice(0, 5).map((n) => (
           <Link
             key={n.to}
             to={n.to}

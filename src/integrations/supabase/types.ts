@@ -615,6 +615,63 @@ export type Database = {
           },
         ]
       }
+      parcel_scan_logs: {
+        Row: {
+          accuracy: number
+          actor_id: string
+          bag_id: string | null
+          captured_at: string
+          code: string
+          created_at: string
+          id: string
+          kind: string
+          lat: number
+          lng: number
+          shipment_id: string | null
+        }
+        Insert: {
+          accuracy: number
+          actor_id: string
+          bag_id?: string | null
+          captured_at: string
+          code: string
+          created_at?: string
+          id?: string
+          kind: string
+          lat: number
+          lng: number
+          shipment_id?: string | null
+        }
+        Update: {
+          accuracy?: number
+          actor_id?: string
+          bag_id?: string | null
+          captured_at?: string
+          code?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          lat?: number
+          lng?: number
+          shipment_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parcel_scan_logs_bag_id_fkey"
+            columns: ["bag_id"]
+            isOneToOne: false
+            referencedRelation: "wh_bags"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parcel_scan_logs_shipment_id_fkey"
+            columns: ["shipment_id"]
+            isOneToOne: false
+            referencedRelation: "shipments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       partner_orders: {
         Row: {
           external_order_id: string
@@ -900,6 +957,157 @@ export type Database = {
           name?: string
         }
         Relationships: []
+      }
+      receiving_challenges: {
+        Row: {
+          attempts: number
+          code_hash: string
+          expires_at: string
+          manifest_id: string
+        }
+        Insert: {
+          attempts?: number
+          code_hash: string
+          expires_at?: string
+          manifest_id: string
+        }
+        Update: {
+          attempts?: number
+          code_hash?: string
+          expires_at?: string
+          manifest_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receiving_challenges_manifest_id_fkey"
+            columns: ["manifest_id"]
+            isOneToOne: true
+            referencedRelation: "receiving_manifests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      receiving_manifests: {
+        Row: {
+          bag_reference: string | null
+          code: string
+          confirmation_lat: number | null
+          confirmation_lng: number | null
+          confirmed_at: string | null
+          created_at: string
+          created_by: string
+          discrepancy_note: string | null
+          expected_codes: string[]
+          id: string
+          partner_id: string | null
+          receiver_id: string
+          seal_condition: string
+          seal_reference: string | null
+          source: string
+          status: string
+        }
+        Insert: {
+          bag_reference?: string | null
+          code: string
+          confirmation_lat?: number | null
+          confirmation_lng?: number | null
+          confirmed_at?: string | null
+          created_at?: string
+          created_by: string
+          discrepancy_note?: string | null
+          expected_codes: string[]
+          id?: string
+          partner_id?: string | null
+          receiver_id: string
+          seal_condition?: string
+          seal_reference?: string | null
+          source?: string
+          status?: string
+        }
+        Update: {
+          bag_reference?: string | null
+          code?: string
+          confirmation_lat?: number | null
+          confirmation_lng?: number | null
+          confirmed_at?: string | null
+          created_at?: string
+          created_by?: string
+          discrepancy_note?: string | null
+          expected_codes?: string[]
+          id?: string
+          partner_id?: string | null
+          receiver_id?: string
+          seal_condition?: string
+          seal_reference?: string | null
+          source?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receiving_manifests_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "courier_partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      receiving_pieces: {
+        Row: {
+          accuracy: number
+          actor_id: string
+          captured_at: string
+          code: string
+          created_at: string
+          damaged: boolean
+          id: string
+          lat: number
+          lng: number
+          manifest_id: string
+          shipment_id: string | null
+        }
+        Insert: {
+          accuracy: number
+          actor_id: string
+          captured_at: string
+          code: string
+          created_at?: string
+          damaged?: boolean
+          id?: string
+          lat: number
+          lng: number
+          manifest_id: string
+          shipment_id?: string | null
+        }
+        Update: {
+          accuracy?: number
+          actor_id?: string
+          captured_at?: string
+          code?: string
+          created_at?: string
+          damaged?: boolean
+          id?: string
+          lat?: number
+          lng?: number
+          manifest_id?: string
+          shipment_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receiving_pieces_manifest_id_fkey"
+            columns: ["manifest_id"]
+            isOneToOne: false
+            referencedRelation: "receiving_manifests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receiving_pieces_shipment_id_fkey"
+            columns: ["shipment_id"]
+            isOneToOne: false
+            referencedRelation: "shipments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       return_events: {
         Row: {
@@ -1426,6 +1634,36 @@ export type Database = {
           },
         ]
       }
+      staff_locations: {
+        Row: {
+          accuracy: number
+          captured_at: string
+          lat: number
+          lng: number
+          on_duty: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          accuracy: number
+          captured_at: string
+          lat: number
+          lng: number
+          on_duty?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          accuracy?: number
+          captured_at?: string
+          lat?: number
+          lng?: number
+          on_duty?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       tracking_otps: {
         Row: {
           attempts: number
@@ -1693,7 +1931,10 @@ export type Database = {
       }
       wh_bag_items: {
         Row: {
+          accuracy: number | null
+          actor_id: string | null
           bag_id: string
+          captured_at: string | null
           created_at: string
           id: string
           lat: number | null
@@ -1703,7 +1944,10 @@ export type Database = {
           shipment_id: string | null
         }
         Insert: {
+          accuracy?: number | null
+          actor_id?: string | null
           bag_id: string
+          captured_at?: string | null
           created_at?: string
           id?: string
           lat?: number | null
@@ -1713,7 +1957,10 @@ export type Database = {
           shipment_id?: string | null
         }
         Update: {
+          accuracy?: number | null
+          actor_id?: string | null
           bag_id?: string
+          captured_at?: string | null
           created_at?: string
           id?: string
           lat?: number | null
@@ -1994,6 +2241,24 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      confirm_receiving_manifest: {
+        Args: {
+          _manifest: string
+          _note?: string
+          _otp: string
+          _seal_condition?: string
+        }
+        Returns: Json
+      }
+      create_receiving_manifest: {
+        Args: {
+          _bag?: string
+          _codes: string[]
+          _receiver: string
+          _seal?: string
+        }
+        Returns: Json
+      }
       credit_wallet: {
         Args: {
           _amount: number
@@ -2101,9 +2366,31 @@ export type Database = {
           role: Database["public"]["Enums"]["app_role"]
         }[]
       }
+      record_parcel_scan: {
+        Args: { _code: string; _kind: string }
+        Returns: string
+      }
       request_tracking_otp: {
         Args: { _code: string; _phone_last4: string }
         Returns: Json
+      }
+      require_scan_location: {
+        Args: never
+        Returns: {
+          accuracy: number
+          captured_at: string
+          lat: number
+          lng: number
+          on_duty: boolean
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "staff_locations"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       resolve_cod_handover: {
         Args: { _id: string; _note?: string; _received: number }
@@ -2130,6 +2417,10 @@ export type Database = {
         }
       }
       rider_start_handover: { Args: { _to: string }; Returns: Json }
+      scan_receiving_piece: {
+        Args: { _code: string; _damaged?: boolean; _manifest: string }
+        Returns: Json
+      }
       scan_transition: {
         Args: {
           _code: string

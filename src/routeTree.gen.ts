@@ -24,6 +24,7 @@ import { Route as AuthenticatedDevelopersRouteImport } from './routes/_authentic
 import { Route as AuthenticatedGatewaysRouteImport } from './routes/_authenticated/gateways'
 import { Route as AuthenticatedHubsRouteImport } from './routes/_authenticated/hubs'
 import { Route as AuthenticatedJobsRouteImport } from './routes/_authenticated/jobs'
+import { Route as AuthenticatedLoginMapsRouteImport } from './routes/_authenticated/login-maps'
 import { Route as AuthenticatedLookupRouteImport } from './routes/_authenticated/lookup'
 import { Route as AuthenticatedLotsRouteImport } from './routes/_authenticated/lots'
 import { Route as AuthenticatedManageHubsRouteImport } from './routes/_authenticated/manage-hubs'
@@ -122,6 +123,11 @@ const AuthenticatedHubsRoute = AuthenticatedHubsRouteImport.update({
 const AuthenticatedJobsRoute = AuthenticatedJobsRouteImport.update({
   id: '/jobs',
   path: '/jobs',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLoginMapsRoute = AuthenticatedLoginMapsRouteImport.update({
+  id: '/login-maps',
+  path: '/login-maps',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedLookupRoute = AuthenticatedLookupRouteImport.update({
@@ -273,6 +279,7 @@ export interface FileRoutesByFullPath {
   '/gateways': typeof AuthenticatedGatewaysRoute
   '/hubs': typeof AuthenticatedHubsRoute
   '/jobs': typeof AuthenticatedJobsRoute
+  '/login-maps': typeof AuthenticatedLoginMapsRoute
   '/lookup': typeof AuthenticatedLookupRoute
   '/lots': typeof AuthenticatedLotsRoute
   '/manage-hubs': typeof AuthenticatedManageHubsRoute
@@ -314,6 +321,7 @@ export interface FileRoutesByTo {
   '/gateways': typeof AuthenticatedGatewaysRoute
   '/hubs': typeof AuthenticatedHubsRoute
   '/jobs': typeof AuthenticatedJobsRoute
+  '/login-maps': typeof AuthenticatedLoginMapsRoute
   '/lookup': typeof AuthenticatedLookupRoute
   '/lots': typeof AuthenticatedLotsRoute
   '/manage-hubs': typeof AuthenticatedManageHubsRoute
@@ -357,6 +365,7 @@ export interface FileRoutesById {
   '/_authenticated/gateways': typeof AuthenticatedGatewaysRoute
   '/_authenticated/hubs': typeof AuthenticatedHubsRoute
   '/_authenticated/jobs': typeof AuthenticatedJobsRoute
+  '/_authenticated/login-maps': typeof AuthenticatedLoginMapsRoute
   '/_authenticated/lookup': typeof AuthenticatedLookupRoute
   '/_authenticated/lots': typeof AuthenticatedLotsRoute
   '/_authenticated/manage-hubs': typeof AuthenticatedManageHubsRoute
@@ -400,6 +409,7 @@ export interface FileRouteTypes {
     | '/gateways'
     | '/hubs'
     | '/jobs'
+    | '/login-maps'
     | '/lookup'
     | '/lots'
     | '/manage-hubs'
@@ -441,6 +451,7 @@ export interface FileRouteTypes {
     | '/gateways'
     | '/hubs'
     | '/jobs'
+    | '/login-maps'
     | '/lookup'
     | '/lots'
     | '/manage-hubs'
@@ -483,6 +494,7 @@ export interface FileRouteTypes {
     | '/_authenticated/gateways'
     | '/_authenticated/hubs'
     | '/_authenticated/jobs'
+    | '/_authenticated/login-maps'
     | '/_authenticated/lookup'
     | '/_authenticated/lots'
     | '/_authenticated/manage-hubs'
@@ -631,6 +643,13 @@ declare module '@tanstack/react-router' {
       path: '/jobs'
       fullPath: '/jobs'
       preLoaderRoute: typeof AuthenticatedJobsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/login-maps': {
+      id: '/_authenticated/login-maps'
+      path: '/login-maps'
+      fullPath: '/login-maps'
+      preLoaderRoute: typeof AuthenticatedLoginMapsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/lookup': {
@@ -819,6 +838,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedGatewaysRoute: typeof AuthenticatedGatewaysRoute
   AuthenticatedHubsRoute: typeof AuthenticatedHubsRoute
   AuthenticatedJobsRoute: typeof AuthenticatedJobsRoute
+  AuthenticatedLoginMapsRoute: typeof AuthenticatedLoginMapsRoute
   AuthenticatedLookupRoute: typeof AuthenticatedLookupRoute
   AuthenticatedLotsRoute: typeof AuthenticatedLotsRoute
   AuthenticatedManageHubsRoute: typeof AuthenticatedManageHubsRoute
@@ -849,6 +869,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedGatewaysRoute: AuthenticatedGatewaysRoute,
   AuthenticatedHubsRoute: AuthenticatedHubsRoute,
   AuthenticatedJobsRoute: AuthenticatedJobsRoute,
+  AuthenticatedLoginMapsRoute: AuthenticatedLoginMapsRoute,
   AuthenticatedLookupRoute: AuthenticatedLookupRoute,
   AuthenticatedLotsRoute: AuthenticatedLotsRoute,
   AuthenticatedManageHubsRoute: AuthenticatedManageHubsRoute,

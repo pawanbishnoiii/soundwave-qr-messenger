@@ -21,12 +21,13 @@ export const Route = createFileRoute("/_authenticated/team")({
   component: TeamPage,
 });
 
-const ICON: Record<AppRole, typeof Crown> = { admin: Crown, distributor: Building2, manager: Briefcase, rider: Bike };
+const ICON: Record<AppRole, typeof Crown> = { admin: Crown, distributor: Building2, manager: Briefcase, rider: Bike, warehouse: Building2 };
 const TONE: Record<AppRole, string> = {
   admin: "bg-navy text-navy-foreground",
   distributor: "bg-accent text-primary",
   manager: "bg-sky/25 text-foreground",
   rider: "bg-lime text-navy",
+  warehouse: "bg-secondary text-secondary-foreground",
 };
 
 function TeamPage() {

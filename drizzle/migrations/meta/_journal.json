@@ -29,6 +29,13 @@
       "when": 1792218296916,
       "tag": "0003_warehouse_tables_profile_address_cod_settlement",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792286818895,
+      "tag": "0004_cod_handover_otp",
+      "breakpoints": true
     }
   ]
 }

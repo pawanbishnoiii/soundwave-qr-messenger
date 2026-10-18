@@ -109,6 +109,35 @@ export type Database = {
         }
         Relationships: []
       }
+      cod_handover_otps: {
+        Row: {
+          attempts: number
+          code: string
+          created_at: string
+          handover_id: string
+        }
+        Insert: {
+          attempts?: number
+          code: string
+          created_at?: string
+          handover_id: string
+        }
+        Update: {
+          attempts?: number
+          code?: string
+          created_at?: string
+          handover_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cod_handover_otps_handover_id_fkey"
+            columns: ["handover_id"]
+            isOneToOne: true
+            referencedRelation: "cod_handovers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cod_handovers: {
         Row: {
           code: string
@@ -2043,6 +2072,7 @@ export type Database = {
         Args: { _data: Json; _event: string }
         Returns: undefined
       }
+      get_handover_otp: { Args: { _id: string }; Returns: string }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
@@ -2056,6 +2086,15 @@ export type Database = {
       }
       import_partner_order: { Args: { _id: string }; Returns: string }
       is_ancestor: { Args: { _anc: string; _desc: string }; Returns: boolean }
+      list_handover_receivers: {
+        Args: never
+        Returns: {
+          full_name: string
+          id: string
+          phone: string
+          role: Database["public"]["Enums"]["app_role"]
+        }[]
+      }
       request_tracking_otp: {
         Args: { _code: string; _phone_last4: string }
         Returns: Json
@@ -2084,6 +2123,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      rider_start_handover: { Args: { _to: string }; Returns: Json }
       scan_transition: {
         Args: {
           _code: string
@@ -2135,6 +2175,10 @@ export type Database = {
       }
       track_shipment: { Args: { _code: string }; Returns: Json }
       track_with_otp: { Args: { _code: string; _otp: string }; Returns: Json }
+      verify_handover_otp: {
+        Args: { _id: string; _otp: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "distributor" | "manager" | "rider" | "warehouse"

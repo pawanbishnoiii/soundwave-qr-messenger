@@ -19,6 +19,8 @@ import { STATUS_META, inr, type Shipment } from "@/lib/status";
 import { playError, playSuccess, unlockAudio } from "@/lib/sound";
 import { pageHead } from "@/lib/seo";
 import riderArt from "@/assets/rider-hero.png";
+import { CashCard } from "@/components/rider/RiderCash";
+import { StorePickupCard } from "@/components/rider/StorePickup";
 
 export const Route = createFileRoute("/_authenticated/rider")({
   head: () => pageHead("Rider app", "Your deliveries, scanner, route and wallet"),
@@ -50,10 +52,10 @@ function RiderApp() {
   return (
     <div className="rider-app min-h-dvh">
       <div className="mx-auto min-h-dvh max-w-md pb-28 sm:border-x sm:border-border">
-        {tab === "today" && <Today name={profile?.full_name?.split(" ")[0] ?? "Rider"} stats={stats} route={route} onOpen={setCard} goScan={() => setTab("scan")} />}
+        {tab === "today" && <Today uid={uid} name={profile?.full_name?.split(" ")[0] ?? "Rider"} stats={stats} route={route} onOpen={setCard} goScan={() => setTab("scan")} />}
         {tab === "route" && <RouteTab route={route} onOpen={setCard} />}
         {tab === "scan" && <ScanTab mine={mine} all={ships} onFound={(s) => { setCard(s); setTab("route"); }} />}
-        {tab === "wallet" && <WalletTab txns={txns.filter((t) => t.rider_id === uid)} stats={stats} />}
+        {tab === "wallet" && <WalletTab uid={uid} txns={txns.filter((t) => t.rider_id === uid)} stats={stats} />}
         {tab === "profile" && <ProfileTab name={profile?.full_name ?? ""} phone={profile?.phone ?? ""} stats={stats} />}
       </div>
 
@@ -78,7 +80,7 @@ function RiderApp() {
 
 type Stats = ReturnType<typeof riderStats>;
 
-function Today({ name, stats, route, onOpen, goScan }: { name: string; stats: Stats; route: Shipment[]; onOpen: (s: Shipment) => void; goScan: () => void }) {
+function Today({ uid, name, stats, route, onOpen, goScan }: { uid: string; name: string; stats: Stats; route: Shipment[]; onOpen: (s: Shipment) => void; goScan: () => void }) {
   const next = route.find((s) => s.status === "out_for_delivery") ?? route[0];
   const tiles = [
     { label: "To deliver", value: stats.pending, icon: Package },
@@ -103,6 +105,13 @@ function Today({ name, stats, route, onOpen, goScan }: { name: string; stats: St
           </div>
         ))}
       </div>
+      <div className="grid grid-cols-2 gap-3">
+        <StorePickupCard />
+        <button onClick={goScan} className="flex h-32 flex-col justify-center rounded-3xl border border-border bg-card p-5 text-left transition-transform active:scale-[0.98]">
+          <ScanLine className="h-6 w-6 text-primary" /><p className="mt-2 text-lg font-bold">Quick scan</p><p className="text-xs text-muted-foreground">Open any parcel</p>
+        </button>
+      </div>
+      {uid && <CashCard uid={uid} />}
       {next ? (
         <section>
           <h2 className="mb-2 text-sm font-semibold text-muted-foreground">Next stop</h2>
@@ -252,7 +261,7 @@ function ParcelSheet({ s, onClose }: { s: Shipment; onClose: () => void }) {
   );
 }
 
-function WalletTab({ txns, stats }: { txns: { id: string; amount: number; kind: string; note: string | null; created_at: string }[]; stats: Stats }) {
+function WalletTab({ uid, txns, stats }: { uid: string; txns: { id: string; amount: number; kind: string; note: string | null; created_at: string }[]; stats: Stats }) {
   return (
     <div className="space-y-4 p-4">
       <h1 className="text-2xl font-extrabold">Wallet</h1>
@@ -261,10 +270,7 @@ function WalletTab({ txns, stats }: { txns: { id: string; amount: number; kind: 
         <p className="text-4xl font-extrabold tabular">{inr(stats.wallet)}</p>
         <p className="mt-1 text-sm opacity-80">{inr(stats.earnedToday)} today</p>
       </div>
-      <Link to="/cash" className="flex items-center justify-between rounded-2xl border border-border bg-card p-4">
-        <span className="flex items-center gap-3"><Banknote className="h-5 w-5 text-primary" /><span><span className="block font-semibold">Hand over COD cash</span><span className="text-xs text-muted-foreground">Submit collected cash to your manager</span></span></span>
-        <ChevronRight className="h-5 w-5 text-muted-foreground" />
-      </Link>
+      <CashCard uid={uid} />
       <div className="divide-y divide-border rounded-2xl border border-border bg-card">
         {txns.length ? txns.slice(0, 50).map((t) => (
           <div key={t.id} className="flex items-center justify-between p-4">

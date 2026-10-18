@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IntegrationsRouteImport } from './routes/integrations'
+import { Route as PayRouteImport } from './routes/pay'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as TrackRouteImport } from './routes/track'
@@ -64,6 +65,11 @@ const AuthRoute = AuthRouteImport.update({
 const IntegrationsRoute = IntegrationsRouteImport.update({
   id: '/integrations',
   path: '/integrations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PayRoute = PayRouteImport.update({
+  id: '/pay',
+  path: '/pay',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResourcesRoute = ResourcesRouteImport.update({
@@ -244,6 +250,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/integrations': typeof IntegrationsRoute
+  '/pay': typeof PayRoute
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/track': typeof TrackRoute
@@ -282,6 +289,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/integrations': typeof IntegrationsRoute
+  '/pay': typeof PayRoute
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/track': typeof TrackRoute
@@ -322,6 +330,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/integrations': typeof IntegrationsRoute
+  '/pay': typeof PayRoute
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/track': typeof TrackRoute
@@ -362,6 +371,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/integrations'
+    | '/pay'
     | '/resources'
     | '/solutions'
     | '/track'
@@ -400,6 +410,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/integrations'
+    | '/pay'
     | '/resources'
     | '/solutions'
     | '/track'
@@ -439,6 +450,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/integrations'
+    | '/pay'
     | '/resources'
     | '/solutions'
     | '/track'
@@ -479,6 +491,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   IntegrationsRoute: typeof IntegrationsRoute
+  PayRoute: typeof PayRoute
   ResourcesRoute: typeof ResourcesRoute
   SolutionsRoute: typeof SolutionsRoute
   TrackRoute: typeof TrackRoute
@@ -517,6 +530,13 @@ declare module '@tanstack/react-router' {
       path: '/integrations'
       fullPath: '/integrations'
       preLoaderRoute: typeof IntegrationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pay': {
+      id: '/pay'
+      path: '/pay'
+      fullPath: '/pay'
+      preLoaderRoute: typeof PayRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/resources': {
@@ -817,6 +837,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   IntegrationsRoute: IntegrationsRoute,
+  PayRoute: PayRoute,
   ResourcesRoute: ResourcesRoute,
   SolutionsRoute: SolutionsRoute,
   TrackRoute: TrackRoute,

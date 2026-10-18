@@ -40,6 +40,7 @@ import { Route as AuthenticatedScanRouteImport } from './routes/_authenticated/s
 import { Route as AuthenticatedStopPlannerRouteImport } from './routes/_authenticated/stop-planner'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
+import { Route as AuthenticatedWarehouseRouteImport } from './routes/_authenticated/warehouse'
 import { Route as DocsApiRouteImport } from './routes/docs.api'
 import { Route as DocsB2bRouteImport } from './routes/docs.b2b'
 import { Route as AuthenticatedShipmentsIndexRouteImport } from './routes/_authenticated/shipments.index'
@@ -207,6 +208,11 @@ const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
   path: '/wallet',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedWarehouseRoute = AuthenticatedWarehouseRouteImport.update({
+  id: '/warehouse',
+  path: '/warehouse',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const DocsApiRoute = DocsApiRouteImport.update({
   id: '/docs/api',
   path: '/docs/api',
@@ -277,6 +283,7 @@ export interface FileRoutesByFullPath {
   '/stop-planner': typeof AuthenticatedStopPlannerRoute
   '/team': typeof AuthenticatedTeamRoute
   '/wallet': typeof AuthenticatedWalletRoute
+  '/warehouse': typeof AuthenticatedWarehouseRoute
   '/docs/api': typeof DocsApiRoute
   '/docs/b2b': typeof DocsB2bRoute
   '/shipments/$id': typeof AuthenticatedShipmentsIdRoute
@@ -316,6 +323,7 @@ export interface FileRoutesByTo {
   '/stop-planner': typeof AuthenticatedStopPlannerRoute
   '/team': typeof AuthenticatedTeamRoute
   '/wallet': typeof AuthenticatedWalletRoute
+  '/warehouse': typeof AuthenticatedWarehouseRoute
   '/docs/api': typeof DocsApiRoute
   '/docs/b2b': typeof DocsB2bRoute
   '/shipments/$id': typeof AuthenticatedShipmentsIdRoute
@@ -357,6 +365,7 @@ export interface FileRoutesById {
   '/_authenticated/stop-planner': typeof AuthenticatedStopPlannerRoute
   '/_authenticated/team': typeof AuthenticatedTeamRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
+  '/_authenticated/warehouse': typeof AuthenticatedWarehouseRoute
   '/docs/api': typeof DocsApiRoute
   '/docs/b2b': typeof DocsB2bRoute
   '/_authenticated/shipments/$id': typeof AuthenticatedShipmentsIdRoute
@@ -398,6 +407,7 @@ export interface FileRouteTypes {
     | '/stop-planner'
     | '/team'
     | '/wallet'
+    | '/warehouse'
     | '/docs/api'
     | '/docs/b2b'
     | '/shipments/$id'
@@ -437,6 +447,7 @@ export interface FileRouteTypes {
     | '/stop-planner'
     | '/team'
     | '/wallet'
+    | '/warehouse'
     | '/docs/api'
     | '/docs/b2b'
     | '/shipments/$id'
@@ -477,6 +488,7 @@ export interface FileRouteTypes {
     | '/_authenticated/stop-planner'
     | '/_authenticated/team'
     | '/_authenticated/wallet'
+    | '/_authenticated/warehouse'
     | '/docs/api'
     | '/docs/b2b'
     | '/_authenticated/shipments/$id'
@@ -721,6 +733,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWalletRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/warehouse': {
+      id: '/_authenticated/warehouse'
+      path: '/warehouse'
+      fullPath: '/warehouse'
+      preLoaderRoute: typeof AuthenticatedWarehouseRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/docs/api': {
       id: '/docs/api'
       path: '/docs/api'
@@ -797,6 +816,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedStopPlannerRoute: typeof AuthenticatedStopPlannerRoute
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRoute
   AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
+  AuthenticatedWarehouseRoute: typeof AuthenticatedWarehouseRoute
   AuthenticatedShipmentsIdRoute: typeof AuthenticatedShipmentsIdRoute
   AuthenticatedShipmentsIndexRoute: typeof AuthenticatedShipmentsIndexRoute
 }
@@ -825,6 +845,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedStopPlannerRoute: AuthenticatedStopPlannerRoute,
   AuthenticatedTeamRoute: AuthenticatedTeamRoute,
   AuthenticatedWalletRoute: AuthenticatedWalletRoute,
+  AuthenticatedWarehouseRoute: AuthenticatedWarehouseRoute,
   AuthenticatedShipmentsIdRoute: AuthenticatedShipmentsIdRoute,
   AuthenticatedShipmentsIndexRoute: AuthenticatedShipmentsIndexRoute,
 }

@@ -115,7 +115,7 @@ function Warehouse() {
             <div key={b.id} className={`rounded-xl border bg-card p-4 ${bagId === b.id ? "ring-2 ring-primary" : ""}`}>
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div><p className="font-mono font-semibold">{b.code}</p><p className="text-xs text-muted-foreground">{b.kind} · {b.destination ?? "—"} {b.pincode ?? ""} · {items.length} items</p></div>
-                <div className="flex flex-wrap items-center gap-2"><Pill tone={b.status === "dispatched" ? "ok" : b.status === "sealed" ? "warn" : "neutral"}>{b.status}</Pill>
+                <div className="flex flex-wrap items-center gap-2"><Pill tone={b.status === "dispatched" ? "ok" : b.status === "sealed" ? "warn" : "muted"}>{b.status}</Pill>
                   {b.status === "open" && <><Button size="sm" variant="outline" onClick={() => setBagId(b.id)}><ScanLine />Scan in</Button><Button size="sm" variant="outline" onClick={() => setStatus(b, "sealed")}><Lock />Seal</Button></>}
                   {b.status === "sealed" && <Button size="sm" onClick={() => setStatus(b, "dispatched")}><Send />Dispatch</Button>}
                   <Button size="sm" variant="ghost" onClick={() => { setBagId(b.id); setTimeout(() => window.print(), 50); }}><Printer />Bill</Button></div>
